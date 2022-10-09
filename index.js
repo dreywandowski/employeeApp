@@ -2,11 +2,6 @@ var express = require('express');
 var app = express();
 const employeeRoutes = require('./routes/employeeRoutes');
 
-
-//var movieController = require('./controllers/MovieController.js');
-
-
-
 // tell node to use ejs as the templating engine
 app.set('view engine', 'ejs');
 
@@ -15,7 +10,9 @@ app.use('/assets', express.static('assets'));
 
 
 // fire our routes
-app.use(employeeRoutes);
+
+// employee routes
+app.use('/api',employeeRoutes);
 
 
 // set our port

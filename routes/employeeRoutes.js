@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var employee = require('../controllers/EmployeeController');
 
+
 // handle POST requests
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded ({extended :false});
@@ -19,14 +20,18 @@ var testJson = (req, res, next) => {
       // index
     router.get('/', testJson, employee.index);
 
-    // get employees
-    router.get('/employees', employee.getEmployees);
+     // register employee
+     router.post('/add_employee',  urlencodedParser, employee.register);
 
-    // get employee
-    router.get('/employees/:name', employee.employee_id);
+      // login
+    router.post('/login',  urlencodedParser, employee.login);
 
-   // register employee
-    router.post('/add_employee',  urlencodedParser, employee.register);
+     // logout
+     router.post('/logout',  urlencodedParser, employee.logout);
+
+   
+
+  
     
 
     /*

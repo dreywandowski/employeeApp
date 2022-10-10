@@ -1,26 +1,55 @@
 var users = require('../models/Users');
-
-
-/*const mysql = require('mysql');
-
-const connection = mysql.createPool({
-    host     : 'localhost',
-    user     : 'dreywandowski',
-    password : '000Drey-',
-    database : 'node_js_apps',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-  });*/
+const bcrypt = require("bcrypt");
 
 
    // home route
    const index = (req, res, next) => {
-   res.status(200).send('The API is up and running!!');
+    res.status(200).json({'message' : 'The API is up and running!', 
+    'status':'Unauthenticated'});
 }
 
-// get all employees
-const getEmployees = (req, res) => {
+
+// TO-DO: FIX Login Endpoint
+// login
+const login = (req, res) => {
+    var qry = req.body;
+    const username = qry.username;
+    const pwd  = qry.password;
+
+    users.sync().then(data =>{
+        return users.findAll({
+            where: {
+                username: username,
+                //attributes : ['username', 'password']
+            }
+        });
+        }).then(resp => {
+           return resp.forEach(element => {
+                console.log(element.toJSON()); 
+                var user_list = element.toJSON();
+            })
+            
+        }).then(user => {
+            /*console.log("final the"+user_list.password);
+            const hash_pwd = user.password;
+            (pwd, hash_pwd) => {
+                bcyrpt.compare(pwd, hash_pwd)
+                    .then(result => {
+                        console.log(result);
+                        return result*/
+                    })
+        .
+        catch(err =>{
+            console.log('error retrieving user list!', err);
+            res.status(200).send('error retrieving user list');
+        });
+
+    
+    }
+
+
+// logout
+const logout = (req, res) => {
     users.sync().then(data =>{
         return users.findAll();
         }).then(resp => {
@@ -30,24 +59,8 @@ const getEmployees = (req, res) => {
             res.status(200).send('User list retrieved succesfully!!');
         }).catch(err =>{
             console.log('error retrieving user list!', err);
-            res.status(200).send('The API is up and running!!');
+            res.status(200).send('error retrieving user list');
         });
-}
-
-// fix how to properly return list of all employees
-
-// get an employee
-const employee_id = function(req, res){
-    connection.query('SELECT * FROM movies', (err, rows) => {
-        if(err) throw err;
-        data = rows;
-        //console.log('now here in the data object: \n', data);
-        console.log('I just want to be sure that the nodemon is Working OK! \n Now I am fine');
-        //connection.end();
-        
-    });
-res.render('movies', {movies: data});
-//res.end('Movie Added Succesfully!');
 }
 
 
@@ -55,24 +68,42 @@ res.render('movies', {movies: data});
 const register = (req, res) => {
     var qry = req.body;
     var values = [[qry.firstName, qry.lastName, qry.username,qry.age, qry.password, qry.admin]];
-    console.log(qry);
+    
+    // hash the password and then save the user in the returned Promise
+    function hashPassword(plaintextPassword) {
+        bcrypt.hash(plaintextPassword, 15)
+            .then(hash => {
+                console.log("our hashed pwd:"+hash);
+                return hash;
+            })
+            .then(pwd =>{
+                users.sync().then(data =>{
+                    console.log('table synced OK, with entries from user!', qry);
+                    const user = users.create({
+                        firstName: qry.firstName,
+                        username: qry.username,
+                        lastName: qry.lastName,
+                        password: pwd,
+                        age: qry.age,
+                        isAdmin: qry.admin
+                    }).then(datad => {
+                        res.status(201).json({'message' : 'User '+qry.firstName+ ' '+ qry.lastName+' '+ 'created sucessfully!', 
+                                          'status':'OK!'});
+                    }).catch(err =>{
+                        res.status(405).json({'message' : 'Error creating the user!' + err, 
+                                          'status':'Error!'});
+                });
+            });
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
 
-    users.sync().then(data =>{
-        console.log('table synced OK, with entries from user!', res);
-        const user = users.create({
-            firstName: qry.firstName,
-            username: qry.username,
-            lastName: qry.lastName,
-            password: qry.password,
-            age: qry.age,
-            isAdmin: qry.admin
-        }).then(datad => {
-            console.log('our api user has been saved!');
-            res.status(201).send('User '+qry.firstName+ ' '+ qry.lastName+' '+ 'created sucessfully!');
-        }).catch(err =>{
-            console.log('error with creating this user!', err);
-    });
-});
+    // run the function
+    hashPassword(qry.password);
+
+  
     
 }
 
@@ -94,8 +125,8 @@ const register = (req, res) => {
 
 module.exports = {
     index,
-    getEmployees,
-    employee_id,
-    register
+    register,
+    login,
+    logout
 
 }

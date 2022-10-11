@@ -6,6 +6,7 @@ var employee = require('../controllers/EmployeeController');
 // handle POST requests
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded ({extended :false});
+const {body, validationResult} = require('express-validator');
 
 var testJson = (req, res, next) => {
     const content = req.headers['content-type'];
@@ -20,11 +21,14 @@ var testJson = (req, res, next) => {
       // index
     router.get('/', testJson, employee.index);
 
-     // register employee
+     // register employee   
      router.post('/add_employee',  urlencodedParser, employee.register);
 
       // login
     router.post('/login',  urlencodedParser, employee.login);
+
+    // edit profile
+    router.put('/update_employee/:name',  urlencodedParser, employee.editProfile);
 
      // logout
      router.post('/logout',  urlencodedParser, employee.logout);

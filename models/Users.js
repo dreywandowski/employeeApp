@@ -16,7 +16,8 @@ const Users = sequelize.define('users', {
  },
 username:{
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    primaryKey: true
 },
 password:{
     type: DataTypes.STRING,
@@ -32,6 +33,7 @@ isAdmin: {
     allowNull: false
 }
 });
+
 
 //console.log(Users === sequelize.define.Users);
 

@@ -1,44 +1,80 @@
 var users = require('../models/Users');
 
+// get an employee
+const employee_id = (req, res) => {
+     const username = req.params.name;
+    
+    users.sync().then(data =>{
+        return users.findByPk(username,
+            {
+                attributes: {
+                    exclude: ['password', 'createdAt']
+                 } 
+            });
+         }).then(resp => {
+            if(resp === null){
+                res.status(404).json({'message' : 'User not found!', 
+                'status': 0});
+            }else{
+                res.status(200).json({'message' : 'User retrieved sucessfully!', 
+                'user': resp, 'status': 1});
+            }
+         }).
+        catch(err =>{
+            res.status(404).json({'message' : 'Error Retrieving user!', 
+            'error': err, 'status': 0});
+        });
+}
+
+    
 // get all employees
 const getEmployees = (req, res) => {
     users.sync().then(data =>{
-        return users.findAll();
+        return users.findAll({
+            attributes: { exclude: ['password', 'createdAt'] }
+    });
         }).
         then(users =>{
-           /*  .then(resp => {
-                resp.forEach(element => {
-                    console.log(element.toJSON()); 
-                    var user_list = element.toJSON();
-                    
-                 }
-                 return resp;
-             })*/
                 res.status(200).json({'message' : 'User list retrieved sucessfully!', 
-                'users': users});
+                'users': users, 'status': 1});
             }).
         catch(err =>{
-            res.status(404).send('error retrieving user list', err);
+            res.status(404).json({'message' : 'Error Retrieving user list!', 
+            'error': err, 'status': 0});
         });
 
 }
 
-// get an employee
-const employee_id = function(req, res){
-    connection.query('SELECT * FROM movies', (err, rows) => {
-        if(err) throw err;
-        data = rows;
-        //console.log('now here in the data object: \n', data);
-        console.log('I just want to be sure that the nodemon is Working OK! \n Now I am fine');
-        //connection.end();
-        
-    });
-res.render('movies', {movies: data});
-//res.end('Movie Added Succesfully!');
+const deleteEmployee = (req, res) => {
+    const username = req.params.name;
+
+    users.sync().then(data =>{
+        return users.destroy({
+            where: {
+                username: username
+            }
+        });
+         }).then(resp => {
+            if(resp === 1){
+                res.status(200).json({'message' : 'User deleted succesfully!', 
+                'status': resp});
+            }
+           else{
+                res.status(404).json({'message' : 'Error deleting the user, verify that it exists!', 
+                'status': resp});
+            }
+         }).
+        catch(err =>{
+            res.status(404).json({'message' : 'Error deleting the user!', 
+            'error': err, 'status': 0});
+        });
 }
 
 
+
 module.exports = {
+    employee_id,
     getEmployees,
-    employee_id
+    deleteEmployee
+   
 }

@@ -1,5 +1,6 @@
 var users = require('../models/Users');
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 
    // home route
@@ -67,8 +68,6 @@ const register = (req, res) => {
     
 }
 
-
-// TO-DO: FIX Edit Profile endpoint
 // edit profile
 
 const editProfile = (req, res) => {
@@ -131,12 +130,34 @@ const login = (req, res) => {
             }
         });
         }).then(resp => {
-           let dbPwd = resp.password;
+           const dbPwd = resp.password;
+           let role = resp.isAdmin;
+           if(resp.isAdmin === true){
+          role = "admin";
+         }
+            else role = "user";
+           const name  = resp.username;
            
+        const user_details = {username: username, role: role };
+
            // compare hashed db pwd against user input and verify
          const decrpyt =  () => bcrypt.compare(pwd, dbPwd)
                     .then(result => {
-                        if(result)res.status(200).json({'message' :'User password match, Authenticated!', 'status' :result});
+                        if(result){
+
+                            const d = new Date();
+                            d.toLocaleString('en-US', { timeZone: 'Africa/Lagos' })
+                            const newD = new Date(d.getTime() + 86400);
+
+                           //signing JWT token with user id
+                              var token = jwt.sign({
+                              user: name,
+                              role: role
+                              }, process.env.JWT_KEY, {
+                             expiresIn: 86400
+                             });
+                            res.status(200).json({'message' :'Login successful, Authenticated!', 'status' :result, accessToken:token, user: user_details,expiresAt: newD});
+                        }
                         else res.status(401).json({'message' : 'Username or password dont match!',
                         'status': result});
                         
@@ -149,7 +170,7 @@ const login = (req, res) => {
                     decrpyt();
                  }) .
         catch(err =>{
-            res.status(404).json({'message' :'error retrieving user list !!', 'error' : err.message, 'status': 0});
+            res.status(404).json({'message' :'error verifying the user !!', 'error' : err.message, 'status': 0});
         });
 
     
@@ -171,13 +192,21 @@ const logout = (req, res) => {
         });
 }
 
-
+// Verification of JWT
+const verify = (req, res) => {
+    // Tokens are generally passed in header of request
+    // Due to security reasons.
+    res.status(200).json({'message' :'verification stage'});
+  
+    
+};
 
 module.exports = {
     index,
     register,
     login,
     logout,
-    editProfile
+    editProfile,
+   // verify
 
 }

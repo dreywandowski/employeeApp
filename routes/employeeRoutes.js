@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var employee = require('../controllers/EmployeeController');
+//var env = require('./connection');
 
 
 // handle POST requests
@@ -30,30 +31,11 @@ var testJson = (req, res, next) => {
     // edit profile
     router.put('/update_employee/:name',  urlencodedParser, employee.editProfile);
 
+    // verify token
+   // app.post("/verifyToken", urlencodedParser, employee.verify);
+
      // logout
      router.post('/logout',  urlencodedParser, employee.logout);
-
-   
-
-  
-    
-
-    /*
-     // update employee profile
-     router.put('/update_movie/:name', function(req, res){
-        var name = req.params.name;
-       // console.log("weyuej",qry);
-        var sql = "SELECT * FROM movies where name = ?";
-        connection.query(sql, name, (err, rows) => {
-            if(err) throw err;
-            data = rows;
-            console.log(data);
-            res.render('update_movie', {movie: data});
-            
-        });
-      
-    });
-*/
 
 
 module.exports = router;

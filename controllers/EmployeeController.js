@@ -70,45 +70,54 @@ const register = (req, res) => {
 
 // TO-DO: FIX Edit Profile endpoint
 // edit profile
+
 const editProfile = (req, res) => {
-    var qry = req.body;
-    const username = req.params.name;
-    console.log(username);
-
-    res.status(500).json({'message' : ' Error decrpyting user hash, kindly check the error msg!',
-                                          'error': qry});
     
-    users.sync().then(data =>{
-       return users.update({
-            where: {
-                username: username
-            }
-        });
-        }).then(resp => {
-           let dbPwd = resp.password;
-           
-           // compare hashed db pwd against user input and verify
-         const decrpyt =  () => bcrypt.compare(pwd, dbPwd)
-                    .then(result => {
-                        if(result)res.status(200).json({'message' :'User password match, Authenticated!', 'status' :result});
-                        else res.status(401).json({'message' : 'Username or password dont match!',
-                        'status': 'unauthenticated'});
-                        
+   const username = req.params.name;
+    var qry = req.body;
+
+    const errors = [];
+    
+    if(qry.firstName.length == '' || qry.firstName.length < 5 )errors.push('First name cannot have less than 5 characters');
+    if(qry.lastName.length == '' || qry.lastName.length < 5 )errors.push('Last name cannot have less than 5 characters');
+    if(qry.username == '')errors.push('Age cannot be empty');
+    if(qry.password.length == '' || qry.password.length < 10 )errors.push('Password cannot have less than 10 characters');
+
+
+    if(errors.length !== 0){
+        res.status(401).json({'message' : 'Validation errors!', 
+        'errors': errors, status: 0});
+    }
+   
+    else{
+    bcrypt.hash(req.body.password, 15)
+            .then(hash => {
+              /*  res.status(200).json({'message' : 'User updated successfully!',
+                'status': hash});*/
+               users.sync().then(data =>{
+                     users.update({
+                     firstName: req.body.firstName,
+                     lastName: req.body.lastName,
+                     password: hash,
+                     age: qry.age,
+                         where: {
+                             username: username
+                         }
+                        });
                     })
-                    .catch(err =>{
-                        res.status(500).json({'message' : ' Error decrpyting user hash, kindly check the error msg!',
-                                          'error': err.message});
-                    });
-
-                    decrpyt();
-                 }) .
-        catch(err =>{
-            res.status(404).json({'message' :'error retrieving user list !!', 'error' : err.message});
-        });
-
+            }).then(resp =>{
+                res.status(200).json({'message' : 'User updated successfully!',
+                'status': 1});
+            })
+            .catch(err =>{
+                res.status(401).json({'message' : ' Error updating user!',
+                        'status': 0, message:err});
+            });
+    
+        
     
     }
-
+}
     // login
 const login = (req, res) => {
     var qry = req.body;
@@ -163,22 +172,6 @@ const logout = (req, res) => {
 }
 
 
-
-/*
- // update employee profile
- router.put('/update_movie/:name', function(req, res){
-    var name = req.params.name;
-   // console.log("weyuej",qry);
-    var sql = "SELECT * FROM movies where name = ?";
-    connection.query(sql, name, (err, rows) => {
-        if(err) throw err;
-        data = rows;
-        console.log(data);
-        res.render('update_movie', {movie: data});
-        
-    });
-  
-});*/
 
 module.exports = {
     index,

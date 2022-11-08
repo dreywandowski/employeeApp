@@ -71,6 +71,7 @@ const register = (req, res) => {
 // edit profile
 
 const editProfile = (req, res) => {
+    res.json((req.headers));
     
    const username = req.params.name;
     var qry = req.body;
@@ -177,6 +178,8 @@ const login = (req, res) => {
     }
 
 
+    
+
 // logout
 const logout = (req, res) => {
     users.sync().then(data =>{
@@ -192,14 +195,34 @@ const logout = (req, res) => {
         });
 }
 
+
 // Verification of JWT
 const verify = (req, res) => {
-    // Tokens are generally passed in header of request
-    // Due to security reasons.
-    res.status(200).json({'message' :'verification stage'});
+   res.json(req.user);
+   /* res.json((req.headers));
+
+    let jwtSecretKey = process.env.JWT_KEY;
+
+    try {
+        const token = req.header.tokenheaderkey;
   
+        const verified = jwt.verify(token, jwtSecretKey);
+        if(verified){
+          
+    res.status(200).json({'message' :'verification statoken verified ok', status: 1});
+        }else{
+            // Access Denied
+            res.status(401).json({'message' : 'Unauthenticated',
+                        'status': 0});
+        }
+    } catch (error) {
+        // Access Denied
+        return res.status(401).json({'message' : 'Unauthenticated! '+ error,
+        'status': 0});
+    }*/
     
-};
+    
+}
 
 module.exports = {
     index,
@@ -207,6 +230,6 @@ module.exports = {
     login,
     logout,
     editProfile,
-   // verify
+    verify
 
 }

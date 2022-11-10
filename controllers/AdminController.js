@@ -45,6 +45,7 @@ const getEmployees = (req, res) => {
 
 }
 
+// delete an employee
 const deleteEmployee = (req, res) => {
     const username = req.params.name;
 

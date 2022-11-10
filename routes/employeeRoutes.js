@@ -28,23 +28,33 @@ var testJson = (req, res, next) => {
     router.get('/', testJson, employee.index);
 
      // register employee   
-     router.post('/add_employee',  urlencodedParser, employee.register);
+     router.post('/employees/addEmployee',  urlencodedParser, employee.register);
 
       // login
-    router.post('/login',  urlencodedParser, employee.login);
+    router.post('/employees/login',  urlencodedParser, employee.login);
 
     // verify token
    // router.get('/verifyToken', [testJson, auth], employee.verify);
 
    // list leaves applied for by self
-   router.get('/myLeaves', [auth], leave.getLeaves);
+   router.get('/leaves/myLeaves', [auth], leave.getLeaves);
+
+  // cancel a leave
+   router.get('/leaves/myLeaves/:id', [auth, urlencodedParser], leave.getLeave);
 
     // create a leave
-    router.post('/createLeave', [auth, urlencodedParser, userValidationRules(), validate], leave.createLeave);
+    router.post('/leaves/createLeave', [auth, urlencodedParser, userValidationRules(), validate], leave.createLeave);
+
+     // request a leave
+     router.post('/leaves/requestLeave/:id', [auth, urlencodedParser], leave.requestLeave);
+
+       // cancel a leave
+       router.post('/leaves/cancelLeave/:id', [auth, urlencodedParser], leave.cancelLeave);
 
 
+       // a problematic endpoint
     // edit profile
-    //router.put('/update_employee/:name',  [urlencodedParser, auth], employee.editProfile);
+    router.put('/employees/updateEmployee/:name',  [urlencodedParser, auth], employee.editProfile);
 
     
 

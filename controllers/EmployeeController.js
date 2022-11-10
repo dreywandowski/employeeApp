@@ -47,10 +47,31 @@ const register = (req, res) => {
                         age: qry.age,
                         isAdmin: qry.admin
                     }).then(datad => {
+                        const d = new Date();
+                        d.toLocaleString('en-US', { timeZone: 'Africa/Lagos' })
+                        const newD = new Date(d.getTime() + 86400);
+
+                        var name = qry.username;
+                        if(qry.admin === "1"){
+                            role = 'admin';
+                        }
+                        else{
+                            role = 'user'; 
+                        }
+
+                        const user_details = {username: name, role: role };
+                        
+                       //signing JWT token with user id
+                          var token = jwt.sign({
+                          user: name,
+                          role: role
+                          }, process.env.JWT_KEY, {
+                         expiresIn: 86400
+                         });
                         res.status(201).json({'message' : 'User '+qry.firstName+ ' '+ qry.lastName+' '+ 'created sucessfully!', 
-                                          'status':1});
+                        accessToken:token, user: user_details,expiresAt: newD, 'status':1});
                     }).catch(err =>{
-                        res.status(403).json({'message' : 'Error creating the user! ' + err, 
+                        res.status(403).json({'message' : 'Error creating the user or assigning a JWT token! ' + err, 
                                           'status':0});
                 });
             });
@@ -71,9 +92,7 @@ const register = (req, res) => {
 // edit profile
 
 const editProfile = (req, res) => {
-    res.json((req.headers));
-    
-   const username = req.params.name;
+   var username = req.params.name;
     var qry = req.body;
 
     const errors = [];
@@ -83,12 +102,11 @@ const editProfile = (req, res) => {
     if(qry.username == '')errors.push('Age cannot be empty');
     if(qry.password.length == '' || qry.password.length < 10 )errors.push('Password cannot have less than 10 characters');
 
-
     if(errors.length !== 0){
         res.status(401).json({'message' : 'Validation errors!', 
         'errors': errors, status: 0});
     }
-   
+ 
     else{
     bcrypt.hash(req.body.password, 15)
             .then(hash => {
@@ -99,7 +117,7 @@ const editProfile = (req, res) => {
                      firstName: req.body.firstName,
                      lastName: req.body.lastName,
                      password: hash,
-                     age: qry.age,
+                     age: req.body.age,
                          where: {
                              username: username
                          }
@@ -199,28 +217,6 @@ const logout = (req, res) => {
 // Verification of JWT
 const verify = (req, res) => {
    res.json(req.user);
-   /* res.json((req.headers));
-
-    let jwtSecretKey = process.env.JWT_KEY;
-
-    try {
-        const token = req.header.tokenheaderkey;
-  
-        const verified = jwt.verify(token, jwtSecretKey);
-        if(verified){
-          
-    res.status(200).json({'message' :'verification statoken verified ok', status: 1});
-        }else{
-            // Access Denied
-            res.status(401).json({'message' : 'Unauthenticated',
-                        'status': 0});
-        }
-    } catch (error) {
-        // Access Denied
-        return res.status(401).json({'message' : 'Unauthenticated! '+ error,
-        'status': 0});
-    }*/
-    
     
 }
 

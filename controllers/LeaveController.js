@@ -157,9 +157,9 @@ const getLeavesApproval = (req, res) => {
         });
 }
 
-// approve leave request -- admins only
+// approve leave request -- admin (supervisors) only
 const approveLeave = (req, res) => {
-    leave.update({approved: 1,}, {where: {id: req.params.id}} ).then(leave => {
+    leave.update({approved: 1, approved_by: req.user.user}, {where: {id: req.params.id}} ).then(leave => {
         res.status(200).json({'message' : 'Leave request approved sucessfully!', 
                           'status':1});
     }).catch(err =>{
@@ -168,9 +168,9 @@ const approveLeave = (req, res) => {
     });
 }
 
-// reject leave request -- admins only
+// reject leave request -- admin (supervisors) only
 const rejectLeave = (req, res) => {
-    leave.update({status: 'cancelled', approved: 0}, {where: {id: req.params.id}} ).then(leave => {
+    leave.update({status: 'cancelled', approved: 0, rejected_by: req.user.user}, {where: {id: req.params.id}} ).then(leave => {
         res.status(200).json({'message' : 'Leave request rejected sucessfully!', 
                           'status':1});
     }).catch(err =>{

@@ -71,6 +71,11 @@ const deleteEmployee = (req, res) => {
         });
 }
 
+// assign an employee to an appropriate supervisor
+const assignEmployee = (req, res) =>{
+
+}
+
 
 
 module.exports = {

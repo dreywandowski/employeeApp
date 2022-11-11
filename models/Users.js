@@ -31,6 +31,22 @@ age: {
 isAdmin: {
     type: DataTypes.BOOLEAN,
     allowNull: false
+},
+email: {
+    type: DataTypes.STRING,
+    allowNull: true
+},
+department: {
+    type: DataTypes.STRING,
+    allowNull: true
+},
+supervisor: {
+    type: DataTypes.STRING,
+    allowNull: true
+},
+subordinates: {
+    type: DataTypes.JSON,
+    allowNull: true
 }
 });
 

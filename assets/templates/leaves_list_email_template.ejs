@@ -113,42 +113,15 @@ table, td { color: #000000; } #u_body a { color: #0000ee; text-decoration: under
       <p style="font-size: 14px; line-height: 170%;">Here is a leave request awaiting your approval/rejection:</p>
   <p style="font-size: 14px; line-height: 170%;"> </p>
     </div>
-    <table>
-      <tbody>
+  
     <% content.forEach(function(leave){ %>
-      <tr>
-        <p style="font-size: 15px; line-height: 180%;"><em>Purpose:</em></p>
-        <td>
-          <p style="font-size: 14px; line-height: 170%;"><%= leave.purpose%></p>
-        </td>
-        </tr>
-        <tr>
-          <p style="font-size: 15px; line-height: 180%;"> <em>Type:</em></p>
-          <td>
-            <p style="font-size: 14px; line-height: 170%;"><%= leave.type%></p>
-          </td>
-          </tr>
-          <tr>
-            <p style="font-size: 15px; line-height: 180%;"><em>Username:</em></p>
-            <td>
-              <p style="font-size: 14px; line-height: 170%;"><%= leave.username%></p>
-            </td>
-            </tr>
-            <tr>
-              <p style="font-size: 15px; line-height: 180%;"><em>From:</em></p>
-              <td>
-                <p style="font-size: 14px; line-height: 170%;"><%= leave.date_from%></p>
-              </td>
-              </tr>
-              <tr>
-                <p style="font-size: 15px; line-height: 180%;"><em>To:</em></p>
-                <td>
-                  <p style="font-size: 14px; line-height: 170%;"><%= leave.date_to%></p>
-                </td>
-                </tr>
-    </tbody>
+        <p style="font-size: 15px; line-height: 180%;"><em>Purpose:</em></p><p style="font-size: 14px; line-height: 170%;"><%= leave.purpose%></p>
+          <p style="font-size: 15px; line-height: 180%;"> <em>Type:</em></p> <p style="font-size: 14px; line-height: 170%;"><%= leave.type%></p>
+            <p style="font-size: 15px; line-height: 180%;"><em>Username:</em></p><p style="font-size: 14px; line-height: 170%;"><%= leave.username%></p>
+              <p style="font-size: 15px; line-height: 180%;"><em>From:</em></p><p style="font-size: 14px; line-height: 170%;"><%= leave.date_from%></p>
+                <p style="font-size: 15px; line-height: 180%;"><em>To:</em></p><p style="font-size: 14px; line-height: 170%;"><%= leave.date_to%></p>
+              
     <% }); %>
-    </table>
   
         </td>
       </tr>

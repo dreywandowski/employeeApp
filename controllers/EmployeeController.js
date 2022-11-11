@@ -45,6 +45,8 @@ const register = (req, res) => {
                         lastName: qry.lastName,
                         password: pwd,
                         age: qry.age,
+                        email:qry.email,
+                        department: qry.dept,
                         isAdmin: qry.admin
                     }).then(datad => {
                         const d = new Date();

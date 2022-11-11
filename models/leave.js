@@ -11,7 +11,9 @@ const Leave = sequelize.define('leave', {
  date_from: DataTypes.DATE,
  date_to: DataTypes.DATE,
  username: DataTypes.STRING,
- approved: DataTypes.BOOLEAN
+ approved: DataTypes.BOOLEAN,
+ approved_by: DataTypes.STRING,
+ rejected_by: DataTypes.STRING
 });
 
 

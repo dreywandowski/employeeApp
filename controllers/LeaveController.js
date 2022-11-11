@@ -1,4 +1,48 @@
 var leave = require('../models/leave');
+const env = require('dotenv').config();
+const EventEmitter = require('events');
+const ejs = require('ejs');
+const nodemailer = require('nodemailer');
+
+var eventEmitter = new EventEmitter();
+
+eventEmitter.on('sendMail', (msg) => {
+    const sendEmail = (receiver, subject, content) => {
+         //var content = JSON.stringify(msg);
+        let transport = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: 'aduramimodamilare@gmail.com',
+          pass: 'lwxuonlgwqejcbxb'
+        }
+     });
+
+     ejs.renderFile('/var/www/html/payroll/assets/templates/leaves_list_email_template.ejs', {content:msg}, (err, data) => {
+        if (err) {
+          console.log("error opening the file!! "+err);
+        } else {
+          var mailOptions = {
+            from: 'admin@employeeapp.com',
+            to: 'aduramimo@gmail.com',
+            subject: subject,
+            html: data
+          };
+        }
+   
+   transport.sendMail(mailOptions, function(err, info) {
+       if (err) {
+         console.log("cant send mail!! " + err);
+       } else {
+         console.log("mail sent ok "+"content=="+ msg+info);
+       }
+   });
+});
+}
+
+        sendEmail("aduramimo@gmail.com", "Leave requests awaiting your approval");
+ });
 
 // get all leaves
 const getLeaves = (req, res) => {
@@ -69,13 +113,20 @@ const requestLeave = (req, res) => {
            } 
  ]*/
         })
-        .then(leave => {
-        res.status(200).json({'message' : 'Leave requested sucessfully!', 
-                          'status':1});
-    }).catch(err =>{
+         .then(leave =>{
+            var leave = require('../models/leave');
+            let id = req.params.id;
+            leave.findAll({where: {id:id}}).
+            then(found =>{
+                eventEmitter.emit('sendMail', found);
+                res.status(200).json({'message' : 'Leave requested sucessfully!', 
+                                  'status':1});
+            }).catch(err =>{
         res.status(403).json({'message' : 'Error requesting the leave application! ' + err, 
                           'status':0});
     });
+
+});
 }
 
 // cancel a leave request
@@ -87,6 +138,23 @@ const cancelLeave = (req, res) => {
         res.status(403).json({'message' : 'Error cancelling the leave application! ' + err, 
                           'status':0});
     });
+}
+
+
+// get all leaves needing approval/rejection
+const getLeavesApproval = (req, res) => {
+        return leave.findAll({
+            where: {
+                status: 'requested'
+            }
+    }). then(leave =>{
+                res.status(200).json({'message' : 'Leave list retrieved sucessfully!', 
+                'leaves': leave, 'status': 1});
+            }).
+        catch(err =>{
+            res.status(404).json({'message' : 'Error Retrieving leave list!', 
+            'error': err, 'status': 0});
+        });
 }
 
 // approve leave request -- admins only
@@ -101,7 +169,6 @@ const approveLeave = (req, res) => {
 }
 
 // reject leave request -- admins only
-
 const rejectLeave = (req, res) => {
     leave.update({status: 'cancelled', approved: 0}, {where: {id: req.params.id}} ).then(leave => {
         res.status(200).json({'message' : 'Leave request rejected sucessfully!', 
@@ -119,6 +186,7 @@ module.exports = {
     requestLeave,
     cancelLeave,
     getLeave,
+    getLeavesApproval,
     approveLeave,
     rejectLeave
 }

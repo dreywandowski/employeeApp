@@ -16,6 +16,9 @@ router.delete('/employees/removeEmployee/:name',[auth, adminVerify], admin.delet
   // get employee
   router.get('/employees/:name', [auth, adminVerify], admin.employee_id);
 
+  // get a list of leaves needing admin attention
+  router.get('/leaves/attention', [auth, adminVerify], leave.getLeavesApproval);
+
   // approve a leave request
   router.post('/leaves/approve/:id', [auth, adminVerify], leave.approveLeave);
 

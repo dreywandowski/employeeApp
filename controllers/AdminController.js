@@ -71,9 +71,53 @@ const deleteEmployee = (req, res) => {
         });
 }
 
-// assign an employee to an appropriate supervisor
-const assignEmployee = (req, res) =>{
 
+
+// assign an employee to an appropriate supervisor
+// TOD0: Fix saving multiple surbodinates not saving to an array and error message showing
+// even after a successful assignment
+
+const assignEmployee = (req, res) =>{
+    users.findAll({
+        where: {username: req.params.name }, 
+        attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+}). then(user =>{
+     users.findAll({
+        where: {isAdmin: 1, department : user[0].department }, 
+       attributes: { exclude: ['password', 'createdAt', 'updatedAt'] }
+    }).
+    then(admin =>{
+        const upd_array = user[0].username.split();
+
+        if(admin[0].subordinates === null){
+            let db = admin[0].subordinates;
+            const final_save = db.concat(upd_array);
+            users.update(
+                {subordinates: final_save},
+                {where: {username: admin[0].username} }
+            );
+        }
+        else{
+            let db = admin[0].subordinates;
+            db = [];
+            const final_save = db.concat(upd_array);
+            users.update(
+                {subordinates: final_save},
+                {where: {username: admin[0].username} }
+            );
+        }
+        }).
+         then(yes =>{
+            res.status(200).json({'message' : 'Employee assignment completed sucessfully! '+
+            req.params.name+' is now under '+ admin[0].username, 
+              'status': 1});
+         }).
+    catch(err =>{
+        res.status(404).json({'message' : 'Error assigning supervisor to the user!', 
+        'error': err, 'status': 0});
+    });
+}); 
+//});
 }
 
 
@@ -81,6 +125,7 @@ const assignEmployee = (req, res) =>{
 module.exports = {
     employee_id,
     getEmployees,
-    deleteEmployee
+    deleteEmployee,
+    assignEmployee
    
 }

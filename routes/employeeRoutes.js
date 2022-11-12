@@ -56,12 +56,8 @@ var testJson = (req, res, next) => {
     // edit profile
     router.put('/employees/updateEmployee/:name',  [urlencodedParser, auth], employee.editProfile);
 
-    
-
-  
-
      // logout
-     router.post('/logout',  auth, employee.logout);
+     router.post('/employees/logout',  auth, employee.logout);
 
 
 module.exports = router;

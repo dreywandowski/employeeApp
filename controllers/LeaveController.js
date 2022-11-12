@@ -8,14 +8,16 @@ var eventEmitter = new EventEmitter();
 
 eventEmitter.on('sendMail', (msg) => {
     const sendEmail = (receiver, subject, content) => {
-         //var content = JSON.stringify(msg);
+         user = process.env.MAIL_USERNAME;
+         pass = process.env.MAIL_PWD;
+         
         let transport = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 465,
         secure: true,
         auth: {
-          user: 'aduramimodamilare@gmail.com',
-          pass: 'lwxuonlgwqejcbxb'
+          user: user,
+          pass: pass
         }
      });
 

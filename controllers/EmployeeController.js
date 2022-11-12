@@ -202,17 +202,13 @@ const login = (req, res) => {
 
 // logout
 const logout = (req, res) => {
-    users.sync().then(data =>{
-        return users.findAll();
-        }).then(resp => {
-            resp.forEach(element => {
-               console.log(element.toJSON()); 
-            });
-            res.status(200).send('User list retrieved succesfully!!');
-        }).catch(err =>{
-            console.log('error retrieving user list!', err);
-            res.status(200).send('error retrieving user list');
-        });
+    let token = req.headers.authorization.split(' ')[1];
+    const logout = jwt.sign({
+        }, process.env.JWT_KEY, {
+       expiresIn: -1
+       });
+
+       res.json(logout);
 }
 
 

@@ -12,10 +12,14 @@ app.use('/assets', express.static('assets'));
 // fire our routes
 const employeeRoutes = require('./routes/employeeRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const generalRoutes = require('./routes/generalRoutes');
+
+
 
 // all routes
 app.use('/api',employeeRoutes);
 app.use('/api',adminRoutes);
+app.use('/api',generalRoutes);
 
 
 // set our port

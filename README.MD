@@ -2,8 +2,7 @@
 ## Features include:
 <ul>
 <li> Leave Application Module</li>
-<li> Salary Module </li>
-<li> KPI Module </li>
+<li> Jobs Portal </li>
 </ol>
 
 ## Live Link: http://employee.dreywandowski.xyz/api

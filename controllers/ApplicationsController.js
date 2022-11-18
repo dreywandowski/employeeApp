@@ -1,8 +1,58 @@
 var application = require('../models/application');
+const EventEmitter = require('events');
+const nodemailer = require('nodemailer');
+const ejs = require('ejs');
+//var localEvents = require('../assets/utils/email_sending_util');
+//var localEvents = new EventEmitter();
+
+
+var eventEmitter = new EventEmitter();
+
+// send mail to user upon succesful job application
+eventEmitter.on('sendMail', (msg, email) => {
+    const sendEmail = (receiver, subject, content) => {
+         user = process.env.MAIL_USERNAME;
+         pass = process.env.MAIL_PWD;
+
+        let transport = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: user,
+          pass: pass
+        }
+     });
+     ejs.renderFile('/var/www/html/payroll/assets/templates/job_application_template.ejs', {content:msg}, (err, data) => {
+        if (err) {
+          console.log("error opening the file!! "+err);
+        } else {
+          var mailOptions = {
+            from: 'admin@employee-app.com',
+            to: email,
+            subject: subject,
+            html: data
+          };
+        }
+   
+   transport.sendMail(mailOptions, function(err, info) {
+       if (err) {
+         console.log("cant send mail!! " + err);
+       } else {
+         console.log("mail sent ok "+"content=="+ msg+info);
+       }
+   });
+});
+}
+        sendEmail("aduramimo@gmail.com", "Your job application has been recieved");
+ });
+
 
 // apply for a job 
 const apply = (req, res) => {
     var qry = req.body;
+    var jobAppliedFor = qry.jobAppliedFor;
+
     return application.create({
         firstName: qry.firstName,
        lastName: qry.lastName,
@@ -16,6 +66,9 @@ const apply = (req, res) => {
        jobAppliedFor : qry.jobAppliedFor
      
    }).then(created => {
+    // send mail to user after a successful application
+       eventEmitter.emit('sendMail', qry.jobAppliedFor, qry.email);
+       //localEvents.emit('sendMail', qry.jobAppliedFor, qry.email);
        res.status(201).json({'message' : 'Application submitted sucessfully!', 
                'status': 1});
    }).

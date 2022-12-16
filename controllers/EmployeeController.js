@@ -54,6 +54,7 @@ const register = (req, res) => {
                         const newD = new Date(d.getTime() + 86400);
 
                         var name = qry.username;
+                        var email = qry.email;
                         if(qry.admin === "1"){
                             role = 'admin';
                         }
@@ -66,7 +67,8 @@ const register = (req, res) => {
                        //signing JWT token with user id
                           var token = jwt.sign({
                           user: name,
-                          role: role
+                          role: role,
+                          email: email
                           }, process.env.JWT_KEY, {
                          expiresIn: 86400
                          });
@@ -158,8 +160,9 @@ const login = (req, res) => {
          }
             else role = "user";
            const name  = resp.username;
+           var email = resp.email;
            
-        const user_details = {username: username, role: role };
+        const user_details = {username: username, role: role, email:email };
 
            // compare hashed db pwd against user input and verify
          const decrpyt =  () => bcrypt.compare(pwd, dbPwd)
@@ -173,7 +176,8 @@ const login = (req, res) => {
                            //signing JWT token with user id
                               var token = jwt.sign({
                               user: name,
-                              role: role
+                              role: role,
+                              email: email
                               }, process.env.JWT_KEY, {
                              expiresIn: 86400
                              });

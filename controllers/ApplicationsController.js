@@ -100,7 +100,7 @@ const getApplication = (req, res) => {
                 'application': application, 'status': 1});
             }).
         catch(err =>{
-            res.status(404).json({'message' : 'Error Retrieving leave!', 
+            res.status(404).json({'message' : 'Error Retrieving application!', 
             'error': err, 'status': 0});
         });
 }

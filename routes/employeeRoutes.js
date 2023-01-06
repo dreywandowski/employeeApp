@@ -3,6 +3,7 @@ var router = express.Router();
 var employee = require('../controllers/EmployeeController');
 var leave = require('../controllers/LeaveController');
 var auth = require('../middleware/verifyToken');
+var caching = require('../middleware/cacheMemory');
 const { userValidationRules, validate } = require('../middleware/validateInput');
 
 
@@ -27,7 +28,8 @@ var testJson = (req, res, next) => {
   router.post('/employees/login',  urlencodedParser, employee.login);
 
     // verify token
-   // router.get('/verifyToken', [testJson, auth], employee.verify);
+    router.get('/verifyToken', [testJson, auth], employee.verify);
+
 
    // list leaves applied for by self
   router.get('/leaves/myLeaves', [auth], leave.getLeaves);

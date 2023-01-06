@@ -47,6 +47,10 @@ supervisor: {
 subordinates: {
     type: DataTypes.JSON,
     allowNull: true
+},
+jwt: {
+    type: DataTypes.STRING,
+    allowNull: true
 }
 });
 

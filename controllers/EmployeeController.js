@@ -1,6 +1,9 @@
 var users = require('../models/Users');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const NodeCache = require('node-cache');
+const cache = new NodeCache({ stdTTL: 86450 });
+
 
 
    // home route
@@ -168,12 +171,11 @@ const login = (req, res) => {
          const decrpyt =  () => bcrypt.compare(pwd, dbPwd)
                     .then(result => {
                         if(result){
-
                             const d = new Date();
                             d.toLocaleString('en-US', { timeZone: 'Africa/Lagos' })
                             const newD = new Date(d.getTime() + 86400);
 
-                           //signing JWT token with user id
+                           //sign JWT token with user id
                               var token = jwt.sign({
                               user: name,
                               role: role,
@@ -181,6 +183,22 @@ const login = (req, res) => {
                               }, process.env.JWT_KEY, {
                              expiresIn: 86400
                              });
+
+                             // save tokens to the db against the user
+                             users.update(
+                                { jwt: token },
+                                { where: { username: username } }
+                              );
+ 
+                             // save token to a cache for fast retrieval
+                             let exists = cache.has('jwt_token_'+username);
+                             if(!exists){
+                            cache.set('jwt_token_'+username, token, 86444);
+                             }
+                             else{
+                                cache.del('jwt_token_'+username); 
+                             }
+
                             res.status(200).json({'message' :'Login successful, Authenticated!', 'status' :result, accessToken:token, user: user_details,expiresAt: newD});
                         }
                         else res.status(401).json({'message' : 'Username or password dont match!',
@@ -206,21 +224,31 @@ const login = (req, res) => {
 
 // logout
 const logout = (req, res) => {
-    let token = req.headers.authorization.split(' ')[1];
-    const logout = jwt.sign({
-        }, process.env.JWT_KEY, {
-       expiresIn: -1
-       });
+    // update the token in the db against the user
+    users.update(
+        { jwt: null },
+        { where: { username: req.user.user } }
+      ).then(update =>{
+        res.status(200).json({'message' :'Logout successful, Unauthenticated!', 'status' :1});
+      }).
+      catch(e => {
+        res.status(500).json({'message' : ' Error logging out the user, kindly check the error msg!',
+        'error': err.message, 'status': 0});
+      });
 
-       res.json(logout);
+       
 }
 
 
 // Verification of JWT
 const verify = (req, res) => {
-   res.json(req.user);
+    mykeys = cache.keys();
+   res.json( 'user == '+JSON.stringify(req.user) + ' '+JSON.stringify(mykeys));
     
 }
+
+
+
 
 module.exports = {
     index,

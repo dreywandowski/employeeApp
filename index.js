@@ -27,6 +27,6 @@ var port = process.env.PORT || 5000;
 
 
 app.listen( port, () => {
-    console.log( `my todo server is running http://localhost:${ port }` );
+    console.log( `my employee app backend server is running http://localhost:${ port }` );
     console.log( `press CTRL+C to stop server` );
 } );

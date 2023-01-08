@@ -13,6 +13,43 @@ const cache = new NodeCache({ stdTTL: 86450 });
 }
 
 
+// assign user token utility
+const assignuserToken = (username, role, email) => {
+    const user_details = {username: username, role: role, email:email };
+    const d = new Date();
+    d.toLocaleString('en-US', { timeZone: 'Africa/Lagos' })
+    const newD = new Date(d.getTime() + 86400);
+
+   //sign JWT token with user id
+      var token = jwt.sign({
+      user: username,
+      role: role,
+      email: email
+      }, process.env.JWT_KEY, {
+     expiresIn: 86400
+     });
+
+     // save tokens to the db against the user
+     users.update(
+        { jwt: token },
+        { where: { username: username } }
+      );
+
+     // save token to a cache for fast retrieval
+     let exists = cache.has('jwt_token_'+username);
+     if(!exists){
+    cache.set('jwt_token_'+username, token, 86444);
+     }
+     else{
+        cache.del('jwt_token_'+username); 
+        cache.set('jwt_token_'+username, token, 86444);
+     }
+
+     return true;
+     
+}
+
+
 // register employee
 const register = (req, res) => {
     var qry = req.body;
@@ -75,6 +112,23 @@ const register = (req, res) => {
                           }, process.env.JWT_KEY, {
                          expiresIn: 86400
                          });
+
+                            // save tokens to the db against the user
+                            users.update(
+                                { jwt: token },
+                                { where: { username: name } }
+                              );
+ 
+                             // save token to a cache for fast retrieval
+                             let exists = cache.has('jwt_token_'+name);
+                             if(!exists){
+                            cache.set('jwt_token_'+name, token, 86444);
+                             }
+                             else{
+                                cache.del('jwt_token_'+name); 
+                                cache.set('jwt_token_'+name, token, 86444);
+                             }
+
                         res.status(201).json({'message' : 'User '+qry.firstName+ ' '+ qry.lastName+' '+ 'created sucessfully!', 
                         accessToken:token, user: user_details,expiresAt: newD, 'status':1});
                     }).catch(err =>{
@@ -171,6 +225,13 @@ const login = (req, res) => {
          const decrpyt =  () => bcrypt.compare(pwd, dbPwd)
                     .then(result => {
                         if(result){
+                          /* let assign =  assignuserToken(username, role, email);
+                           if(assign){
+                            res.status(200).json({'message' :'Login successful, Authenticated!', 'status' :result, accessToken:token, user: user_details,expiresAt: newD});
+                           }
+                           else{
+                            res.status(500).json({'message' : 'Some error occured while trying to set tokens!', 'status': 0})
+                           }*/
                             const d = new Date();
                             d.toLocaleString('en-US', { timeZone: 'Africa/Lagos' })
                             const newD = new Date(d.getTime() + 86400);
@@ -197,9 +258,11 @@ const login = (req, res) => {
                              }
                              else{
                                 cache.del('jwt_token_'+username); 
+                                cache.set('jwt_token_'+username, token, 86444);
                              }
 
                             res.status(200).json({'message' :'Login successful, Authenticated!', 'status' :result, accessToken:token, user: user_details,expiresAt: newD});
+                            
                         }
                         else res.status(401).json({'message' : 'Username or password dont match!',
                         'status': result});

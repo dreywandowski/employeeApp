@@ -5,7 +5,7 @@ var leave = require('../controllers/LeaveController');
 var auth = require('../middleware/verifyToken');
 var caching = require('../middleware/cacheMemory');
 const { userValidationRules, validate } = require('../middleware/validateInput');
-
+const { userValidation, validateUser } = require('../middleware/validateNewUser');
 
 // handle POST requests
 var bodyParser = require('body-parser');

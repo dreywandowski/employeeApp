@@ -155,12 +155,13 @@ const register = (req, res) => {
 const editProfile = (req, res) => {
    var username = req.params.name;
     var qry = req.body;
+   // res.json("hereee , "+username + " " +qry.firstName);
 
-    const errors = [];
+   const errors = [];
     
     if(qry.firstName.length == '' || qry.firstName.length < 5 )errors.push('First name cannot have less than 5 characters');
     if(qry.lastName.length == '' || qry.lastName.length < 5 )errors.push('Last name cannot have less than 5 characters');
-    if(qry.username == '')errors.push('Age cannot be empty');
+    if(qry.age == '')errors.push('Age cannot be empty');
     if(qry.password.length == '' || qry.password.length < 10 )errors.push('Password cannot have less than 10 characters');
 
     if(errors.length !== 0){
@@ -195,7 +196,7 @@ const editProfile = (req, res) => {
     
         
     
-    }
+   }
 }
     // login
 const login = (req, res) => {

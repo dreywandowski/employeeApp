@@ -4,7 +4,7 @@ const userValidation = () => {
   return [
     create('username', 'username length should be at least 5 characters').isLength({ min: 5, max: 30 }),
     create('password', 'paasword length should be at least 8 characters').isLength({ min: 8, max: 200 }),
-    create('age', 'must be an integer').isNumeric(),
+    create('age', 'must be an integer').isNumeric()
   ]
 }
 

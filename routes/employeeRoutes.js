@@ -5,10 +5,12 @@ var leave = require('../controllers/LeaveController');
 var auth = require('../middleware/verifyToken');
 var caching = require('../middleware/cacheMemory');
 const { userValidationRules, validate } = require('../middleware/validateInput');
-const { userValidation, validateUser } = require('../middleware/validateNewUser');
+//const { userValidation, validateUser } = require('../middleware/validateNewUser');
+const { validateRules, validateUser } = require('../middleware/validateEditUser');
 
 // handle POST requests
 var bodyParser = require('body-parser');
+
 var urlencodedParser = bodyParser.urlencoded ({extended :false});
 
 
@@ -31,6 +33,7 @@ var testJson = (req, res, next) => {
     router.get('/verifyToken', [testJson, auth], employee.verify);
 
 
+
    // list leaves applied for by self
   router.get('/leaves/myLeaves', [auth], leave.getLeaves);
 
@@ -47,9 +50,10 @@ var testJson = (req, res, next) => {
   router.post('/leaves/cancelLeave/:id', [auth, urlencodedParser], leave.cancelLeave);
 
 
-       // a problematic endpoint
+          // a problematic endpoint
     // edit profile
-  router.put('/employees/updateEmployee/:name',  [urlencodedParser, auth], employee.editProfile);
+    router.put('/employees/updateEmployee/:name',  [auth, urlencodedParser], employee.editProfile);
+
 
      // logout
   router.post('/employees/logout',  auth, employee.logout);

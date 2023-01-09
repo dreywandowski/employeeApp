@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+var cors = require('cors');
 
 
 // tell node to use ejs as the templating engine
@@ -14,12 +15,26 @@ const employeeRoutes = require('./routes/employeeRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const generalRoutes = require('./routes/generalRoutes');
 
-
+// cors
+app.use(cors());
 
 // all routes
 app.use('/api',employeeRoutes);
 app.use('/api',adminRoutes);
 app.use('/api',generalRoutes);
+
+/*
+var whitelist = ['http://example1.com', 'http://example2.com']
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+*/
 
 
 // set our port

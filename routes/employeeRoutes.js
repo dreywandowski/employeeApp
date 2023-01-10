@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var employee = require('../controllers/EmployeeController');
 var leave = require('../controllers/LeaveController');
+var file_upload = require('../controllers/FileController');
 var auth = require('../middleware/verifyToken');
 var caching = require('../middleware/cacheMemory');
 const { userValidationRules, validate } = require('../middleware/validateInput');
@@ -29,8 +30,12 @@ var testJson = (req, res, next) => {
       // login
   router.post('/employees/login',  urlencodedParser, employee.login);
 
+    // upload profile picture
+  router.post('/employees/uploadPicture', [auth, urlencodedParser], file_upload.uploadPic);
+
     // verify token
     router.get('/verifyToken', [testJson, auth], employee.verify);
+
 
 
 
@@ -50,10 +55,11 @@ var testJson = (req, res, next) => {
   router.post('/leaves/cancelLeave/:id', [auth, urlencodedParser], leave.cancelLeave);
 
 
+
+
           // a problematic endpoint
     // edit profile
     router.put('/employees/updateEmployee/:name',  [auth, urlencodedParser], employee.editProfile);
-
 
      // logout
   router.post('/employees/logout',  auth, employee.logout);

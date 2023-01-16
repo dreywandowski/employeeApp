@@ -1,37 +1,23 @@
-const { check, validate } = require('express-validator');
+const {check, validationResult} = require('express-validator');
 
-const validateRules = () => {
-    [
-    check('firstName').not().isEmpty().isLength({ min: 8 }).withMessage('firstName must be at least 8 characters long'),
-    check('lastName').not().isEmpty().isLength({ min: 8 }).withMessage('firstName must be at least 8 characters long'),
-    check('age').isNumeric(),
-    check('password')
-    .isLength({ min: 8 })
-    .withMessage('Password must be at least 8 characters long')
-    .matches(/\d/)
-    .withMessage('Password must contain at least one number')
-    ]
-}
-
-
-const validateUser = (req, res, next) => {
-    const errors = validate(req)
-    if (errors.isEmpty()) {
-      return next()
-    }
-    const extractedErrors = []
-    errors.array().map(err => extractedErrors.push({ [err.param]: err.msg }))
-  
-    return res.status(422).json({
-      errors: extractedErrors,
-    })
-  }
-  
-  module.exports = {
-      validateRules,
-      validateUser
-  }
-
-
-  
-  
+exports.validateEditUser = [
+  check('firstName').trim().escape().not().isEmpty().withMessage('First name can not be empty!').bail().isLength({min: 3})
+    .withMessage('Minimum 3 characters required!')
+    .bail(),
+    check('lastName').trim().escape().not().isEmpty().withMessage('Last name can not be empty!').bail().isLength({min: 3})
+    .withMessage('Minimum 3 characters required!')
+    .bail(),
+    check('age').trim().escape().not().isEmpty().withMessage('age can not be empty!').bail().isLength({min: 2})
+    .withMessage('Minimum 2 digits required!')
+    .bail(),
+    check('password').trim().escape().not().isEmpty().withMessage('password field can not be empty!').bail().isLength({min: 8})
+    .withMessage('Minimum 8 characters required!')
+    .bail().matches(/\d/)
+    .withMessage('Password must contain at least one number').bail(),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(422).json({errors: errors.array()});
+    next();
+  },
+];

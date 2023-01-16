@@ -15,7 +15,8 @@ exports.validateUser = [
     .bail(),
     check('password').trim().escape().not().isEmpty().withMessage('password field can not be empty!').bail().isLength({min: 8})
     .withMessage('Minimum 8 characters required!')
-    .bail(),
+    .bail().matches(/\d/)
+    .withMessage('Password must contain at least one number').bail(),
   check('email').trim().normalizeEmail().not().isEmpty().withMessage('Invalid email address!').bail(),
   (req, res, next) => {
     const errors = validationResult(req);

@@ -53,21 +53,6 @@ const assignuserToken = (username, role, email) => {
 // register employee
 const register = (req, res) => {
     var qry = req.body;
-    var values = [[qry.firstName, qry.lastName, qry.username,qry.age, qry.password, qry.admin]];
-
-    // validate the user
-    
-    const errors = [];
-    
-    if(qry.username.length == '' || qry.username.length < 8 )errors.push('Username cannot have less than 8 characters');
-    if(qry.password.length == '' || qry.password.length < 10 )errors.push('Password cannot have less than 10 characters');
-
-    if(errors.length !== 0){
-        res.status(401).json({'message' : 'Validation errors!', 
-        'errors': errors, status: 0});
-    }
-   
-    else{
 
     // hash the password and then save the user in the returned Promise
     function hashPassword(plaintextPassword) {
@@ -148,28 +133,13 @@ const register = (req, res) => {
     }
   
     
-}
 
 // edit profile
 
 const editProfile = (req, res) => {
    var username = req.params.name;
     var qry = req.body;
-   // res.json("hereee , "+username + " " +qry.firstName);
 
-   const errors = [];
-    
-    if(qry.firstName.length == '' || qry.firstName.length < 5 )errors.push('First name cannot have less than 5 characters');
-    if(qry.lastName.length == '' || qry.lastName.length < 5 )errors.push('Last name cannot have less than 5 characters');
-    if(qry.age == '')errors.push('Age cannot be empty');
-    if(qry.password.length == '' || qry.password.length < 10 )errors.push('Password cannot have less than 10 characters');
-
-    if(errors.length !== 0){
-        res.status(401).json({'message' : 'Validation errors!', 
-        'errors': errors, status: 0});
-    }
- 
-    else{
     bcrypt.hash(req.body.password, 15)
             .then(hash => {
               /*  res.status(200).json({'message' : 'User updated successfully!',
@@ -193,11 +163,8 @@ const editProfile = (req, res) => {
                 res.status(401).json({'message' : ' Error updating user!',
                         'status': 0, message:err});
             });
-    
-        
-    
-   }
 }
+
     // login
 const login = (req, res) => {
     var qry = req.body;

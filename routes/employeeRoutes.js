@@ -7,7 +7,7 @@ var auth = require('../middleware/verifyToken');
 var caching = require('../middleware/cacheMemory');
 const { userValidationRules, validate } = require('../middleware/validateInput');
 const {validateUser } = require('../middleware/validateNewUser');
-//const { validateRules, validateUser } = require('../middleware/validateEditUser');
+const {validateEditUser } = require('../middleware/validateEditUser');
 
 // handle POST requests
 var bodyParser = require('body-parser');
@@ -29,6 +29,10 @@ var testJson = (req, res, next) => {
 
       // login
   router.post('/employees/login',  urlencodedParser, employee.login);
+
+    // edit profile
+    router.put('/employees/updateEmployee/:name',  [auth, urlencodedParser, validateEditUser], employee.editProfile);
+
 
     // upload profile picture
   //router.post('/employees/uploadPicture', [auth, urlencodedParser], file_upload.uploadPic);
@@ -56,13 +60,8 @@ var testJson = (req, res, next) => {
 
 
 
-
-          // a problematic endpoint
-    // edit profile
-    router.put('/employees/updateEmployee/:name',  [auth, urlencodedParser], employee.editProfile);
-
      // logout
-  router.post('/employees/logout',  auth, employee.logout);
+  router.put('/employees/logout',  auth, employee.logout);
 
 
 module.exports = router;

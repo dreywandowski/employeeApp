@@ -1,28 +1,26 @@
-const { create, validateNewUser } = require('express-validator');
+const {check, validationResult} = require('express-validator');
 
-const userValidation = () => {
-  return [
-    create('username', 'username length should be at least 5 characters').isLength({ min: 5, max: 30 }),
-    create('password', 'paasword length should be at least 8 characters').isLength({ min: 8, max: 200 }),
-    create('age', 'must be an integer').isNumeric()
-  ]
-}
-
-
-const validateUser = (req, res, next) => {
-  const errors = validateNewUser(req)
-  if (errors.isEmpty()) {
-    return next()
-  }
-  const extractedErrors = []
-  errors.array().map(err => extractedErrors.push({ [err.param]: err.msg }))
-
-  return res.status(422).json({
-    errors: extractedErrors,
-  })
-}
-
-module.exports = {
-    userValidation,
-    validateUser
-}
+exports.validateUser = [
+  check('firstName').trim().escape().not().isEmpty().withMessage('First name can not be empty!').bail().isLength({min: 3})
+    .withMessage('Minimum 3 characters required!')
+    .bail(),
+    check('lastName').trim().escape().not().isEmpty().withMessage('Last name can not be empty!').bail().isLength({min: 3})
+    .withMessage('Minimum 3 characters required!')
+    .bail(),
+    check('username').trim().escape().not().isEmpty().withMessage('Username name can not be empty!').bail().isLength({min: 8})
+    .withMessage('Minimum 8 characters required!')
+    .bail(),
+    check('age').trim().escape().not().isEmpty().withMessage('age can not be empty!').bail().isLength({min: 2})
+    .withMessage('Minimum 2 digits required!')
+    .bail(),
+    check('password').trim().escape().not().isEmpty().withMessage('password field can not be empty!').bail().isLength({min: 8})
+    .withMessage('Minimum 8 characters required!')
+    .bail(),
+  check('email').trim().normalizeEmail().not().isEmpty().withMessage('Invalid email address!').bail(),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(422).json({errors: errors.array()});
+    next();
+  },
+];

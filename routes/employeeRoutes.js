@@ -2,12 +2,12 @@ var express = require('express');
 var router = express.Router();
 var employee = require('../controllers/EmployeeController');
 var leave = require('../controllers/LeaveController');
-var file_upload = require('../controllers/FileController');
+//var file_upload = require('../controllers/FileController');
 var auth = require('../middleware/verifyToken');
 var caching = require('../middleware/cacheMemory');
 const { userValidationRules, validate } = require('../middleware/validateInput');
-//const { userValidation, validateUser } = require('../middleware/validateNewUser');
-const { validateRules, validateUser } = require('../middleware/validateEditUser');
+const {validateUser } = require('../middleware/validateNewUser');
+//const { validateRules, validateUser } = require('../middleware/validateEditUser');
 
 // handle POST requests
 var bodyParser = require('body-parser');
@@ -25,13 +25,13 @@ var testJson = (req, res, next) => {
   router.get('/', testJson, employee.index);
 
      // register employee   
-  router.post('/employees/addEmployee',  urlencodedParser, employee.register);
+  router.post('/employees/addEmployee',  [urlencodedParser, validateUser], employee.register);
 
       // login
   router.post('/employees/login',  urlencodedParser, employee.login);
 
     // upload profile picture
-  router.post('/employees/uploadPicture', [auth, urlencodedParser], file_upload.uploadPic);
+  //router.post('/employees/uploadPicture', [auth, urlencodedParser], file_upload.uploadPic);
 
     // verify token
     router.get('/verifyToken', [testJson, auth], employee.verify);

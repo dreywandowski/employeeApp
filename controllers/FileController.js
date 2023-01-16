@@ -1,5 +1,9 @@
 var multer = require('multer');
 
+const uploadPic = (req, res) => {
+res.json('hii');
+}
+
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
   
@@ -62,3 +66,7 @@ app.post("/uploadProfilePicture",function (req, res, next) {
         }
     })
 })
+
+module.exports = {
+    uploadPic
+}

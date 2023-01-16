@@ -69,10 +69,6 @@ const register = (req, res) => {
                         department: qry.dept,
                         isAdmin: qry.admin
                     }).then(datad => {
-                        const d = new Date();
-                        d.toLocaleString('en-US', { timeZone: 'Africa/Lagos' })
-                        const newD = new Date(d.getTime() + 86400);
-
                         var name = qry.username;
                         var email = qry.email;
                         if(qry.admin === "1"){
@@ -113,8 +109,6 @@ const register = (req, res) => {
     hashPassword(qry.password);
     }
   
-    
-
 // edit profile
 
 const editProfile = (req, res) => {
@@ -124,16 +118,15 @@ const editProfile = (req, res) => {
     bcrypt.hash(req.body.password, 15)
             .then(hash => {
                users.sync().then(data =>{
-                     users.update({
-                     firstName: req.body.firstName,
-                     lastName: req.body.lastName,
-                     password: hash,
-                     age: req.body.age,
-                         where: {
-                             username: username
-                         }
-                        });
-                    })
+                users.update(
+                    {  firstName: req.body.firstName,
+                        lastName: req.body.lastName,
+                        password: hash,
+                        age: req.body.age 
+                     }, 
+                    { where: { username: username}}
+                );
+                    })     
             }).then(resp =>{
                 res.status(200).json({'message' : 'User updated successfully!',
                 'status': 1});
@@ -203,8 +196,6 @@ const login = (req, res) => {
     
     }
 
-
-    
 
 // logout
 const logout = (req, res) => {

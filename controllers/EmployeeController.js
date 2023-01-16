@@ -15,11 +15,6 @@ const cache = new NodeCache({ stdTTL: 86450 });
 
 // assign user token utility
 const assignuserToken = (username, role, email) => {
-    const user_details = {username: username, role: role, email:email };
-    const d = new Date();
-    d.toLocaleString('en-US', { timeZone: 'Africa/Lagos' })
-    const newD = new Date(d.getTime() + 86400);
-
    //sign JWT token with user id
       var token = jwt.sign({
       user: username,
@@ -45,7 +40,7 @@ const assignuserToken = (username, role, email) => {
         cache.set('jwt_token_'+username, token, 86444);
      }
 
-     return true;
+     return token;
      
 }
 
@@ -86,37 +81,23 @@ const register = (req, res) => {
                         else{
                             role = 'user'; 
                         }
-
                         const user_details = {username: name, role: role };
                         
-                       //signing JWT token with user id
-                          var token = jwt.sign({
-                          user: name,
-                          role: role,
-                          email: email
-                          }, process.env.JWT_KEY, {
-                         expiresIn: 86400
-                         });
+                           let token =  assignuserToken(name, role, email);
+                           if(token !==''){
+                            const d = new Date();
+                            d.toLocaleString('en-US', { timeZone: 'Africa/Lagos' })
+                            const newD = new Date(d.getTime() + 172800);
 
-                            // save tokens to the db against the user
-                            users.update(
-                                { jwt: token },
-                                { where: { username: name } }
-                              );
- 
-                             // save token to a cache for fast retrieval
-                             let exists = cache.has('jwt_token_'+name);
-                             if(!exists){
-                            cache.set('jwt_token_'+name, token, 86444);
-                             }
-                             else{
-                                cache.del('jwt_token_'+name); 
-                                cache.set('jwt_token_'+name, token, 86444);
-                             }
-
+                           
                         res.status(201).json({'message' : 'User '+qry.firstName+ ' '+ qry.lastName+' '+ 'created sucessfully!', 
                         accessToken:token, user: user_details,expiresAt: newD, 'status':1});
-                    }).catch(err =>{
+                           }
+                           else{
+                            res.status(500).json({'message' : 'Some error occured while trying to set tokens!', 'status': 0})
+                           }
+                           
+                        }).catch(err =>{
                         res.status(403).json({'message' : 'Error creating the user or assigning a JWT token! ' + err, 
                                           'status':0});
                 });
@@ -142,8 +123,6 @@ const editProfile = (req, res) => {
 
     bcrypt.hash(req.body.password, 15)
             .then(hash => {
-              /*  res.status(200).json({'message' : 'User updated successfully!',
-                'status': hash});*/
                users.sync().then(data =>{
                      users.update({
                      firstName: req.body.firstName,
@@ -188,49 +167,23 @@ const login = (req, res) => {
            var email = resp.email;
            
         const user_details = {username: username, role: role, email:email };
-
+      
            // compare hashed db pwd against user input and verify
          const decrpyt =  () => bcrypt.compare(pwd, dbPwd)
                     .then(result => {
                         if(result){
-                          /* let assign =  assignuserToken(username, role, email);
-                           if(assign){
-                            res.status(200).json({'message' :'Login successful, Authenticated!', 'status' :result, accessToken:token, user: user_details,expiresAt: newD});
+                           let token =  assignuserToken(username, role, email);
+                           if(token !==''){
+                            const d = new Date();
+                            d.toLocaleString('en-US', { timeZone: 'Africa/Lagos' })
+                            const newD = new Date(d.getTime() + 172800);
+
+                            res.status(200).json({'message' :'Login successful.., Authenticated!', 'status' :result, accessToken:token, user: user_details,expiresAt: newD});
                            }
                            else{
                             res.status(500).json({'message' : 'Some error occured while trying to set tokens!', 'status': 0})
-                           }*/
-                            const d = new Date();
-                            d.toLocaleString('en-US', { timeZone: 'Africa/Lagos' })
-                            const newD = new Date(d.getTime() + 86400);
-
-                           //sign JWT token with user id
-                              var token = jwt.sign({
-                              user: name,
-                              role: role,
-                              email: email
-                              }, process.env.JWT_KEY, {
-                             expiresIn: 86400
-                             });
-
-                             // save tokens to the db against the user
-                             users.update(
-                                { jwt: token },
-                                { where: { username: username } }
-                              );
- 
-                             // save token to a cache for fast retrieval
-                             let exists = cache.has('jwt_token_'+username);
-                             if(!exists){
-                            cache.set('jwt_token_'+username, token, 86444);
-                             }
-                             else{
-                                cache.del('jwt_token_'+username); 
-                                cache.set('jwt_token_'+username, token, 86444);
-                             }
-
-                            res.status(200).json({'message' :'Login successful, Authenticated!', 'status' :result, accessToken:token, user: user_details,expiresAt: newD});
-                            
+                           }
+                           
                         }
                         else res.status(401).json({'message' : 'Username or password dont match!',
                         'status': result});

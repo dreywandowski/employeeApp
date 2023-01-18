@@ -1,10 +1,14 @@
 var users = require('../models/Users');
+var password_resets = require('../models/password_resets');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-var redis = require("redis");
 const NodeCache = require('node-cache');
 const cache = new NodeCache({ stdTTL: 86450 });
-
+const env = require('dotenv').config();
+const EventEmitter = require('events');
+const ejs = require('ejs');
+const nodemailer = require('nodemailer');
+var eventEmitter = new EventEmitter();
 
    // home route
 const index = (req, res, next) => {
@@ -12,6 +16,46 @@ const index = (req, res, next) => {
     'status':'Unauthenticated'}); 
 }
 
+
+ // send mail to the user for approval/rejection
+ eventEmitter.on('sendVerifyAccount', (pin) => {
+    const sendEmail = (receiver, subject, content) => {
+         user = process.env.MAIL_USERNAME;
+         pass = process.env.MAIL_PWD;
+
+        let transport = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+          user: user,
+          pass: pass
+        }
+     });
+
+     ejs.renderFile('/var/www/html/payroll/assets/templates/new_user_verify.ejs', {content:pin}, (err, data) => {
+        if (err) {
+          console.log("error opening the file!! "+err);
+        } else {
+          var mailOptions = {
+            from: 'admin@employeeapp.com',
+            to: 'aduramimo@gmail.com',
+            subject: subject,
+            html: data
+          };
+        }
+   
+   transport.sendMail(mailOptions, function(err, info) {
+       if (err) {
+         console.log("cant send mail!! " + err);
+       } else {
+         console.log("mail sent ok "+"content=="+ msg+info);
+       }
+   });
+});
+}
+        sendEmail("aduramimo@gmail.com", "Verify your account");
+ });
 
 // assign user token utility
 const assignuserToken = (username, role, email) => {
@@ -44,6 +88,40 @@ const assignuserToken = (username, role, email) => {
 
      return token;
      
+}
+
+// new user verification process
+const new_user_verify = (email) => {
+    var check = password_resets.findOne({
+        where: {
+            email: email
+        }
+    }).then(data => {
+     if(data !== null){
+       password_resets.update({where: {
+        email: email
+    }
+});
+     }
+     else{
+       const pin =  Math.floor(Math.random() * 999999) + 100000;
+       password_resets.create({
+        email: email,
+        token: pin
+       }).then(msg =>{
+        if (msg === null){
+            throw Error("unable to create a verification pin");
+        }
+        else{
+            eventEmitter.emit('sendVerifyAccount', pin);
+        }
+       });
+     }
+    }).catch(err => {
+        console.log('Error creating the PIN or sending mail! ' + err)
+    });
+
+    return 1;
 }
 
 
@@ -80,7 +158,13 @@ const register = (req, res) => {
                             role = 'user'; 
                         }
                         const user_details = {username: name, role: role };
+
+                        new_user_verify(email);
+                        if(new_user_verify){
+                            console.log('new user ok');
+                        }
                         
+                        // assign token to new user
                            let token =  assignuserToken(name, role, email);
                            if(token !==''){
                             const d = new Date();

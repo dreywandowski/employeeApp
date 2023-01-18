@@ -1,6 +1,29 @@
 var express = require('express');
 var app = express();
 var cors = require('cors');
+var redis = require('redis');
+
+// connect to Redis 
+const client = redis.createClient();
+(async () => {
+    // Connect to redis server
+    await client.connect();
+})();
+console.log("Attempting to connect to redis");
+client.on('connect', () => {
+    console.log('Connected to the redis server from the root file!');
+});
+
+// Log any error that may occur to the console
+client.on("error", (err) => {
+    console.log(`Error:${err}`);
+});
+
+// Close the connection when there is an interrupt sent from keyboard
+process.on('SIGINT', () => {
+    client.quit();
+    console.log('redis client quit');
+});
 
 
 // tell node to use ejs as the templating engine
@@ -45,3 +68,4 @@ app.listen( port, () => {
     console.log( `my employee app backend server is running http://localhost:${ port }` );
     console.log( `press CTRL+C to stop server` );
 } );
+

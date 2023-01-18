@@ -8,7 +8,7 @@ const employee_id = (req, res) => {
         return users.findByPk(username,
             {
                 attributes: {
-                    exclude: ['password', 'createdAt']
+                    exclude: ['password', 'createdAt', 'updatedAt', 'jwt']
                  } 
             });
          }).then(resp => {
@@ -31,7 +31,7 @@ const employee_id = (req, res) => {
 const getEmployees = (req, res) => {
     users.sync().then(data =>{
         return users.findAll({
-            attributes: { exclude: ['password', 'createdAt'] }
+            attributes: { exclude: ['password', 'createdAt', 'updatedAt', 'jwt'] }
     });
         }).
         then(users =>{
@@ -80,11 +80,11 @@ const deleteEmployee = (req, res) => {
 const assignEmployee = (req, res) =>{
     users.findAll({
         where: {username: req.params.name }, 
-        attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+        attributes: { exclude: ['password', 'createdAt', 'updatedAt', 'jwt'] },
 }). then(user =>{
      users.findAll({
         where: {isAdmin: 1, department : user[0].department }, 
-       attributes: { exclude: ['password', 'createdAt', 'updatedAt'] }
+       attributes: { exclude: ['password', 'createdAt', 'updatedAt', 'jwt'] }
     }).
     then(admin =>{
         const upd_array = user[0].username.split();

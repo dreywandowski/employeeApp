@@ -4,7 +4,6 @@ var employee = require('../controllers/EmployeeController');
 var leave = require('../controllers/LeaveController');
 //var file_upload = require('../controllers/FileController');
 var auth = require('../middleware/verifyToken');
-var caching = require('../middleware/cacheMemory');
 const { userValidationRules, validate } = require('../middleware/validateInput');
 const {validateUser } = require('../middleware/validateNewUser');
 const {validateEditUser } = require('../middleware/validateEditUser');

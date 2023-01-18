@@ -1,15 +1,15 @@
 var users = require('../models/Users');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+var redis = require("redis");
 const NodeCache = require('node-cache');
 const cache = new NodeCache({ stdTTL: 86450 });
 
 
-
    // home route
-   const index = (req, res, next) => {
+const index = (req, res, next) => {
     res.status(200).json({'message' : 'The API is up and running!', 
-    'status':'Unauthenticated'});
+    'status':'Unauthenticated'}); 
 }
 
 
@@ -32,12 +32,14 @@ const assignuserToken = (username, role, email) => {
 
      // save token to a cache for fast retrieval
      let exists = cache.has('jwt_token_'+username);
+     obj = { k: username, val: token };
+
      if(!exists){
-    cache.set('jwt_token_'+username, token, 86444);
+    cache.set('jwt_token_'+username, obj, 86444);
      }
      else{
         cache.del('jwt_token_'+username); 
-        cache.set('jwt_token_'+username, token, 86444);
+        cache.set('jwt_token_'+username, obj, 86444);
      }
 
      return token;
@@ -217,9 +219,10 @@ const logout = (req, res) => {
 
 // Verification of JWT
 const verify = (req, res) => {
-    mykeys = cache.keys();
-   res.json( 'user == '+JSON.stringify(req.user) + ' '+JSON.stringify(mykeys));
-    
+    let show = cache.get('jwt_token_dreywandowski');
+   // res.json(show);
+   res.json( 'user == '+JSON.stringify(req.user) + ' and keys ---'+JSON.stringify(cache.keys()));
+  
 }
 
 

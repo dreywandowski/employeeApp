@@ -26,7 +26,10 @@ var testJson = (req, res, next) => {
      // register employee   
   router.post('/employees/addEmployee',  [urlencodedParser, validateUser], employee.register);
 
-      // login
+    // verify new user
+  router.post('/employees/verifyEmployee',  [urlencodedParser], employee.verifyMail);
+
+   // login
   router.post('/employees/login',  urlencodedParser, employee.login);
 
     // edit profile

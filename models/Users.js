@@ -34,7 +34,8 @@ isAdmin: {
 },
 email: {
     type: DataTypes.STRING,
-    allowNull: true
+    allowNull: true,
+    unique: true
 },
 department: {
     type: DataTypes.STRING,
@@ -50,6 +51,10 @@ subordinates: {
 },
 jwt: {
     type: DataTypes.STRING,
+    allowNull: true
+},
+verifiedAt: {
+    type: DataTypes.DATE,
     allowNull: true
 }
 });

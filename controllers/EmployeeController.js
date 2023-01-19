@@ -17,8 +17,8 @@ const index = (req, res, next) => {
 }
 
 
- // send mail to the user for approval/rejection
- eventEmitter.on('sendVerifyAccount', (pin) => {
+ // send mail to the new user for verification
+ eventEmitter.on('sendVerifyAccount', (pin, email) => {
     const sendEmail = (receiver, subject, content) => {
          user = process.env.MAIL_USERNAME;
          pass = process.env.MAIL_PWD;
@@ -39,7 +39,7 @@ const index = (req, res, next) => {
         } else {
           var mailOptions = {
             from: 'admin@employeeapp.com',
-            to: 'aduramimo@gmail.com',
+            to: email,
             subject: subject,
             html: data
           };
@@ -54,7 +54,7 @@ const index = (req, res, next) => {
    });
 });
 }
-        sendEmail("aduramimo@gmail.com", "Verify your account");
+        sendEmail(email, "Verify your account");
  });
 
 // assign user token utility
@@ -90,7 +90,7 @@ const assignuserToken = (username, role, email) => {
      
 }
 
-// new user verification process
+// new user verification initiation
 const new_user_verify = (email) => {
     var check = password_resets.findOne({
         where: {
@@ -113,7 +113,7 @@ const new_user_verify = (email) => {
             throw Error("unable to create a verification pin");
         }
         else{
-            eventEmitter.emit('sendVerifyAccount', pin);
+            eventEmitter.emit('sendVerifyAccount', pin,email);
         }
        });
      }
@@ -122,6 +122,63 @@ const new_user_verify = (email) => {
     });
 
     return 1;
+}
+
+// verify new user
+const verifyMail = (req, res) => {
+    password_resets.findOne({
+        where: {
+            email: req.body.email,
+            token: req.body.pin
+        }
+    }).then(resp => {
+        if(resp === null || resp === ''){
+            throw Error('Invalid token!');
+        }
+
+        // after successful validation, remove the user's verification token and 
+        // continue to proccess the request. This means user has been verified.
+        password_resets.destroy({
+            where: {
+                email: req.body.email,
+                token: req.body.pin
+            } 
+        }).then(deleted =>{
+         if(!deleted){
+            throw Error("Error deleting the user token!!");
+         }
+        });
+
+        // go to user's table and update the verification time-stamp. User is now verified successfully
+        var date = new Date();
+        var dateStr =
+   date.getFullYear() + "-" +
+ ("00" + (date.getMonth() + 1)).slice(-2) + "-" +
+  ("00" + date.getDate()).slice(-2) +" "+
+  
+  ("00" + date.getHours()).slice(-2) + ":" +
+  ("00" + date.getMinutes()).slice(-2) + ":" +
+  ("00" + date.getSeconds()).slice(-2);
+        
+        users.update(
+            {  
+                verifiedAt: dateStr
+             }, 
+            { where: { email: req.body.email}}
+        )
+    }).then(done => {
+        /*if(!done){
+            throw Error("Error updating the user with a verified token!!");
+         }*/
+
+         res.status(200).json({'message' : 'User verified succesfully, you may proceed to login' 
+         ,'status':1});
+    }).
+     catch(err => {
+        res.status(403).json({'message' : 'Error updating the user with a verified token or updating the dB! ' + err, 
+        'status':0});
+     });
+
 }
 
 
@@ -160,8 +217,9 @@ const register = (req, res) => {
                         const user_details = {username: name, role: role };
 
                         new_user_verify(email);
-                        if(new_user_verify){
-                            console.log('new user ok');
+                        if(!new_user_verify){
+                            res.status(403).json({'message' : 'Error initiatiating a verification token for the new user', 
+                                          'status':0});
                         }
                         
                         // assign token to new user
@@ -190,7 +248,6 @@ const register = (req, res) => {
                                           'status':0});
             })
     }
-
     // run the function
     hashPassword(qry.password);
     }
@@ -318,6 +375,7 @@ module.exports = {
     login,
     logout,
     editProfile,
-    verify
+    verify,
+    verifyMail
 
 }

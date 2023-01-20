@@ -126,6 +126,34 @@ const new_user_verify = (email) => {
 
 // resend verify token
 const resend_token = (req, res) => {
+    var check = password_resets.findOne({
+        where: {
+            email: req.body.email
+        }
+    }).then(data => {
+        if (data === null){
+            throw Error("User doesn't exist!!"); 
+        }
+       const pin =  Math.floor(Math.random() * 999999) + 100000;
+       password_resets.update({
+        token: pin
+       },
+       { where: { email: req.body.email}}).then(msg =>{
+        if (msg === null){
+            throw Error("unable to re-create a verification pin");
+        }
+        else{
+            eventEmitter.emit('sendVerifyAccount', pin,req.body.email);
+            res.status(200).json({'message' : 'Password reset token has been sent to your email!', 
+    'status':1}); 
+        }
+       });
+    }).catch(err => {
+        res.status(400).json({'message' : 'Error re-creating the PIN or sending mail! '+err, 
+        'status':0}); 
+    });
+
+    return 1;
     
 }
 
@@ -381,6 +409,7 @@ module.exports = {
     logout,
     editProfile,
     verify,
-    verifyMail
+    verifyMail,
+    resend_token
 
 }

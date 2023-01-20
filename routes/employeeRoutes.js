@@ -29,6 +29,9 @@ var testJson = (req, res, next) => {
 
     // verify new user
   router.post('/employees/verifyEmployee',  [urlencodedParser], employee.verifyMail);
+ 
+  // resend registration token
+ router.post('/employees/resendToken',  [urlencodedParser], employee.resend_token);
 
    // login
   router.post('/employees/login',  urlencodedParser, employee.login);
@@ -36,6 +39,7 @@ var testJson = (req, res, next) => {
     // edit profile
     router.put('/employees/updateEmployee/:name',  [auth, urlencodedParser, validateEditUser, verification], employee.editProfile);
 
+   
 
     // upload profile picture
   //router.post('/employees/uploadPicture', [auth, urlencodedParser], file_upload.uploadPic);

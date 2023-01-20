@@ -57,7 +57,7 @@ const index = (req, res, next) => {
         sendEmail(email, "Verify your account");
  });
 
-// assign user token utility
+// assign new user token utility
 const assignuserToken = (username, role, email) => {
    //sign JWT token with user id
       var token = jwt.sign({
@@ -144,7 +144,7 @@ const resend_token = (req, res) => {
         }
         else{
             eventEmitter.emit('sendVerifyAccount', pin,req.body.email);
-            res.status(200).json({'message' : 'Password reset token has been sent to your email!', 
+            res.status(200).json({'message' : 'Verification token has been re-sent to your email!', 
     'status':1}); 
         }
        });
@@ -286,7 +286,6 @@ const register = (req, res) => {
     }
   
 // edit profile
-
 const editProfile = (req, res) => {
    var username = req.params.name;
     var qry = req.body;
@@ -371,7 +370,6 @@ const login = (req, res) => {
 
     
     }
-
 
 // logout
 const logout = (req, res) => {

@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var employee = require('../controllers/EmployeeController');
 var leave = require('../controllers/LeaveController');
+var reset = require('../controllers/ResetPasswordController');
 //var file_upload = require('../controllers/FileController');
 var auth = require('../middleware/verifyToken');
 const { userValidationRules, validate } = require('../middleware/validateInput');
@@ -24,6 +25,10 @@ var testJson = (req, res, next) => {
       // index
   router.get('/', testJson, employee.index);
 
+  ///////////////////////////////////////////////
+  ///////// EMPLOYEE SELF-SERVICE ROUTES ///////
+  /////////////////////////////////////////////
+
      // register employee   
   router.post('/employees/addEmployee',  [urlencodedParser, validateUser], employee.register);
 
@@ -37,9 +42,17 @@ var testJson = (req, res, next) => {
   router.post('/employees/login',  urlencodedParser, employee.login);
 
     // edit profile
-    router.put('/employees/updateEmployee/:name',  [auth, urlencodedParser, validateEditUser, verification], employee.editProfile);
+  router.put('/employees/updateEmployee/:name',  [auth, urlencodedParser, validateEditUser, verification], employee.editProfile);
 
-   
+  // initiate password reset
+  router.post('/employees/forgotPassword',  [urlencodedParser], reset.forgot_pwd);
+
+   // verify password reset pin
+   router.post('/employees/verifyforgotPin',  [urlencodedParser], reset.verify_reset);
+ 
+    // reset password
+    router.post('/employees/resetPassword',  [urlencodedParser], reset.resetPwd);
+ 
 
     // upload profile picture
   //router.post('/employees/uploadPicture', [auth, urlencodedParser], file_upload.uploadPic);
@@ -47,8 +60,14 @@ var testJson = (req, res, next) => {
     // verify token
     router.get('/verifyToken', [testJson, auth], employee.verify);
 
+    // logout
+  router.post('/employees/logout',  [auth,verification], employee.logout);
 
 
+  
+   ///////////////////////////////////////////////
+  ///////// EMPLOYEE LEAVE PORTAL ROUTES ///////
+  /////////////////////////////////////////////
 
    // list leaves applied for by self
   router.get('/leaves/myLeaves', [auth, verification], leave.getLeaves);
@@ -67,8 +86,7 @@ var testJson = (req, res, next) => {
 
 
 
-     // logout
-  router.post('/employees/logout',  [auth,verification], employee.logout);
+ 
 
 
 module.exports = router;

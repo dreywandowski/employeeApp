@@ -124,6 +124,11 @@ const new_user_verify = (email) => {
     return 1;
 }
 
+// resend verify token
+const resend_token = (req, res) => {
+    
+}
+
 // verify new user
 const verifyMail = (req, res) => {
     password_resets.findOne({

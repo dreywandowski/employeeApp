@@ -4,10 +4,11 @@
 module.exports = {
   async up (queryInterface, Sequelize) {
     return Promise.all([
-      queryInterface.changeColumn('users ', 'email', {
+      queryInterface.changeColumn('users', 'email', {
           unique: true,
-      })
-  ])
+          type: Sequelize.STRING
+      },),
+  ]);
   },
 
   async down (queryInterface, Sequelize) {

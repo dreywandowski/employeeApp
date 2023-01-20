@@ -7,6 +7,7 @@ var auth = require('../middleware/verifyToken');
 const { userValidationRules, validate } = require('../middleware/validateInput');
 const {validateUser } = require('../middleware/validateNewUser');
 const {validateEditUser } = require('../middleware/validateEditUser');
+const verification  = require('../middleware/checkUserVerified');
 
 // handle POST requests
 var bodyParser = require('body-parser');
@@ -33,7 +34,7 @@ var testJson = (req, res, next) => {
   router.post('/employees/login',  urlencodedParser, employee.login);
 
     // edit profile
-    router.put('/employees/updateEmployee/:name',  [auth, urlencodedParser, validateEditUser], employee.editProfile);
+    router.put('/employees/updateEmployee/:name',  [auth, urlencodedParser, validateEditUser, verification], employee.editProfile);
 
 
     // upload profile picture
@@ -46,24 +47,24 @@ var testJson = (req, res, next) => {
 
 
    // list leaves applied for by self
-  router.get('/leaves/myLeaves', [auth], leave.getLeaves);
+  router.get('/leaves/myLeaves', [auth, verification], leave.getLeaves);
 
   // cancel a leave
-  router.get('/leaves/myLeaves/:id', [auth, urlencodedParser], leave.getLeave);
+  router.get('/leaves/myLeaves/:id', [auth, urlencodedParser, verification], leave.getLeave);
 
     // create a leave
-  router.post('/leaves/createLeave', [auth, urlencodedParser, userValidationRules(), validate], leave.createLeave);
+  router.post('/leaves/createLeave', [auth, urlencodedParser, userValidationRules(), validate, verification], leave.createLeave);
 
      // request a leave
-  router.post('/leaves/requestLeave/:id', [auth, urlencodedParser], leave.requestLeave);
+  router.post('/leaves/requestLeave/:id', [auth, urlencodedParser, verification], leave.requestLeave);
 
        // cancel a leave
-  router.post('/leaves/cancelLeave/:id', [auth, urlencodedParser], leave.cancelLeave);
+  router.post('/leaves/cancelLeave/:id', [auth, urlencodedParser, verification], leave.cancelLeave);
 
 
 
      // logout
-  router.put('/employees/logout',  auth, employee.logout);
+  router.post('/employees/logout',  [auth,verification], employee.logout);
 
 
 module.exports = router;

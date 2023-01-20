@@ -1,9 +1,16 @@
 var multer = require('multer');
 
 const uploadPic = (req, res) => {
+    //Configuration for Multer
+const upload = multer({ dest: "../assets/images/uploads" });
+
+/*upload.single("file");
+console.log(req.file);*/
 res.json('hii');
 }
 
+
+/*
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
   
@@ -25,7 +32,7 @@ var upload = multer({
     fileFilter: function (req, file, cb){
     
         // Set the filetypes, it is optional
-        var filetypes = /jpeg|jpg|png/;
+        var filetypes = /jpeg|jpg|png/; 
         var mimetype = filetypes.test(file.mimetype);
   
         var extname = filetypes.test(path.extname(
@@ -66,7 +73,7 @@ app.post("/uploadProfilePicture",function (req, res, next) {
         }
     })
 })
-
+*/
 module.exports = {
     uploadPic
 }

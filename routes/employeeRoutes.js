@@ -3,7 +3,7 @@ var router = express.Router();
 var employee = require('../controllers/EmployeeController');
 var leave = require('../controllers/LeaveController');
 var reset = require('../controllers/ResetPasswordController');
-//var file_upload = require('../controllers/FileController');
+var file_upload = require('../controllers/FileController');
 var auth = require('../middleware/verifyToken');
 const { userValidationRules, validate } = require('../middleware/validateInput');
 const {validateUser } = require('../middleware/validateNewUser');
@@ -55,7 +55,7 @@ var testJson = (req, res, next) => {
  
 
     // upload profile picture
-  //router.post('/employees/uploadPicture', [auth, urlencodedParser], file_upload.uploadPic);
+   router.post('/employees/uploadPicture', [auth, urlencodedParser], file_upload.uploadPic);
 
     // verify token
     router.get('/verifyToken', [testJson, auth], employee.verify);

@@ -16,7 +16,13 @@ const Leave = sequelize.define('leave', {
  rejected_by: DataTypes.STRING
 });
 
+Leave.associate = function(models){
+  Users.belongsTo(models.Users, {
+      foreignKey: "username",
+      sourceKey: "username"
+  })
 
+}
 module.exports = Leave;
 
 

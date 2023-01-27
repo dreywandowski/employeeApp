@@ -72,7 +72,24 @@ const deleteEmployee = (req, res) => {
 }
 
 
-
+// place an employee to a rank
+const rankEmployee = (req, res) => {
+    var username = req.params.name;
+     var qry = req.body;
+ 
+    // res.json(username);
+          users.update( {rank: qry.rank}, 
+                     { where: { username: username}
+                    }).then(resp =>{
+                 res.status(200).json({'message' : 'User updated successfully!',
+                 'status': 1});
+             })
+             .catch(err =>{
+                 res.status(401).json({'message' : ' Error updating user!',
+                         'status': 0, message:err});
+             });
+        
+        }
 // assign an employee to an appropriate supervisor
 // TOD0: Fix saving multiple surbodinates not saving to an array and error message showing
 // even after a successful assignment
@@ -126,6 +143,7 @@ module.exports = {
     employee_id,
     getEmployees,
     deleteEmployee,
-    assignEmployee
+    assignEmployee,
+    rankEmployee
    
 }

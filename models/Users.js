@@ -59,6 +59,12 @@ verifiedAt: {
 }
 });
 
+Users.associate = function(models){
+    Users.hasMany(models.leave, {
+        foreignKey: "username",
+        sourceKey: "username"
+    })
+}
 
 //console.log(Users === sequelize.define.Users);
 

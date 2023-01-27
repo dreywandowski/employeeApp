@@ -1,12 +1,15 @@
 var multer = require('multer');
 
+
 const uploadPic = (req, res) => {
     //Configuration for Multer
 const upload = multer({ dest: "../assets/images/uploads" });
 
-/*upload.single("file");
-console.log(req.file);*/
-res.json('hii');
+upload.single("file");
+console.log(req.body);
+console.log(req.file);
+
+res.json(req.file);
 }
 
 

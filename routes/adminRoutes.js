@@ -26,6 +26,10 @@ router.delete('/employees/removeEmployee/:name',[auth, verification, adminVerify
   // assign employees to appropriate supervisor
   router.post('/employees/assignSupervisor/:name', [auth, verification, adminVerify], admin.assignEmployee);
 
+  // rank employee for salary grade purposes
+  router.post('/employees/rankEmployee/:name', [auth, verification, adminVerify, urlencodedParser], admin.rankEmployee);
+
+
   ////////////////////////////////////////////////////////////////
 
 

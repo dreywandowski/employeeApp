@@ -7,6 +7,7 @@ var adminVerify = require('../middleware/verifyAdmin');
 var leave = require('../controllers/LeaveController');
 var applications = require('../controllers/ApplicationsController');
 var jobs = require('../controllers/JobsController');
+var salary = require('../controllers/SalaryController');
 var verification  = require('../middleware/checkUserVerified');
 
 // handle POST requests
@@ -28,6 +29,9 @@ router.delete('/employees/removeEmployee/:name',[auth, verification, adminVerify
 
   // rank employee for salary grade purposes
   router.post('/employees/rankEmployee/:name', [auth, verification, adminVerify, urlencodedParser], admin.rankEmployee);
+
+  // calculate staff salary
+  router.post('/employees/calculateSalary/:name', [auth, verification, adminVerify], salary.calculateSalary);
 
 
   ////////////////////////////////////////////////////////////////

@@ -56,6 +56,10 @@ jwt: {
 verifiedAt: {
     type: DataTypes.DATE,
     allowNull: true
+},
+rank: {
+    type: DataTypes.STRING,
+    allowNull: true
 }
 });
 

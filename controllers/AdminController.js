@@ -75,13 +75,12 @@ const deleteEmployee = (req, res) => {
 // place an employee to a rank
 const rankEmployee = (req, res) => {
     var username = req.params.name;
-     var qry = req.body;
+     var qry = req.body.rank;
  
-    // res.json(username);
-          users.update( {rank: qry.rank}, 
+          users.update( {rank: qry}, 
                      { where: { username: username}
                     }).then(resp =>{
-                 res.status(200).json({'message' : 'User updated successfully!',
+                 res.status(200).json({'message' : 'User assigned the rank ' + qry + ' successfully!',
                  'status': 1});
              })
              .catch(err =>{

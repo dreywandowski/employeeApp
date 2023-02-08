@@ -4,6 +4,7 @@ var employee = require('../controllers/EmployeeController');
 var leave = require('../controllers/LeaveController');
 var reset = require('../controllers/ResetPasswordController');
 var files = require('../controllers/FileController');
+var salary = require('../controllers/SalaryController');
 var auth = require('../middleware/verifyToken');
 const { userValidationRules, validate } = require('../middleware/validateInput');
 const {validateUser } = require('../middleware/validateNewUser');
@@ -52,6 +53,10 @@ var testJson = (req, res, next) => {
  
     // reset password
     router.post('/employees/resetPassword',  [urlencodedParser], reset.resetPwd);
+
+
+  // my salary breakdown
+  router.get('/employees/mySalary/:name', [auth, verification], salary.mySalaryBreakDown);
  
 
     // upload profile picture

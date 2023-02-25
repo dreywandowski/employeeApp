@@ -6,5 +6,14 @@
 <li> Jobs Portal </li>
 </ol>
 
+Features implemented includes:
+1. ORM system employed to manage database operations [Sequeilze ORM]
+2. CORS handled to manage cross-origin requests
+3. Rate-limiting to reduce server loads 
+4. Caching system to reduce latency
+5. MVC architecture employed for structure and easy debugging
+6. Cron jobs to automate simple HR tasks
+7. New user verification to prevent spam regsitrations.
+
 ## Documentation available at: https://dreywandowski.xyz/api_documentations/employee_portal/
 ## Live Link: http://employee.dreywandowski.xyz/api

@@ -30,8 +30,6 @@ router.delete('/employees/removeEmployee/:name',[auth, verification, adminVerify
   // rank employee for salary grade purposes
   router.post('/employees/rankEmployee/:name', [auth, verification, adminVerify, urlencodedParser], admin.rankEmployee);
 
-  // calculate staff salary
-  router.post('/employees/calculateSalary/:name', [auth, verification, adminVerify], salary.calculateSalary);
 
 
   ////////////////////////////////////////////////////////////////

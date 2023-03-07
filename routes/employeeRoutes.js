@@ -57,6 +57,9 @@ var testJson = (req, res, next) => {
 
   // my salary breakdown
   router.get('/employees/mySalary/:name', [auth, verification], salary.mySalaryBreakDown);
+
+  // download my salary pdf file
+  router.get('/employees/downloadSalary', [auth, verification], salary.download);
  
 
     // upload profile picture

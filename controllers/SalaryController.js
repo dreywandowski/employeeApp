@@ -3,6 +3,7 @@ var pdf = require('html-pdf');
 var options = {format: 'Letter'};
 const ejs = require('ejs');
 const EventEmitter = require('events');
+const fs = require('fs');
 
 var eventEmitter = new EventEmitter();
 // create a pdf file of the salary breakdown
@@ -25,8 +26,6 @@ if (err) {
 }
         createPDF(msg);
  });
-
-
 
     
 // retrive my salary calculation/breakdown
@@ -94,8 +93,34 @@ const mySalaryBreakDown = (req, res) => {
         });
 }
 
+const download = (req, res) =>{
+        const file = './downloads/employee_salary.pdf';
+         fs.exists(file,  (doesExist) => {
+            if (doesExist) {
+              console.log('file exists');
+
+              //file exists
+               res.download(file,(lol) =>{
+              // remove file after succesful download
+                fs.unlink(file, (err => {
+                    if (err) console.log("Unable to delete " +err);
+                    else {
+                      console.log("\nDeleted file: "+file);
+                    }
+                  }));
+               });   
+            } else {
+                res.status(404).json({'message' : 'File is not existent!!', 
+                'status': 0});
+            }
+          });
+         
+          
+
+}
 
 
 module.exports = {
-    mySalaryBreakDown
+    mySalaryBreakDown,
+    download
 }

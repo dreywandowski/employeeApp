@@ -51,7 +51,7 @@ router.delete('/employees/removeEmployee/:name',[auth, verification, adminVerify
 
 /////////////// JOB ROUTES //////////////////////
   // view job applications
-  router.get('/jobs/applications/', [auth,verification,  adminVerify], applications.getApplications);
+  router.get('/jobs/applications', [auth,verification,  adminVerify, urlencodedParser], applications.getApplications);
 
    // view job application
    router.get('/jobs/applications/:id', [auth, verification, adminVerify], applications.getApplication);

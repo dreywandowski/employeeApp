@@ -2,6 +2,7 @@ var application = require('../models/application');
 const EventEmitter = require('events');
 const nodemailer = require('nodemailer');
 const ejs = require('ejs');
+var Json2csvParser = require('json2csv').Parser;
 //var localEvents = require('../assets/utils/email_sending_util');
 //var localEvents = new EventEmitter();
 
@@ -39,7 +40,7 @@ eventEmitter.on('sendMail', (msg, email) => {
        if (err) {
          console.log("cant send mail!! " + err);
        } else {
-         console.log("mail sent ok "+"content=="+ msg+info);
+         console.log("mail sent ok "+"content== "+ msg+info);
        }
    });
 });
@@ -80,7 +81,22 @@ const apply = (req, res) => {
 
 // view applications
 const getApplications = (req, res) => {
-    return application.findAll(). then(applications =>{
+    return application.findAll().then(applications =>{
+      //  option to convert to csv file
+            if(req.body.csv == 1){
+             // -> Convert JSON to CSV data
+       const csvFields = ['id', 'firstName','lastName', 'email', 'phone', 'address', 'location', 'skills', 'total_exp', 'qualifications', 'jobApplied', 'date'];
+       const json2csvParser = new Json2csvParser({ csvFields });
+       const csv = json2csvParser.parse(applications);
+
+      console.log(csv);
+ 
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", "attachment; filename=.downloads/applications.csv");
+
+    res.status(200).end(csv);
+            }
+             
             res.status(200).json({'message' : 'Application list retrieved sucessfully!', 
             'applications': applications, 'status': 1});
         }).

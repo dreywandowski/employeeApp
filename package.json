@@ -23,6 +23,7 @@
     "form-data": "^4.0.0",
     "formdata-node": "^5.0.0",
     "html-pdf": "^3.0.1",
+    "json2csv": "^6.0.0-alpha.2",
     "jsonwebtoken": "^8.5.1",
     "jspdf": "^2.5.1",
     "multer": "^1.4.5-lts.1",

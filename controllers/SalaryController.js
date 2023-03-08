@@ -1,4 +1,5 @@
 var users = require('../models/Users');
+var bank = require('../models/bank');
 var pdf = require('html-pdf');
 var options = {format: 'Letter'};
 const ejs = require('ejs');
@@ -93,6 +94,7 @@ const mySalaryBreakDown = (req, res) => {
         });
 }
 
+// download salary breakdown
 const download = (req, res) =>{
         const file = './downloads/employee_salary.pdf';
          fs.exists(file,  (doesExist) => {
@@ -119,8 +121,27 @@ const download = (req, res) =>{
 
 }
 
+// add account details for staff
+const addAccount = (req, res) => {
+    var qry = req.body;
+    let username = qry.username;
+
+    const banks_acc = bank.create({
+        accountName: qry.accountName,
+        accountNumber: qry.accountNumber,
+        bankName: qry.bankName,
+        bankCode: qry.bankCode,
+        username: qry.username
+    }).then(resp => {
+        res.status(201).json({'message' : 'Bank account for user ' + username + ' sucessfully created', 'status':1});
+    }).catch(err => {
+        res.status(403).json({'message' : 'Error creating an account for the user ' + err, 
+        'status':0});
+    });
+}
 
 module.exports = {
     mySalaryBreakDown,
-    download
+    download,
+    addAccount
 }

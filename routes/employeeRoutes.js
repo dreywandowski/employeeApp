@@ -20,7 +20,7 @@ var urlencodedParser = bodyParser.urlencoded ({extended :false});
 
 var testJson = (req, res, next) => {
     const content = req.headers['content-type'];
-    console.log("test Json request header is =="+content);
+    console.log("test Json request header is == "+content);
     next()
    }
       // index

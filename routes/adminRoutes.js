@@ -30,7 +30,8 @@ router.delete('/employees/removeEmployee/:name',[auth, verification, adminVerify
   // rank employee for salary grade purposes
   router.post('/employees/rankEmployee/:name', [auth, verification, adminVerify, urlencodedParser], admin.rankEmployee);
 
-
+  // create bank account
+  router.post('/employees/createAccount', [auth, verification, adminVerify, urlencodedParser], salary.addAccount);
 
   ////////////////////////////////////////////////////////////////
 

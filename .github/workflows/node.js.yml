@@ -15,17 +15,27 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+        fail-fast: false
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [14.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
+    #- uses: actions/checkout@v3
+    - uses: appleboy/ssh-action@master
+    - name: Deploy Complete HR changes to my Linux server
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        script: |
+        cd /var/www/html/payroll
+        git pull 
+        sudo systemctl stop employee-app
+        sudo systemctl start employee-app
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test

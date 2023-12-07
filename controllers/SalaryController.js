@@ -7,6 +7,7 @@ const EventEmitter = require('events');
 const fs = require('fs');
 const https = require('https');
 const env = require('dotenv').config();
+//var { getRequest, postRequest } = require('./UtilController');
 
 var eventEmitter = new EventEmitter();
 // create a pdf file of the salary breakdown
@@ -260,9 +261,68 @@ const paySalary = (req, res)=>{
     });
 }
 
+
+
+// list avalible Nigerian Banks
+const listBanks = (req,res) => {
+    const options = {
+        method: 'GET',
+        hostname: 'api.paystack.co',
+        path: '/bank?currency=NGN',
+        maxRedirects: 20,
+        headers: {
+          Authorization: `Bearer ${process.env.PAYSTACK_SECRET}`,
+          'Content-Type': 'application/json',
+        }
+      };
+
+     // var call = getRequest(options);
+     // return;
+    
+      const request = https.request(options, function (response) {
+        const chunks = [];
+    
+        response.on('data', function (chunk) {
+          chunks.push(chunk);
+        });
+    
+        response.on('end', function () {
+          try {
+            const body = Buffer.concat(chunks);
+            const banks = JSON.parse(body.toString());
+    
+            // Send the JSON response to the user with a status code of 200
+            res.status(200).json({
+              message: 'Banks List retrieved successfully!',
+              banks: banks.data,
+              status: 1,
+            });
+          } catch (error) {
+            // Handle parsing error and send an error response to the user with a status code of 403
+            res.status(403).json({
+              message: 'Error retrieving banks... ' + error.message,
+              status: 0,
+            });
+          }
+        });
+    
+        response.on('error', function (error) {
+          // Handle response error and send an error response to the user with a status code of 500
+          res.status(500).json({
+            message: 'Internal Server Error: ' + error.message,
+            status: 0,
+          });
+        });
+      });
+    
+      request.end();
+}
+
+
 module.exports = {
     mySalaryBreakDown,
     download,
     addAccount,
-    paySalary
+    paySalary,
+    listBanks
 }

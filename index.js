@@ -4,7 +4,7 @@ var cors = require('cors');
 var redis = require('redis');
 
 // connect to Redis 
-const client = redis.createClient();
+/*const client = redis.createClient();
 (async () => {
     // Connect to redis server
     await client.connect();
@@ -23,7 +23,7 @@ client.on("error", (err) => {
 process.on('SIGINT', () => {
     client.quit();
     console.log('redis client quit');
-});
+});*/
 
 
 // tell node to use ejs as the templating engine

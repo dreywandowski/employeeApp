@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var NodeCache = require('node-cache');
 var employee = require('../controllers/EmployeeController');
 var leave = require('../controllers/LeaveController');
 var reset = require('../controllers/ResetPasswordController');
@@ -26,24 +27,17 @@ var testJson = (req, res, next) => {
       // index
   router.get('/', testJson, employee.index);
 
+   // clear cache
+  router.get('/clear-cache', (req, res) => {
+    var myCache = new NodeCache();
+    myCache.clear();
+    console.log('Cache cleared.');
+    res.send('Cache cleared successfully.');
+  });
+
   ///////////////////////////////////////////////
   ///////// EMPLOYEE SELF-SERVICE ROUTES ///////
   /////////////////////////////////////////////
-
-     // register employee   
-  router.post('/employees/addEmployee',  [urlencodedParser, validateUser], employee.register);
-
-    // verify new user
-  router.post('/employees/verifyEmployee',  [urlencodedParser], employee.verifyMail);
- 
-  // resend registration token
- router.post('/employees/resendToken',  [urlencodedParser], employee.resend_token);
-
-   // login
-  router.post('/employees/login',  urlencodedParser, employee.login);
-
-    // edit profile
-  router.put('/employees/updateEmployee/:name',  [auth, urlencodedParser, validateEditUser, verification], employee.editProfile);
 
   // initiate password reset
   router.post('/employees/forgotPassword',  [urlencodedParser], reset.forgot_pwd);
@@ -51,8 +45,24 @@ var testJson = (req, res, next) => {
    // verify password reset pin
    router.post('/employees/verifyforgotPin',  [urlencodedParser], reset.verify_reset);
  
-    // reset password
-    router.post('/employees/resetPassword',  [urlencodedParser], reset.resetPwd);
+  // reset password
+  router.post('/employees/resetPassword',  [urlencodedParser], reset.resetPwd);
+     
+  // resend registration token
+ router.post('/employees/resendToken',  [urlencodedParser], employee.resend_token);
+
+  // register employee   
+  router.post('/employees/addEmployee',  [urlencodedParser, validateUser], employee.register);
+
+    // verify new user
+  router.post('/employees/verifyEmployee',  [urlencodedParser], employee.verifyMail);
+
+   // login
+  router.post('/employees/login',  [urlencodedParser], employee.login);
+
+  // edit profile
+  router.put('/employees/updateEmployee/:name',  [auth, urlencodedParser, validateEditUser, verification], employee.editProfile);
+
 
 
   // my salary breakdown
@@ -78,10 +88,10 @@ var testJson = (req, res, next) => {
   /////////////////////////////////////////////
 
    // list leaves applied for by self
-  router.get('/leaves/myLeaves', [auth, verification], leave.getLeaves);
-
-  // cancel a leave
+     // cancel a leave
   router.get('/leaves/myLeaves/:id', [auth, urlencodedParser, verification], leave.getLeave);
+  
+  router.get('/leaves/myLeaves', [auth, verification], leave.getLeaves);
 
     // create a leave
   router.post('/leaves/createLeave', [auth, urlencodedParser, userValidationRules(), validate, verification], leave.createLeave);

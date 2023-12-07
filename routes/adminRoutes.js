@@ -16,22 +16,35 @@ var urlencodedParser = bodyParser.urlencoded ({extended :false});
 
 /////////////// EMPLOYEE ROUTES //////////////////////
  // delete employee
-router.delete('/employees/removeEmployee/:name',[auth, verification, adminVerify], admin.deleteEmployee);
+  router.delete('/employees/removeEmployee/:name',[auth, verification, adminVerify], admin.deleteEmployee);
 
- // get employees
- router.get('/employees', [auth, verification, adminVerify], admin.getEmployees);
+// assign employees to appropriate supervisor
+  router.post('/employees/assignSupervisor/:name', [auth, verification, adminVerify], admin.assignEmployee);
 
-  // get employee
+// get employee
   router.get('/employees/:name', [auth, verification, adminVerify], admin.employee_id);
 
-  // assign employees to appropriate supervisor
-  router.post('/employees/assignSupervisor/:name', [auth, verification, adminVerify], admin.assignEmployee);
+ // get employees
+ router.get('/employees/', [auth, verification, adminVerify], admin.getEmployees);
+
+
+
 
   // rank employee for salary grade purposes
   router.post('/employees/rankEmployee/:name', [auth, verification, adminVerify, urlencodedParser], admin.rankEmployee);
 
   // create bank account
   router.post('/employees/createAccount', [auth, verification, adminVerify, urlencodedParser], salary.addAccount);
+
+  // create transfer reciepent
+  //router.post('/employees/admin/createBeneficiary', [auth, verification, adminVerify, urlencodedParser], salary.createTransferRecipient);
+
+  // transfer money -- bulk
+ // router.post('/employees/admin/transferBulk', [auth, verification, adminVerify, urlencodedParser], salary.transferMoneyFlw);
+
+
+  // list banks
+  //router.get('/banks', [auth, verification, adminVerify], salary.listBanks);
 
   ////////////////////////////////////////////////////////////////
 
@@ -51,16 +64,17 @@ router.delete('/employees/removeEmployee/:name',[auth, verification, adminVerify
 
 
 /////////////// JOB ROUTES //////////////////////
-  // view job applications
-  router.get('/jobs/applications', [auth,verification,  adminVerify, urlencodedParser], applications.getApplications);
 
    // view job application
    router.get('/jobs/applications/:id', [auth, verification, adminVerify], applications.getApplication);
 
+  // view job applications
+  router.get('/jobs/applications', [auth,verification,  adminVerify, urlencodedParser], applications.getApplications);
+
    // create job application
    router.post('/jobs/applications', [auth, urlencodedParser,verification, adminVerify], jobs.postJob);
 
-      ////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
 
 
 module.exports = router;

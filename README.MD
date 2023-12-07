@@ -15,5 +15,5 @@ Features implemented includes:
 6. Cron jobs to automate simple HR tasks
 7. New user verification to prevent spam regsitrations.
 
-## Documentation available at: https://dreywandowski.xyz/api_documentations/employee_portal/
-## Live Link: http://employee.dreywandowski.xyz/api
+## Documentation available at: https://dreywandowski.ng/api_documentations/employee_portal/
+## Live Link: http://employee.dreywandowski.ng/api

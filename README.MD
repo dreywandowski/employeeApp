@@ -13,17 +13,16 @@ Employee management application, backend APIs created with Node js + Express + S
  Features include:
 
 URL: <a target="_blank" href="http://employee.dreywandowski.ng/api"> Complete HR - Backend </a>
-
-## Steps to run the application locally
-
-# 
+#
+## Modules
 <ul>
 <li> Employee Module</li>
 <li> Leave Application Module</li>
 <li> Jobs Portal </li>
 </ol>
 
-Features implemented includes:
+#
+## Features implemented includes:
 1. ORM system employed to manage database operations [Sequeilze ORM]
 2. CORS handled to manage cross-origin requests
 3. Rate-limiting to reduce server loads 
@@ -32,4 +31,5 @@ Features implemented includes:
 6. Cron jobs to automate simple HR tasks
 7. New user verification to prevent spam regsitrations.
 
+#
 ## Documentation available at: https://dreywandowski.ng/api_documentations/employee_portal/

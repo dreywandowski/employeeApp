@@ -15,6 +15,13 @@ const Job = sequelize.define('Job', {
   end_date: DataTypes.DATE
  });
  
- 
+
+ Job.associate = function(models){
+  Job.belongsTo(models.application, {
+      foreignKey: "job_id",
+      sourceKey: "id"
+  })
+
+}
  module.exports = Job;
  

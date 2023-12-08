@@ -17,5 +17,11 @@ const application = sequelize.define('application', {
   jobAppliedFor: DataTypes.STRING
  });
  
+ application.associate = function(models){
+  application.hasMany(models.jobs, {
+      foreignKey: "id",
+      sourceKey: "job_id"
+  })
+}
 
  module.exports = application;

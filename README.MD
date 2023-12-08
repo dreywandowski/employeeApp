@@ -19,7 +19,7 @@ URL: <a target="_blank" href="http://employee.dreywandowski.ng/api"> Complete HR
 <li> Employee Module</li>
 <li> Leave Application Module</li>
 <li> Jobs Portal </li>
-</ol>
+</ul>
 
 #
 ## Features implemented includes:

@@ -5,7 +5,7 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     return Promise.all([
       queryInterface.sequelize.query('SET FOREIGN_KEY_CHECKS = 0'),
-      queryInterface.addConstraint('jobs', {
+      queryInterface.addConstraint('Jobs', {
         fields: ['id'],
         type: 'foreign key',
         name: 'applications_fk',

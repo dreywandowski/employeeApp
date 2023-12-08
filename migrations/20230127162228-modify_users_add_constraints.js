@@ -4,7 +4,7 @@
 module.exports = {
   async up (queryInterface, Sequelize) {
     return Promise.all([
-      //Sequelize.query('SET FOREIGN_KEY_CHECKS = 0'),
+      Sequelize.query('SET FOREIGN_KEY_CHECKS = 0'),
       queryInterface.addConstraint('users', {
         fields: ['username'],
         type: 'foreign key',

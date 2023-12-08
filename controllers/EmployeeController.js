@@ -12,7 +12,7 @@ var eventEmitter = new EventEmitter();
 
    // home route
 const index = (req, res, next) => {
-    res.status(200).json({'message' : 'The API is up and running on port 5000', 
+    res.status(200).json({'message' : 'The API is up and running on port 5000!', 
     'status':'Unauthenticated'}); 
 }
 

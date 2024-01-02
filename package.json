@@ -37,6 +37,8 @@
     "redis": "^4.5.1",
     "sequelize": "^6.24.0",
     "util": "^0.12.5",
+    "uuid": "^9.0.1",
+    "uuidv4": "^6.2.13",
     "validatorjs": "^3.22.1"
   },
   "devDependencies": {

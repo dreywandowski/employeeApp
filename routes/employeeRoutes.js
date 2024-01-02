@@ -79,7 +79,7 @@ var testJson = (req, res, next) => {
     router.get('/verifyToken', [testJson, auth], employee.verify);
 
     // logout
-  router.post('/employees/logout',  [auth,verification], employee.logout);
+  router.post('/employees/logout',  [auth, verification, urlencodedParser], employee.logout);
 
 
   

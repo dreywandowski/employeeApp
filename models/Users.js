@@ -2,10 +2,15 @@ const conn = require('../connection');
 const sequelize = conn.sequelize;
 const DataTypes = conn.DataTypes;
 
-
 // create a users table
 const Users = sequelize.define('users', {
  // Model attributes are defined here
+ employee_id: {
+    type: DataTypes.UUID,
+    primaryKey: true,
+    allowNull: false,
+    defaultValue: DataTypes.UUIDV4,
+  },
  firstName: {
     type: DataTypes.STRING,
     allowNull: false
@@ -46,7 +51,7 @@ supervisor: {
     allowNull: true
 },
 subordinates: {
-    type: DataTypes.JSON,
+    type: DataTypes.TEXT('long'),
     allowNull: true
 },
 jwt: {

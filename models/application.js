@@ -14,7 +14,10 @@ const application = sequelize.define('application', {
   skills: DataTypes.STRING,
   total_years_of_experience: DataTypes.INTEGER,
   proffessional_qualifications: DataTypes.STRING,
-  jobAppliedFor: DataTypes.STRING
+  jobAppliedFor: DataTypes.STRING,
+  job_id: DataTypes.INTEGER,
+  status: DataTypes.INTEGER,
+  interview_date: DataTypes.DATE
  });
  
  application.associate = function(models){

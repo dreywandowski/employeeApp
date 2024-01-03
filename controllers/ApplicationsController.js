@@ -5,19 +5,8 @@ const ejs = require('ejs');
 var Json2csvParser = require('json2csv').Parser;
 //var localEvents = require('../assets/utils/email_sending_util');
 //var localEvents = new EventEmitter();
-
-
 var eventEmitter = new EventEmitter();
 
-// send mail to user upon succesful job application
-eventEmitter.on('sendApplyMail', (msg, email) => {
-        sendEmail("aduramimo@gmail.com", "Your job application has been recieved");
- });
-
- // send mail to user upon change of job application status
-eventEmitter.on('sendInterviewMail', (msg, email) => {
-  sendEmail("aduramimo@gmail.com", "Your job application has been recieved");
-});
 
  // email sending function
  const sendEmail = (receiver, subject, content) => {
@@ -33,12 +22,12 @@ eventEmitter.on('sendInterviewMail', (msg, email) => {
    pass: pass
  }
 });
-ejs.renderFile('/var/www/html/payroll/assets/templates/job_application_template.ejs', {content:msg}, (err, data) => {
+ejs.renderFile(content, {content:msg}, (err, data) => {
  if (err) {
    console.log("error opening the file!! "+err);
  } else {
    var mailOptions = {
-     from: 'admin@employee-app.com',
+     from: process.env.MAIL_FROM,
      to: email,
      subject: subject,
      html: data
@@ -54,6 +43,17 @@ if (err) {
 });
 });
 }
+
+// send mail to user upon succesful job application
+eventEmitter.on('sendApplyMail', (msg, email) => {
+  sendEmail("aduramimo@gmail.com", "Your job application has been recieved", process.env.JOB_APPLIED_TEMPLATE);
+});
+
+// send mail to user upon change of job application status
+eventEmitter.on('sendInterviewMail', (msg, email) => {
+sendEmail("aduramimo@gmail.com", "Interview Invitation", process.env.INTERVIEW_TEMPLATE);
+});
+
 
 // apply for a job 
 const apply = (req, res) => {
@@ -137,6 +137,16 @@ const changeJobStatus = (req, res) => {
     }
   }).
    then(updated =>{
+        switch(qry.status){
+         case "first_interview":
+          break;
+          case "second_interview":
+          break;
+          case "hire":
+          break;
+          default:
+
+        }
          // send mail to user after a successful application
          eventEmitter.emit('sendInterviewMail', qry.jobAppliedFor, qry.email);
           res.status(200).json({'message' : 'Application item retrieved sucessfully!', 

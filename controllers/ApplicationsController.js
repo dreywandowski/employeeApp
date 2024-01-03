@@ -50,9 +50,17 @@ eventEmitter.on('sendApplyMail', (msg, email) => {
 });
 
 // send mail to user upon change of job application status
-eventEmitter.on('sendInterviewMail', (msg, email) => {
+eventEmitter.on('sendFirstInterviewMail', (msg, email) => {
 sendEmail("aduramimo@gmail.com", "Interview Invitation", process.env.INTERVIEW_TEMPLATE);
 });
+
+eventEmitter.on('sendSecondInterviewMail', (msg, email) => {
+  sendEmail("aduramimo@gmail.com", "Final Interview Invitation", process.env.INTERVIEW_TEMPLATE_SECOND);
+  });
+
+eventEmitter.on('sendOfferLetter', (msg, email) => {
+    sendEmail("aduramimo@gmail.com", "Offer Letter", process.env.OFFER_LETTER);
+    });
 
 
 // apply for a job 
@@ -138,17 +146,22 @@ const changeJobStatus = (req, res) => {
   }).
    then(updated =>{
         switch(qry.status){
-         case "first_interview":
+          // first interview
+         case 2:
+          eventEmitter.emit('sendFirstInterviewMail', qry.jobAppliedFor, qry.email);
           break;
-          case "second_interview":
+          // second interview
+          case 3:
+            eventEmitter.emit('sendSecondInterviewMail', qry.jobAppliedFor, qry.email);
           break;
-          case "hire":
+          // hire
+          case 4:
+            eventEmitter.emit('sendOfferLetter', qry.jobAppliedFor, qry.email);
           break;
           default:
 
         }
-         // send mail to user after a successful application
-         eventEmitter.emit('sendInterviewMail', qry.jobAppliedFor, qry.email);
+         
           res.status(200).json({'message' : 'Application item retrieved sucessfully!', 
           'application': application, 'status': 1});
       }).

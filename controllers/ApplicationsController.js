@@ -10,44 +10,50 @@ var Json2csvParser = require('json2csv').Parser;
 var eventEmitter = new EventEmitter();
 
 // send mail to user upon succesful job application
-eventEmitter.on('sendMail', (msg, email) => {
-    const sendEmail = (receiver, subject, content) => {
-         user = process.env.MAIL_USERNAME;
-         pass = process.env.MAIL_PWD;
-
-        let transport = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 465,
-        secure: true,
-        auth: {
-          user: user,
-          pass: pass
-        }
-     });
-     ejs.renderFile('/var/www/html/payroll/assets/templates/job_application_template.ejs', {content:msg}, (err, data) => {
-        if (err) {
-          console.log("error opening the file!! "+err);
-        } else {
-          var mailOptions = {
-            from: 'admin@employee-app.com',
-            to: email,
-            subject: subject,
-            html: data
-          };
-        }
-   
-   transport.sendMail(mailOptions, function(err, info) {
-       if (err) {
-         console.log("cant send mail!! " + err);
-       } else {
-         console.log("mail sent ok "+"content== "+ msg+info);
-       }
-   });
-});
-}
+eventEmitter.on('sendApplyMail', (msg, email) => {
         sendEmail("aduramimo@gmail.com", "Your job application has been recieved");
  });
 
+ // send mail to user upon change of job application status
+eventEmitter.on('sendInterviewMail', (msg, email) => {
+  sendEmail("aduramimo@gmail.com", "Your job application has been recieved");
+});
+
+ // email sending function
+ const sendEmail = (receiver, subject, content) => {
+  user = process.env.MAIL_USERNAME;
+  pass = process.env.MAIL_PWD;
+
+ let transport = nodemailer.createTransport({
+ host: "smtp.gmail.com",
+ port: 465,
+ secure: true,
+ auth: {
+   user: user,
+   pass: pass
+ }
+});
+ejs.renderFile('/var/www/html/payroll/assets/templates/job_application_template.ejs', {content:msg}, (err, data) => {
+ if (err) {
+   console.log("error opening the file!! "+err);
+ } else {
+   var mailOptions = {
+     from: 'admin@employee-app.com',
+     to: email,
+     subject: subject,
+     html: data
+   };
+ }
+
+transport.sendMail(mailOptions, function(err, info) {
+if (err) {
+  console.log("cant send mail!! " + err);
+} else {
+  console.log("mail sent ok "+"content== "+ msg+info);
+}
+});
+});
+}
 
 // apply for a job 
 const apply = (req, res) => {
@@ -68,7 +74,7 @@ const apply = (req, res) => {
      
    }).then(created => {
     // send mail to user after a successful application
-       eventEmitter.emit('sendMail', qry.jobAppliedFor, qry.email);
+       eventEmitter.emit('sendApplyMail', qry.jobAppliedFor, qry.email);
        //localEvents.emit('sendMail', qry.jobAppliedFor, qry.email);
        res.status(201).json({'message' : 'Application submitted sucessfully!', 
                'status': 1});
@@ -121,12 +127,33 @@ const getApplication = (req, res) => {
         });
 }
 
+// change job status 
+const changeJobStatus = (req, res) => {
+  var qry = req.body;
+
+  return application.update({ status: qry.status }, {
+    where: {
+      id:qry.id
+    }
+  }).
+   then(updated =>{
+         // send mail to user after a successful application
+         eventEmitter.emit('sendInterviewMail', qry.jobAppliedFor, qry.email);
+          res.status(200).json({'message' : 'Application item retrieved sucessfully!', 
+          'application': application, 'status': 1});
+      }).
+  catch(err =>{
+      res.status(404).json({'message' : 'Error Retrieving application!', 
+      'error': err, 'status': 0});
+  });
+}
 
 // export applications to csv
 
 module.exports = {
     apply,
     getApplication,
-    getApplications
+    getApplications,
+    changeJobStatus
     
 }

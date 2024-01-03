@@ -52,7 +52,6 @@ eventEmitter.on('sendMail', (msg, email) => {
 // apply for a job 
 const apply = (req, res) => {
     var qry = req.body;
-    var jobAppliedFor = qry.jobAppliedFor;
 
     return application.create({
         firstName: qry.firstName,
@@ -64,7 +63,8 @@ const apply = (req, res) => {
        total_years_of_experience: qry.yearsOfExperience,
        skills: qry.skills,
        proffessional_qualifications: qry.proffessional_qualifications,
-       jobAppliedFor : qry.jobAppliedFor
+       jobAppliedFor : qry.jobAppliedFor,
+       job_id: qry.job_id
      
    }).then(created => {
     // send mail to user after a successful application

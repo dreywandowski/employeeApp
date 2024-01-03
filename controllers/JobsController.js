@@ -42,7 +42,8 @@ const postJob = (req, res) => {
         duties: qry.duties,
         qualifications:qry.qualifications,
         skills: qry.skills,
-        end_date: qry.end_date
+        end_date: qry.end_date,
+        department: qry.department
     }).then(created => {
         res.status(201).json({'message' : 'Job ' + title + ' created sucessfully!', 
                 'status': 1});

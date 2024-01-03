@@ -35,3 +35,17 @@ URL: <a target="_blank" href="http://employee.dreywandowski.ng/api"> Complete HR
 ## Documentation available at: https://dreywandowski.ng/api_documentations/employee_portal/
 
 
+### Changes to Implement
+application stages 
+archived -- 0
+in view -- 1
+first interview -- 2
+second interview -- 3
+hire - 4
+
+1. Add Department column to jobs. 
+2. Add application status (0,1,2,3,4,5) , portfolio link to apllications table
+3. Add employee id (UUID) to users table
+4. Create controller to change application status as referenced in (2).
+5. Immediately the job status on (4) is changed to 5 (approved for hire), automatically create an interview date
+6.  Immediately the job status on (4) is changed to 2 (first interview), automatically send an interview email to applicant

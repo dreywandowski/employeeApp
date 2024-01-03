@@ -12,7 +12,8 @@ const Job = sequelize.define('Job', {
   duties: DataTypes.STRING,
   qualifications: DataTypes.STRING,
   skills: DataTypes.STRING,
-  end_date: DataTypes.DATE
+  end_date: DataTypes.DATE,
+  department: DataTypes.STRING
  });
  
 

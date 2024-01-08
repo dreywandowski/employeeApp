@@ -71,8 +71,11 @@ var urlencodedParser = bodyParser.urlencoded ({extended :false});
   // view job applications
   router.get('/jobs/applications', [auth,verification,  adminVerify, urlencodedParser], applications.getApplications);
 
-   // create job application
+  // create job application
    router.post('/jobs/applications', [auth, urlencodedParser,verification, adminVerify], jobs.postJob);
+
+  // change application status
+   router.post('/jobs/applications/changeAppStatus', [auth, urlencodedParser,verification, adminVerify], applications.changeJobStatus);
 
 ////////////////////////////////////////////////////////////////
 

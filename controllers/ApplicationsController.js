@@ -83,7 +83,6 @@ const apply = (req, res) => {
    }).then(created => {
     // send mail to user after a successful application
        eventEmitter.emit('sendApplyMail', qry.jobAppliedFor, qry.email);
-       //localEvents.emit('sendMail', qry.jobAppliedFor, qry.email);
        res.status(201).json({'message' : 'Application submitted sucessfully!', 
                'status': 1});
    }).
@@ -162,11 +161,11 @@ const changeJobStatus = (req, res) => {
 
         }
          
-          res.status(200).json({'message' : 'Application item retrieved sucessfully!', 
+          res.status(200).json({'message' : 'Application status updated sucessfully!', 
           'application': application, 'status': 1});
       }).
   catch(err =>{
-      res.status(404).json({'message' : 'Error Retrieving application!', 
+      res.status(404).json({'message' : 'Error updating application status!', 
       'error': err, 'status': 0});
   });
 }

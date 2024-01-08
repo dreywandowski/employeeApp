@@ -8,7 +8,7 @@ var eventEmitter = new EventEmitter();
 
 
  // email sending function
- const sendEmail = (receiver, subject, content, msg) => {
+ const sendEmail = (receiver, subject, content, contentData) => {
   user = process.env.MAIL_USERNAME;
   pass = process.env.MAIL_PWD;
 
@@ -21,7 +21,7 @@ var eventEmitter = new EventEmitter();
    pass: pass
  }
 });
-ejs.renderFile(content, {content:msg}, (err, data) => {
+ejs.renderFile(content, contentData, (err, data) => {
  if (err) {
    console.log("error opening the file!! "+err);
  } else {
@@ -45,12 +45,17 @@ if (err) {
 
 // send mail to user upon succesful job application
 eventEmitter.on('sendApplyMail', (msg, email) => {
-  sendEmail("aduramimo@gmail.com", "Your job application has been recieved", process.env.JOB_APPLIED_TEMPLATE, msg);
+  sendEmail(email, "Your job application has been recieved", process.env.JOB_APPLIED_TEMPLATE, msg);
 });
 
 // send mail to user upon change of job application status
-eventEmitter.on('sendFirstInterviewMail', (msg, email) => {
-sendEmail("aduramimo@gmail.com", "Interview Invitation", process.env.INTERVIEW_TEMPLATE);
+eventEmitter.on('sendFirstInterviewMail', (email, interview_date, jobAppliedFor, address) => {
+  const contentData = {
+    interview_date: interview_date,
+    job: jobAppliedFor,
+    location: address,
+  };
+sendEmail(email, "Interview Invitation", process.env.INTERVIEW_TEMPLATE, contentData);
 });
 
 eventEmitter.on('sendSecondInterviewMail', (msg, email) => {
@@ -149,20 +154,37 @@ const changeJobStatus = (req, res) => {
     }
   }).
    then(updated =>{
+    // get application details
+    return application.findAll({where: {id:qry.id}}).
+    then(application =>{
+      let email = '';  let jobAppliedFor = '';  let interview_date = '';
+
+      application.forEach(instance => {
+        const dataValues = instance.dataValues;
+
+        const firstName = dataValues.firstName;
+        const lastName = dataValues.lastName;
+        email = dataValues.email;
+        jobAppliedFor = dataValues.jobAppliedFor;
+        interview_date = dataValues.interview_date;
+        const skills = dataValues.skills;
+    
+      });
        if(qry.status == 2){
-        eventEmitter.emit('sendFirstInterviewMail', 'ee', 'rr');
+        eventEmitter.emit('sendFirstInterviewMail', email, interview_date, jobAppliedFor, process.env.COMPANY_ADDRESS);
        }
        else if(qry.status == 3){
-        eventEmitter.emit('sendSecondInterviewMail', 'ee', 'rr');
+        eventEmitter.emit('sendSecondInterviewMail', email, interview_date, jobAppliedFor, process.env.COMPANY_ADDRESS);
        }
        else if(qry.status == 4){
-        eventEmitter.emit('sendOfferLetter', 'ee', 'rr');
+        eventEmitter.emit('sendOfferLetter', email, interview_date, jobAppliedFor, process.env.COMPANY_ADDRESS);
        }
        else{
        }
          
           res.status(200).json({'message' : 'Application status updated sucessfully!', 'status': 1});
-      }).
+      })
+    }).
   catch(err =>{
       res.status(404).json({'message' : 'Error updating application status!', 
       'error': err, 'status': 0});

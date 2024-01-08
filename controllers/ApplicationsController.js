@@ -136,7 +136,14 @@ const getApplication = (req, res) => {
 // change job status 
 const changeJobStatus = (req, res) => {
   var qry = req.body;
-  return application.update({ status: qry.status }, {
+  var qry_upd = {};
+  if(qry.interview_date !== null && qry.interview_date !==''){
+    qry_upd = { status: qry.status, interview_date: qry.interview_date };
+  }
+  else{
+     qry_upd = { status: qry.status };
+  }
+  return application.update(qry_upd, {
     where: {
       id:qry.id
     }

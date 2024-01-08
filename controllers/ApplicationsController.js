@@ -4,7 +4,6 @@ const nodemailer = require('nodemailer');
 const ejs = require('ejs');
 var Json2csvParser = require('json2csv').Parser;
 //var localEvents = require('../assets/utils/email_sending_util');
-//var localEvents = new EventEmitter();
 var eventEmitter = new EventEmitter();
 
 
@@ -51,6 +50,7 @@ eventEmitter.on('sendApplyMail', (msg, email) => {
 
 // send mail to user upon change of job application status
 eventEmitter.on('sendFirstInterviewMail', (msg, email) => {
+  console.log('hereeeeee');
 sendEmail("aduramimo@gmail.com", "Interview Invitation", process.env.INTERVIEW_TEMPLATE);
 });
 
@@ -136,33 +136,27 @@ const getApplication = (req, res) => {
 
 // change job status 
 const changeJobStatus = (req, res) => {
+  var eventEmitter = new EventEmitter();
   var qry = req.body;
-
   return application.update({ status: qry.status }, {
     where: {
       id:qry.id
     }
   }).
    then(updated =>{
-        switch(qry.status){
-          // first interview
-         case 2:
-          eventEmitter.emit('sendFirstInterviewMail', qry.jobAppliedFor, qry.email);
-          break;
-          // second interview
-          case 3:
-            eventEmitter.emit('sendSecondInterviewMail', qry.jobAppliedFor, qry.email);
-          break;
-          // hire
-          case 4:
-            eventEmitter.emit('sendOfferLetter', qry.jobAppliedFor, qry.email);
-          break;
-          default:
-
-        }
+       if(qry.status == 2){
+        eventEmitter.emit('sendFirstInterviewMail', 'ee', 'rr');
+       }
+       else if(qry.status == 3){
+        eventEmitter.emit('sendSecondInterviewMail', 'ee', 'rr');
+       }
+       else if(qry.status == 4){
+        eventEmitter.emit('sendOfferLetter', 'ee', 'rr');
+       }
+       else{
+       }
          
-          res.status(200).json({'message' : 'Application status updated sucessfully!', 
-          'application': application, 'status': 1});
+          res.status(200).json({'message' : 'Application status updated sucessfully!', 'status': 1});
       }).
   catch(err =>{
       res.status(404).json({'message' : 'Error updating application status!', 

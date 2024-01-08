@@ -50,7 +50,6 @@ eventEmitter.on('sendApplyMail', (msg, email) => {
 
 // send mail to user upon change of job application status
 eventEmitter.on('sendFirstInterviewMail', (msg, email) => {
-  console.log('ejs == '+process.env.INTERVIEW_TEMPLATE);
 sendEmail("aduramimo@gmail.com", "Interview Invitation", process.env.INTERVIEW_TEMPLATE);
 });
 
@@ -136,13 +135,6 @@ const getApplication = (req, res) => {
 
 // change job status 
 const changeJobStatus = (req, res) => {
-  
-eventEmitter.on('sendFirstInterviewMail', (arg1, arg2) => {
-  console.log('Event triggered with arguments:', arg1, arg2);
-});
-
-eventEmitter.emit('sendFirstInterviewMail', 'ee', 'rr');
-return
   var qry = req.body;
   return application.update({ status: qry.status }, {
     where: {

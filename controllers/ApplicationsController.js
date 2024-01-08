@@ -50,7 +50,7 @@ eventEmitter.on('sendApplyMail', (msg, email) => {
 
 // send mail to user upon change of job application status
 eventEmitter.on('sendFirstInterviewMail', (msg, email) => {
-  console.log('hereeeeee');
+  console.log('ejs == '+process.env.INTERVIEW_TEMPLATE);
 sendEmail("aduramimo@gmail.com", "Interview Invitation", process.env.INTERVIEW_TEMPLATE);
 });
 

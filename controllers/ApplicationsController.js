@@ -45,7 +45,10 @@ if (err) {
 
 // send mail to user upon succesful job application
 eventEmitter.on('sendApplyMail', (msg, email) => {
-  sendEmail(email, "Your job application has been recieved", process.env.JOB_APPLIED_TEMPLATE, msg);
+  const contentData = {
+    msg: msg
+  };
+  sendEmail(email, "Your job application has been recieved", process.env.JOB_APPLIED_TEMPLATE, contentData);
 });
 
 

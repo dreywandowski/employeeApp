@@ -27,7 +27,7 @@ ejs.renderFile(content, {content:msg}, (err, data) => {
  } else {
    var mailOptions = {
      from: process.env.MAIL_FROM,
-     to: email,
+     to: receiver,
      subject: subject,
      html: data
    };

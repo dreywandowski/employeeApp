@@ -48,6 +48,7 @@ eventEmitter.on('sendApplyMail', (msg, email) => {
   sendEmail(email, "Your job application has been recieved", process.env.JOB_APPLIED_TEMPLATE, msg);
 });
 
+
 // send mail to user upon change of job application status
 eventEmitter.on('sendFirstInterviewMail', (email, interview_date, jobAppliedFor, address) => {
   const contentData = {
@@ -58,12 +59,22 @@ eventEmitter.on('sendFirstInterviewMail', (email, interview_date, jobAppliedFor,
 sendEmail(email, "Interview Invitation", process.env.INTERVIEW_TEMPLATE, contentData);
 });
 
-eventEmitter.on('sendSecondInterviewMail', (msg, email) => {
-  sendEmail("aduramimo@gmail.com", "Final Interview Invitation", process.env.INTERVIEW_TEMPLATE_SECOND);
+eventEmitter.on('sendSecondInterviewMail', (email, interview_date, jobAppliedFor, address) => {
+  const contentData = {
+    interview_date: interview_date,
+    job: jobAppliedFor,
+    location: address,
+  };
+  sendEmail(email, "Final Interview Invitation", process.env.INTERVIEW_TEMPLATE_SECOND, contentData);
   });
 
-eventEmitter.on('sendOfferLetter', (msg, email) => {
-    sendEmail("aduramimo@gmail.com", "Offer Letter", process.env.OFFER_LETTER);
+eventEmitter.on('sendOfferLetter', (email, interview_date, jobAppliedFor, address) => {
+  const contentData = {
+    interview_date: interview_date,
+    job: jobAppliedFor,
+    location: address,
+  };
+    sendEmail(email, "Offer Letter", process.env.OFFER_LETTER, contentData);
     });
 
 
@@ -158,16 +169,17 @@ const changeJobStatus = (req, res) => {
     return application.findAll({where: {id:qry.id}}).
     then(application =>{
       let email = '';  let jobAppliedFor = '';  let interview_date = '';
+      let firstName = '';  let lastName = ''; 
 
       application.forEach(instance => {
         const dataValues = instance.dataValues;
 
-        const firstName = dataValues.firstName;
-        const lastName = dataValues.lastName;
+        firstName = dataValues.firstName;
+        lastName = dataValues.lastName;
         email = dataValues.email;
         jobAppliedFor = dataValues.jobAppliedFor;
         interview_date = dataValues.interview_date;
-        const skills = dataValues.skills;
+        
     
       });
        if(qry.status == 2){
@@ -176,6 +188,7 @@ const changeJobStatus = (req, res) => {
        else if(qry.status == 3){
         eventEmitter.emit('sendSecondInterviewMail', email, interview_date, jobAppliedFor, process.env.COMPANY_ADDRESS);
        }
+       // TO-DO: generate offer letter email + pdf and send
        else if(qry.status == 4){
         eventEmitter.emit('sendOfferLetter', email, interview_date, jobAppliedFor, process.env.COMPANY_ADDRESS);
        }

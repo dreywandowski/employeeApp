@@ -8,7 +8,7 @@ var eventEmitter = new EventEmitter();
 
 
  // email sending function
- const sendEmail = (receiver, subject, content) => {
+ const sendEmail = (receiver, subject, content, msg) => {
   user = process.env.MAIL_USERNAME;
   pass = process.env.MAIL_PWD;
 
@@ -45,7 +45,7 @@ if (err) {
 
 // send mail to user upon succesful job application
 eventEmitter.on('sendApplyMail', (msg, email) => {
-  sendEmail("aduramimo@gmail.com", "Your job application has been recieved", process.env.JOB_APPLIED_TEMPLATE);
+  sendEmail("aduramimo@gmail.com", "Your job application has been recieved", process.env.JOB_APPLIED_TEMPLATE, msg);
 });
 
 // send mail to user upon change of job application status
@@ -136,7 +136,13 @@ const getApplication = (req, res) => {
 
 // change job status 
 const changeJobStatus = (req, res) => {
-  var eventEmitter = new EventEmitter();
+  
+eventEmitter.on('sendFirstInterviewMail', (arg1, arg2) => {
+  console.log('Event triggered with arguments:', arg1, arg2);
+});
+
+eventEmitter.emit('sendFirstInterviewMail', 'ee', 'rr');
+return
   var qry = req.body;
   return application.update({ status: qry.status }, {
     where: {

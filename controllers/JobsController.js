@@ -55,12 +55,28 @@ const postJob = (req, res) => {
     
 }
 
+ const closeJob = (req, res) => {
+    var qry = req.body;
 
+    return jobs.update({isOpen: 0}, {
+      where: {
+        id:qry.id
+      }
+    }).
+     then(updated =>{
+            res.status(200).json({'message' : 'Job status updated sucessfully!', 'status': 1});
+      }).
+    catch(err =>{
+        res.status(403).json({'message' : 'Error updating Job status!', 
+        'error': err, 'status': 0});
+    });
+ }
 
 
 module.exports = {
     getJobs,
     getJob,
-    postJob
+    postJob,
+    closeJob
     
 }

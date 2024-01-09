@@ -77,6 +77,9 @@ var urlencodedParser = bodyParser.urlencoded ({extended :false});
   // change application status
    router.post('/jobs/applications/changeAppStatus', [auth, urlencodedParser,verification, adminVerify], applications.changeJobStatus);
 
+  // close job
+  router.post('/jobs/applications/closeJob', [auth, urlencodedParser,verification, adminVerify], jobs.closeJob);
+
 ////////////////////////////////////////////////////////////////
 
 

@@ -6,7 +6,7 @@ var Json2csvParser = require('json2csv').Parser;
 //var localEvents = require('../assets/utils/email_sending_util');
 var eventEmitter = new EventEmitter();
 
-
+// TO-DO: Block applications for jobs that are expired
  // email sending function
  const sendEmail = (receiver, subject, content, contentData) => {
   user = process.env.MAIL_USERNAME;

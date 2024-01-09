@@ -5,8 +5,7 @@ const employee_id = (req, res) => {
      const username = req.params.name;
     
     users.sync().then(data =>{
-        return users.findByPk(username,
-            {
+        return users.findAll({where: {username:username},
                 attributes: {
                     exclude: ['password', 'createdAt', 'updatedAt', 'jwt']
                  } 

@@ -30,6 +30,7 @@
     "mysql": "^2.18.1",
     "mysql2": "^2.3.3",
     "node-cache": "^5.1.2",
+    "node-cron": "^3.0.3",
     "nodemailer": "^6.8.0",
     "nodemon": "^2.0.20",
     "pdf-master": "^1.1.0",

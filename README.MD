@@ -33,3 +33,6 @@ URL: <a target="_blank" href="http://employee.dreywandowski.ng/api"> Complete HR
 
 #
 ## Documentation available at: https://dreywandowski.ng/api_documentations/employee_portal/
+
+
+#### --- https://stackoverflow.com/questions/66587556/node-bull-queue-error-missing-process-handler-for-job-type-job-name

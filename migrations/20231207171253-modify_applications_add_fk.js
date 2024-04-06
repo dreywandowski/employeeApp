@@ -12,7 +12,7 @@ module.exports = {
           table: 'Jobs',
           field: 'id'
         },
-        onDelete: 'cascade',
+        //onDelete: 'cascade',
         onUpdate: 'cascade'
       },),
   ]);

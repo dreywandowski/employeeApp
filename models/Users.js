@@ -69,7 +69,7 @@ rank: {
 });
 
 Users.associate = function(models){
-    Users.hasMany(models.leave, {
+    Users.hasMany(models.leaves, {
         foreignKey: "username",
         sourceKey: "username"
     })

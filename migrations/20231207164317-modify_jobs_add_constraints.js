@@ -13,7 +13,7 @@ module.exports = {
           table: 'applications',
           field: 'job_id'
         },
-        onDelete: 'cascade',
+       // onDelete: 'cascade',
         onUpdate: 'cascade'
       },),
   ]);

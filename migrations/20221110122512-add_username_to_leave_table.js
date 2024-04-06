@@ -9,22 +9,22 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-     return queryInterface.sequelize.transaction(t => {
+    /* return queryInterface.sequelize.transaction(t => {
       return Promise.all([
-        queryInterface.addColumn('Leave', 'username', {
+        queryInterface.addColumn('leaves', 'username', {
           type: Sequelize.DataTypes.STRING
         }, 
         
         { transaction: t }),
 
-        queryInterface.addColumn('Leave', 'approved', {
+        queryInterface.addColumn('leaves', 'approved', {
           type: Sequelize.DataTypes.BOOLEAN
         }, 
         
         { transaction: t }),
         
       ]);
-    });
+    });*/
   },
 
   async down (queryInterface, Sequelize) {
@@ -32,7 +32,7 @@ module.exports = {
      * Add reverting commands here.
      *
      * Example:
-     * await queryInterface.dropTable('users');
+     * await queryInterface.dropTable('leaves');
      */
   }
 };

@@ -15,6 +15,7 @@ module.exports = {
             allowNull: false,
            // unique: true,
           //  allowNull: false,
+            primaryKey : true,
             type: Sequelize.UUID,
             defaultValue: Sequelize.UUIDV4,
           },

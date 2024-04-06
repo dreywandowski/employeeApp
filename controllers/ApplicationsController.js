@@ -1,4 +1,5 @@
 var application = require('../models/application');
+var job = require('../models/job');
 const EventEmitter = require('events');
 const nodemailer = require('nodemailer');
 const ejs = require('ejs');
@@ -82,29 +83,43 @@ eventEmitter.on('sendOfferLetter', (email, interview_date, jobAppliedFor, addres
 
 
 // apply for a job 
+// ====>>> fix jobs not found causing app to break
 const apply = (req, res) => {
     var qry = req.body;
 
-    return application.create({
-        firstName: qry.firstName,
-       lastName: qry.lastName,
-       email: qry.email,
-       phone: qry.phone,
-       address: qry.address,
-       location: qry.location,
-       total_years_of_experience: qry.yearsOfExperience,
-       skills: qry.skills,
-       proffessional_qualifications: qry.proffessional_qualifications,
-       jobAppliedFor : qry.jobAppliedFor,
-       job_id: qry.job_id
-     
-   }).then(created => {
-    // send mail to user after a successful application
-       eventEmitter.emit('sendApplyMail', qry.jobAppliedFor, qry.email);
-       res.status(201).json({'message' : 'Application submitted sucessfully!', 
-               'status': 1});
-   }).
-   catch(err =>{
+    return job.findByPk(qry.job_id)
+           .then(jobs =>{
+            if(jobs === null){
+              console.log('josbb'+jobs)
+              throw Error("User doesn't exist!!"); 
+            }
+            let job_status = jobs.toJSON();
+
+            if (jobs && job_status.isOpen) {  
+       return application.create({
+      firstName: qry.firstName,
+     lastName: qry.lastName,
+     email: qry.email,
+     phone: qry.phone,
+     address: qry.address,
+     location: qry.location,
+     total_years_of_experience: qry.yearsOfExperience,
+     skills: qry.skills,
+     proffessional_qualifications: qry.proffessional_qualifications,
+     jobAppliedFor : qry.jobAppliedFor,
+     job_id: qry.job_id
+   
+     }).then(created => {
+     // send mail to user after a successful application
+     eventEmitter.emit('sendApplyMail', qry.jobAppliedFor, qry.email);
+     res.status(201).json({'message' : 'Application submitted sucessfully!', 
+     'status': 1});
+     });
+      } else {
+              throw Error("Job doesn't exist");
+            }
+          }).
+           catch(err =>{
        res.status(404).json({'message' : 'Error applying for the job!', 
        'error': err, 'status': 0});
    });

@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    return Promise.all([
+ /*   return Promise.all([
       queryInterface.addColumn(
         'users', 
         'jwt', 
@@ -12,7 +12,7 @@ module.exports = {
           allowNull: true,
         },
       ),
-    ]);
+    ]);*/
   },
 
   async down (queryInterface, Sequelize) {

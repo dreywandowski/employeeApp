@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    return Promise.all([
+ /*   return Promise.all([
     queryInterface.addColumn(
       'leaves',
       'rejected_by',
@@ -12,7 +12,7 @@ module.exports = {
         allowNull: true,
       },
     ),
-    ]);
+    ]);*/
     /**
      * Add altering commands here.
      *
@@ -26,7 +26,7 @@ module.exports = {
      * Add reverting commands here.
      *
      * Example:
-     * await queryInterface.dropTable('users');
+     * await queryInterface.dropTable('leaves');
      */
   }
 };

@@ -1,6 +1,9 @@
 var users = require('../models/Users');
 var password_resets = require('../models/password_resets');
-const bcrypt = require("bcrypt");
+const { hashPassword } = require('../services/hashPasswordService'); 
+const { sendEmail } = require('../services/emailService');
+const { insertData, getData, updateData } = require('../services/dbService'); 
+const Users = require('../models/Users');
 const jwt = require("jsonwebtoken");
 const NodeCache = require('node-cache');
 const cache = new NodeCache({ stdTTL: 86450 });
@@ -18,43 +21,10 @@ const index = (req, res, next) => {
 
 
  // send mail to the new user for verification
+ 
  eventEmitter.on('sendVerifyAccount', (pin, email) => {
-    const sendEmail = (receiver, subject, content) => {
-         user = process.env.MAIL_USERNAME;
-         pass = process.env.MAIL_PWD;
-
-        let transport = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 465,
-        secure: true,
-        auth: {
-          user: user,
-          pass: pass
-        }
-     });
-
-     ejs.renderFile('/var/www/html/payroll/assets/templates/new_user_verify.ejs', {content:pin}, (err, data) => {
-        if (err) {
-          console.log("error opening the file!! "+err);
-        } else {
-          var mailOptions = {
-            from: 'admin@employeeapp.com',
-            to: email,
-            subject: subject,
-            html: data
-          };
-        }
-   
-   transport.sendMail(mailOptions, function(err, info) {
-       if (err) {
-         console.log("cant send mail!! " + err);
-       } else {
-         console.log("mail sent ok "+"content=="+ msg+info);
-       }
-   });
-});
-}
-        sendEmail(email, "Verify your account");
+     const send = sendEmail(email, subject, content, pin);
+        sendEmail(email, "Verify your account", pin, process.env.USER_VERIFY_TEMPLATE);
  });
 
 // assign new user token utility
@@ -91,38 +61,20 @@ const assignuserToken = (username, role, email) => {
 }
 
 // new user verification initiation
-const new_user_verify = (email) => {
-    var check = password_resets.findOne({
-        where: {
-            email: email
-        }
-    }).then(data => {
-     if(data !== null){
-       password_resets.update({where: {
+async function new_user_verify(email){
+    const check = await getData(password_resets, {
         email: email
-    }
 });
+     if(Object.keys(check).length !== 0){
+        return 0;
+        //const upd = await updateData(password_resets, {email: email});
      }
      else{
        const pin =  Math.floor(Math.random() * 999999) + 100000;
-       password_resets.create({
-        email: email,
-        token: pin
-       }).then(msg =>{
-        if (msg === null){
-            throw Error("unable to create a verification pin");
+       const createPin = await insertData(password_resets, {email: email, token: pin });
+            return 1;
         }
-        else{
-            eventEmitter.emit('sendVerifyAccount', pin,email);
-        }
-       });
      }
-    }).catch(err => {
-        console.log('Error creating the PIN or sending mail! ' + err)
-    });
-
-    return 1;
-}
 
 // resend verify token
 const resend_token = (req, res) => {
@@ -216,29 +168,41 @@ const verifyMail = (req, res) => {
 
 
 // register employee
-const register = (req, res) => {
-    var qry = req.body;
+async function register (req, res) {
+    try{
+        var qry = req.body;
+         // hash the password and then save the user in the returned Promise
+    const hashed = await hashPassword(qry.password);
+    /*const saveUser = await insertData(Users, { firstName: qry.firstName,
+        username: qry.username,
+        lastName: qry.lastName,
+        password: hashed,
+        age: qry.age,
+        email:qry.email,
+        department: qry.dept,
+        isAdmin: qry.admin});*/
 
-    // hash the password and then save the user in the returned Promise
-    function hashPassword(plaintextPassword) {
-        bcrypt.hash(plaintextPassword, 15)
-            .then(hash => {
-                console.log("our hashed pwd:"+hash);
-                return hash;
-            })
-            .then(pwd =>{
-                users.sync().then(data =>{
-                   // console.log('table synced OK, with entries from user!', qry);
-                    const user = users.create({
-                        firstName: qry.firstName,
-                        username: qry.username,
-                        lastName: qry.lastName,
-                        password: pwd,
-                        age: qry.age,
-                        email:qry.email,
-                        department: qry.dept,
-                        isAdmin: qry.admin
-                    }).then(datad => {
+   const ver =  await new_user_verify(qry.email);
+        if(!ver){
+            res.status(403).json({'message' : 'Error initiatiating a verification token for the new user! User already exists', 
+                          'status':0});
+        }
+        eventEmitter.emit('sendVerifyAccount', pin,email);
+            }
+        catch(error){
+            let statusCode = 403; // Default status code
+            if (error.message.includes('Error creating the records')) {
+                statusCode = 500;
+            }
+            res.status(statusCode).json({
+                message: error.message,
+                status: 0
+            });
+        }
+    }
+
+   
+            /*.then(datad => {
                         var name = qry.username;
                         var email = qry.email;
                         if(qry.admin === "1"){
@@ -281,9 +245,7 @@ const register = (req, res) => {
                                           'status':0});
             })
     }
-    // run the function
-    hashPassword(qry.password);
-    }
+    }*/
   
 // edit profile
 const editProfile = (req, res) => {

@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    return Promise.all([
+   /* return Promise.all([
       queryInterface.sequelize.query('SET FOREIGN_KEY_CHECKS = 0'),
       queryInterface.addConstraint('users', {
         fields: ['username'],
@@ -16,7 +16,7 @@ module.exports = {
        // onDelete: 'cascade',
         onUpdate: 'cascade'
       },),
-  ]);
+  ]);*/
   },
 
    

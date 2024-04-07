@@ -7,10 +7,7 @@ const Users = require('../models/Users');
 const jwt = require("jsonwebtoken");
 const NodeCache = require('node-cache');
 const cache = new NodeCache({ stdTTL: 86450 });
-const env = require('dotenv').config();
 const EventEmitter = require('events');
-const ejs = require('ejs');
-const nodemailer = require('nodemailer');
 var eventEmitter = new EventEmitter();
 
    // home route
@@ -21,9 +18,7 @@ const index = (req, res, next) => {
 
 
  // send mail to the new user for verification
- 
  eventEmitter.on('sendVerifyAccount', (pin, email) => {
-     const send = sendEmail(email, subject, content, pin);
         sendEmail(email, "Verify your account", pin, process.env.USER_VERIFY_TEMPLATE);
  });
 
@@ -71,8 +66,9 @@ async function new_user_verify(email){
      }
      else{
        const pin =  Math.floor(Math.random() * 999999) + 100000;
-       const createPin = await insertData(password_resets, {email: email, token: pin });
-            return 1;
+       //const createPin = await insertData(password_resets, {email: email, token: pin });
+       eventEmitter.emit('sendVerifyAccount', pin,email);
+       return 1;
         }
      }
 
@@ -187,7 +183,6 @@ async function register (req, res) {
             res.status(403).json({'message' : 'Error initiatiating a verification token for the new user! User already exists', 
                           'status':0});
         }
-        eventEmitter.emit('sendVerifyAccount', pin,email);
             }
         catch(error){
             let statusCode = 403; // Default status code

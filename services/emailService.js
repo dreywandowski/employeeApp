@@ -3,20 +3,19 @@ const nodemailer = require('nodemailer');
 const ejs = require('ejs');
 
     async function sendEmail(email, subject, others, template){
-         //user = process.env.MAIL_USERNAME;
-         //pass = process.env.MAIL_PWD;
+         user = process.env.MAIL_USERNAME;
+         pass = process.env.MAIL_PWD;
          let content = '';
 
         let transport = nodemailer.createTransport({
-        host: process.env.MAIL_HOST,
-        port: process.env.MAIL_PORT,
+        host: "smtp.gmail.com",
+        port: 465,
         secure: true,
         auth: {
-          user: process.env.MAIL_USERNAME,
-          pass: process.env.MAIL_PWD
+          user,
+          pass
         }
      });
-
      ejs.renderFile(template, {content:others}, (err, data) => {
         if (err) {
           console.log("error opening the file!! "+err);

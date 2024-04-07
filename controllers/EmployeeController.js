@@ -1,6 +1,6 @@
 var users = require('../models/Users');
 var password_resets = require('../models/password_resets');
-const { hashPassword } = require('../services/hashPasswordService'); 
+const { hashPassword, decryptPassword } = require('../services/hashPasswordService'); 
 const { sendEmail } = require('../services/emailService');
 const { insertData, getData, updateData } = require('../services/dbService'); 
 const Users = require('../models/Users');
@@ -16,6 +16,9 @@ const index = (req, res, next) => {
     'status':'Unauthenticated'}); 
 }
 
+const d = new Date();
+d.toLocaleString('en-US', { timeZone: 'Africa/Lagos' })
+const newD = new Date(d.getTime() + 172800);
 
  // send mail to the new user for verification
  eventEmitter.on('sendVerifyAccount', (pin, email) => {
@@ -171,8 +174,10 @@ const verifyMail = (req, res) => {
 async function register (req, res) {
     try{
         var qry = req.body;
-         // hash the password and then save the user in the returned Promise
+         // hash the password
     const hashed = await hashPassword(qry.password);
+
+    // save the user 
     const saveUser = await insertData(Users, { firstName: qry.firstName,
         username: qry.username,
         lastName: qry.lastName,
@@ -182,28 +187,19 @@ async function register (req, res) {
         department: qry.dept,
         isAdmin: qry.admin});
 
+  // send verification mail
    const ver =  await new_user_verify(qry.email);
         if(!ver){
             throw new Error('Error initiatiating a verification token for the new user! User already exists'); 
         }
 
-        if(qry.admin === "1"){
-            role = 'admin';
-        }
-        else{
-            role = 'user'; 
-        }
-
-        const user_details = {username: qry.username, role: role, email:qry.email };
-        // assign token to new user
+        // create and assign token to new user
+     qry.admin === "1" ? role = 'admin' : role = 'user';
+   const user_details = {username: qry.username, role: role, email:qry.email };
    const assignToken = await assignUserToken(qry.username, role, qry.email);
-   const d = new Date();
-   d.toLocaleString('en-US', { timeZone: 'Africa/Lagos' })
-   const newD = new Date(d.getTime() + 172800);
   
    res.status(201).json({'message' : 'User '+qry.firstName+ ' '+ qry.lastName+' '+ 'created sucessfully!',
    accessToken:assignToken, user: user_details,expiresAt: newD, 'status':1});
-  
             }
         catch(error){
             let statusCode = 403; // Default status code
@@ -247,62 +243,34 @@ const editProfile = (req, res) => {
 }
 
     // login
-const login = (req, res) => {
+async function login(req, res){
+    try{
     var qry = req.body;
     const username = qry.username;
     const pwd  = qry.password;
-    
-    users.sync().then(data =>{
-       return users.findOne({
-            where: {
-                username: username
-            }
-        });
-        }).then(resp => {
-           const dbPwd = resp.password;
-           let role = resp.isAdmin;
-           if(resp.isAdmin === true){
-          role = "admin";
-         }
-            else role = "user";
-           const name  = resp.username;
-           var email = resp.email;
-           
-        const user_details = {username: username, role: role, email:email };
-      
-           // compare hashed db pwd against user input and verify
-         const decrpyt =  () => bcrypt.compare(pwd, dbPwd)
-                    .then(result => {
-                        if(result){
-                           let token =  assignUserToken(username, role, email);
-                           if(token !==''){
-                            const d = new Date();
-                            d.toLocaleString('en-US', { timeZone: 'Africa/Lagos' })
-                            const newD = new Date(d.getTime() + 172800);
+    const check = await getData(users, {username: username});
+    let dbPwd ='';  let email ='';  let isAdmin ='';
+    check.forEach(instance => {
+        const dataValues = instance.dataValues;
 
-                            res.status(200).json({'message' :'Login successful.., Authenticated!', 'status' :result, accessToken:token, user: user_details,expiresAt: newD});
-                           }
-                           else{
-                            res.status(500).json({'message' : 'Some error occured while trying to set tokens!', 'status': 0})
-                           }
-                           
-                        }
-                        else res.status(401).json({'message' : 'Username or password dont match!',
-                        'status': result});
-                        
-                    })
-                    .catch(err =>{
-                        res.status(500).json({'message' : ' Error decrpyting user hash, kindly check the error msg!',
-                                          'error': err.message, 'status': 0});
-                    });
-
-                    decrpyt();
-                 }) .
-        catch(err =>{
-            res.status(404).json({'message' :'error verifying the user !!', 'error' : err.message, 'status': 0});
-        });
-
-    
+        email = dataValues.email;   isAdmin = dataValues.isAdmin;
+        dbPwd = dataValues.password;  //password = dataValues.password;
+    });
+    isAdmin === 1 ? role = 'admin' : role = 'user';
+    const user_details = {username: username, role: role, email:email };
+  
+    const checkPwd = await decryptPassword(pwd,dbPwd);
+    if(checkPwd){
+        const assignToken = await assignUserToken(qry.username, role, email);
+        res.status(200).json({'message' :'Login successful.., Authenticated!', 'status' :1, accessToken:assignToken, user: user_details,expiresAt: newD});
+    }
+    else{
+        res.status(500).json({'message' : 'Some error occured while trying to set tokens!', 'status': 0})
+    }
+    }
+        catch(err){
+            throw new Error('Error logging in : ' + err.message);
+        };
     }
 
 // logout

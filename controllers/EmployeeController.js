@@ -23,54 +23,58 @@ const index = (req, res, next) => {
  });
 
 // assign new user token utility
-const assignuserToken = (username, role, email) => {
-   //sign JWT token with user id
-      var token = jwt.sign({
-      user: username,
-      role: role,
-      email: email
-      }, process.env.JWT_KEY, {
-     expiresIn: 86400
-     });
+async function assignUserToken(username, role, email) {
+    try {
+        // Sign JWT token with user id
+        var token = jwt.sign({
+            user: username,
+            role: role,
+            email: email
+        }, process.env.JWT_KEY, {
+            expiresIn: 86400
+        });
 
-     // save tokens to the db against the user
-     users.update(
-        { jwt: token },
-        { where: { username: username } }
-      );
+        // Save tokens to the database against the user
+        const upd = await updateData(users, { jwt: token }, { username: username });
 
-     // save token to a cache for fast retrieval
-     let exists = cache.has('jwt_token_'+username);
-     obj = { k: username, val: token };
+        // Save token to a cache for fast retrieval
+        let exists = cache.has('jwt_token_' + username);
+        obj = { k: username, val: token };
 
-     if(!exists){
-    cache.set('jwt_token_'+username, obj, 86444);
-     }
-     else{
-        cache.del('jwt_token_'+username); 
-        cache.set('jwt_token_'+username, obj, 86444);
-     }
+        if (!exists) {
+            cache.set('jwt_token_' + username, obj, 86400); 
+        } else {
+            cache.del('jwt_token_' + username);
+            cache.set('jwt_token_' + username, obj, 86400);
+        }
 
-     return token;
-     
+        return token;
+    } catch (error) {
+        throw new Error('Error assigning token: ' + error.message);
+    }
 }
+
 
 // new user verification initiation
 async function new_user_verify(email){
+    try{
     const check = await getData(password_resets, {
         email: email
 });
      if(Object.keys(check).length !== 0){
         return 0;
-        //const upd = await updateData(password_resets, {email: email});
      }
      else{
        const pin =  Math.floor(Math.random() * 999999) + 100000;
-       //const createPin = await insertData(password_resets, {email: email, token: pin });
+       const createPin = await insertData(password_resets, {email: email, token: pin });
        eventEmitter.emit('sendVerifyAccount', pin,email);
        return 1;
         }
      }
+catch{
+    reject('Error hashing the password');
+}
+}
 
 // resend verify token
 const resend_token = (req, res) => {
@@ -169,24 +173,41 @@ async function register (req, res) {
         var qry = req.body;
          // hash the password and then save the user in the returned Promise
     const hashed = await hashPassword(qry.password);
-    /*const saveUser = await insertData(Users, { firstName: qry.firstName,
+    const saveUser = await insertData(Users, { firstName: qry.firstName,
         username: qry.username,
         lastName: qry.lastName,
         password: hashed,
         age: qry.age,
         email:qry.email,
         department: qry.dept,
-        isAdmin: qry.admin});*/
+        isAdmin: qry.admin});
 
    const ver =  await new_user_verify(qry.email);
         if(!ver){
-            res.status(403).json({'message' : 'Error initiatiating a verification token for the new user! User already exists', 
-                          'status':0});
+            throw new Error('Error initiatiating a verification token for the new user! User already exists'); 
         }
+
+        if(qry.admin === "1"){
+            role = 'admin';
+        }
+        else{
+            role = 'user'; 
+        }
+
+        const user_details = {username: qry.username, role: role, email:qry.email };
+        // assign token to new user
+   const assignToken = await assignUserToken(qry.username, role, qry.email);
+   const d = new Date();
+   d.toLocaleString('en-US', { timeZone: 'Africa/Lagos' })
+   const newD = new Date(d.getTime() + 172800);
+  
+   res.status(201).json({'message' : 'User '+qry.firstName+ ' '+ qry.lastName+' '+ 'created sucessfully!',
+   accessToken:assignToken, user: user_details,expiresAt: newD, 'status':1});
+  
             }
         catch(error){
             let statusCode = 403; // Default status code
-            if (error.message.includes('Error creating the records')) {
+            if (error.message.includes('Error creating the records' || 'Error assigning token')) {
                 statusCode = 500;
             }
             res.status(statusCode).json({
@@ -196,51 +217,7 @@ async function register (req, res) {
         }
     }
 
-   
-            /*.then(datad => {
-                        var name = qry.username;
-                        var email = qry.email;
-                        if(qry.admin === "1"){
-                            role = 'admin';
-                        }
-                        else{
-                            role = 'user'; 
-                        }
-                        const user_details = {username: name, role: role };
 
-                        new_user_verify(email);
-                        if(!new_user_verify){
-                            res.status(403).json({'message' : 'Error initiatiating a verification token for the new user', 
-                                          'status':0});
-                        }
-                        
-                        // assign token to new user
-                           let token =  assignuserToken(name, role, email);
-                           if(token !==''){
-                            const d = new Date();
-                            d.toLocaleString('en-US', { timeZone: 'Africa/Lagos' })
-                            const newD = new Date(d.getTime() + 172800);
-
-                           
-                        res.status(201).json({'message' : 'User '+qry.firstName+ ' '+ qry.lastName+' '+ 'created sucessfully!', 
-                        accessToken:token, user: user_details,expiresAt: newD, 'status':1});
-                           }
-                           else{
-                            res.status(500).json({'message' : 'Some error occured while trying to set tokens!', 'status': 0})
-                           }
-                           
-                        }).catch(err =>{
-                        res.status(403).json({'message' : 'Error creating the user or assigning a JWT token! ' + err, 
-                                          'status':0});
-                });
-            });
-            })
-            .catch(err => {
-                res.status(403).json({'message' : 'Error hashing the password ' + err, 
-                                          'status':0});
-            })
-    }
-    }*/
   
 // edit profile
 const editProfile = (req, res) => {
@@ -297,7 +274,7 @@ const login = (req, res) => {
          const decrpyt =  () => bcrypt.compare(pwd, dbPwd)
                     .then(result => {
                         if(result){
-                           let token =  assignuserToken(username, role, email);
+                           let token =  assignUserToken(username, role, email);
                            if(token !==''){
                             const d = new Date();
                             d.toLocaleString('en-US', { timeZone: 'Africa/Lagos' })

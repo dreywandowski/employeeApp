@@ -34,8 +34,8 @@ const getData = (table, clause) => {
     });
 }
 
-const updateData = (table, clause) => {
-    return table.update({ where: clause }).
+const updateData = (table, attributes, clause) => {
+    return table.update(attributes, { where: clause }).
     then(data => {
         return data;
     }).catch(err => {

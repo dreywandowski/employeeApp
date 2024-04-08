@@ -249,23 +249,17 @@ async function login(req, res){
     const username = qry.username;
     const pwd  = qry.password;
     const check = await getData(users, {username: username});
-    let dbPwd ='';  let email ='';  let isAdmin ='';
-    check.forEach(instance => {
-        const dataValues = instance.dataValues;
 
-        email = dataValues.email;   isAdmin = dataValues.isAdmin;
-        dbPwd = dataValues.password;  //password = dataValues.password;
-    });
-    isAdmin === 1 ? role = 'admin' : role = 'user';
-    const user_details = {username: username, role: role, email:email };
+    check[0].dataValues.isAdmin ? role = 'admin' : role = 'user';
+    const user_details = {username: username, role: role, email:check[0].dataValues.email };
   
-    const checkPwd = await decryptPassword(pwd,dbPwd);
+    const checkPwd = await decryptPassword(pwd,check[0].dataValues.password);
     if(checkPwd){
         const assignToken = await assignUserToken(qry.username, role, email);
         res.status(200).json({'message' :'Login successful.., Authenticated!', 'status' :1, accessToken:assignToken, user: user_details,expiresAt: newD});
     }
     else{
-        res.status(500).json({'message' : 'Some error occured while trying to set tokens!', 'status': 0})
+        res.status(500).json({'message' : 'Username or password dont match!', 'status': 0})
     }
     }
         catch(err){

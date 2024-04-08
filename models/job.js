@@ -4,7 +4,7 @@ const DataTypes = conn.DataTypes;
 
 
 // create a job model
-const Job = sequelize.define('Job', {
+const Job = sequelize.define('jobs', {
   title: DataTypes.STRING,
   isOpen: DataTypes.BOOLEAN,
   yearsOfExperience: DataTypes.INTEGER,

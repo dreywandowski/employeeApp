@@ -10,10 +10,7 @@ const { insertData, getData, updateData } = require('../services/dbService');
 
 // send mail to user upon succesful job application
 eventEmitter.on('sendApplyMail', (msg, email) => {
-  const contentData = {
-    msg: msg
-  };
-  sendEmail(email, "Your job application has been recieved", contentData, process.env.JOB_APPLIED_TEMPLATE);
+  sendEmail(email, "Your job application has been recieved", msg, process.env.JOB_APPLIED_TEMPLATE);
 });
 
 
@@ -54,9 +51,9 @@ async function apply(req, res){
     if (Object.keys(jobs).length == 0){
       throw new Error("job doesn't exist!!"); 
    }
-      let job_status = jobs.toJSON();
+      let job_status = jobs[0].dataValues;
       if (jobs && job_status.isOpen) { 
-        const create_job = await insertData(job, {
+        const create_job = await insertData(application, {
           firstName: qry.firstName,
          lastName: qry.lastName,
          email: qry.email,
@@ -146,29 +143,15 @@ const changeJobStatus = (req, res) => {
     // get application details
     return application.findAll({where: {id:qry.id}}).
     then(application =>{
-      let email = '';  let jobAppliedFor = '';  let interview_date = '';
-      let firstName = '';  let lastName = ''; 
-
-      application.forEach(instance => {
-        const dataValues = instance.dataValues;
-
-        firstName = dataValues.firstName;
-        lastName = dataValues.lastName;
-        email = dataValues.email;
-        jobAppliedFor = dataValues.jobAppliedFor;
-        interview_date = dataValues.interview_date;
-        
-    
-      });
        if(qry.status == 2){
-        eventEmitter.emit('sendFirstInterviewMail', email, interview_date, jobAppliedFor, process.env.COMPANY_ADDRESS);
+        eventEmitter.emit('sendFirstInterviewMail', application[0].dataValues.email, application[0].dataValues.interview_date, application[0].dataValues.jobAppliedFor, process.env.COMPANY_ADDRESS);
        }
        else if(qry.status == 3){
-        eventEmitter.emit('sendSecondInterviewMail', email, interview_date, jobAppliedFor, process.env.COMPANY_ADDRESS);
+        eventEmitter.emit('sendSecondInterviewMail', application[0].dataValues.email, application[0].dataValues.interview_date, application[0].dataValues.jobAppliedFor, process.env.COMPANY_ADDRESS);
        }
        // TO-DO: generate offer letter email + pdf and send
        else if(qry.status == 4){
-        eventEmitter.emit('sendOfferLetter', email, interview_date, jobAppliedFor, process.env.COMPANY_ADDRESS);
+        eventEmitter.emit('sendOfferLetter', application[0].dataValues.email, application[0].dataValues.interview_date, application[0].dataValues.jobAppliedFor, process.env.COMPANY_ADDRESS);
        }
        else{
        }

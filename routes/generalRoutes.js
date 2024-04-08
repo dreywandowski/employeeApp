@@ -18,7 +18,7 @@ var urlencodedParser = bodyParser.urlencoded ({extended :false});
   router.get('/jobs/:id', jobs.getJob);
 
   // apply for job
-  router.post('/jobs/applications/apply/:id', urlencodedParser, applications.apply);
+  router.post('/jobs/applications/apply', urlencodedParser, applications.apply);
 
 
 module.exports = router;

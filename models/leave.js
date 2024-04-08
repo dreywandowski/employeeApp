@@ -4,7 +4,7 @@ const DataTypes = conn.DataTypes;
 
 
 // create a leave model
-const Leave = sequelize.define('leave', {
+const Leave = sequelize.define('leaves', {
  purpose: DataTypes.STRING,
  type: DataTypes.STRING,
  status: DataTypes.STRING,

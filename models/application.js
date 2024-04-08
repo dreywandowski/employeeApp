@@ -4,7 +4,7 @@ const DataTypes = conn.DataTypes;
 
 
 // create an application model
-const application = sequelize.define('application', {
+const application = sequelize.define('applications', {
   firstName: DataTypes.STRING,
   lastName: DataTypes.STRING,
   email: DataTypes.STRING,
@@ -21,7 +21,7 @@ const application = sequelize.define('application', {
  });
  
  application.associate = function(models){
-  application.hasMany(models.jobs, {
+  application.hasMany(models.job, {
       foreignKey: "id",
       sourceKey: "job_id"
   })

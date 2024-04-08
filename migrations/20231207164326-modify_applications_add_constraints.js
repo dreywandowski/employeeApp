@@ -9,7 +9,7 @@ module.exports = {
         type: 'foreign key',
         name: 'jobs_fk',
         references: { 
-          table: 'Jobs',
+          table: 'jobs',
           field: 'id'
         },
         //onDelete: 'cascade',

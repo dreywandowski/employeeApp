@@ -3,16 +3,19 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    /*return Promise.all([
-      queryInterface.addColumn(
-        'applications',
-        'job_id',
-        {
-          type: Sequelize.INTEGER,
-          allowNull: true,
+    return Promise.all([
+      queryInterface.addConstraint('applications', {
+        fields: ['job_id'],
+        type: 'foreign key',
+        name: 'jobs_fk',
+        references: { 
+          table: 'Jobs',
+          field: 'id'
         },
-      ),
-      ]);*/
+        //onDelete: 'cascade',
+        onUpdate: 'cascade'
+      },),
+  ]);
     },
 
   async down (queryInterface, Sequelize) {

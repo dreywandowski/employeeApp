@@ -12,7 +12,7 @@ module.exports = {
           table: 'users',
           field: 'username'
         },
-        onDelete: 'cascade',
+       // onDelete: 'cascade',
         onUpdate: 'cascade'
       },),
   ]);

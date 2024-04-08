@@ -1,55 +1,19 @@
 var application = require('../models/application');
 var job = require('../models/job');
-const EventEmitter = require('events');
-const nodemailer = require('nodemailer');
-const ejs = require('ejs');
+const { sendEmail } = require('../services/emailService');
 var Json2csvParser = require('json2csv').Parser;
-//var localEvents = require('../assets/utils/email_sending_util');
+const EventEmitter = require('events');
 var eventEmitter = new EventEmitter();
+const { insertData, getData, updateData } = require('../services/dbService'); 
 
 // TO-DO: Block applications for jobs that are expired
- // email sending function
- const sendEmail = (receiver, subject, content, contentData) => {
-  user = process.env.MAIL_USERNAME;
-  pass = process.env.MAIL_PWD;
-
- let transport = nodemailer.createTransport({
- host: "smtp.gmail.com",
- port: 465,
- secure: true,
- auth: {
-   user: user,
-   pass: pass
- }
-});
-ejs.renderFile(content, contentData, (err, data) => {
- if (err) {
-   console.log("error opening the file!! "+err);
- } else {
-   var mailOptions = {
-     from: process.env.MAIL_FROM,
-     to: receiver,
-     subject: subject,
-     html: data
-   };
- }
-
-transport.sendMail(mailOptions, function(err, info) {
-if (err) {
-  console.log("cant send mail!! " + err);
-} else {
-  console.log("mail sent ok "+"content== "+ msg+info);
-}
-});
-});
-}
 
 // send mail to user upon succesful job application
 eventEmitter.on('sendApplyMail', (msg, email) => {
   const contentData = {
     msg: msg
   };
-  sendEmail(email, "Your job application has been recieved", process.env.JOB_APPLIED_TEMPLATE, contentData);
+  sendEmail(email, "Your job application has been recieved", contentData, process.env.JOB_APPLIED_TEMPLATE);
 });
 
 
@@ -83,46 +47,42 @@ eventEmitter.on('sendOfferLetter', (email, interview_date, jobAppliedFor, addres
 
 
 // apply for a job 
-// ====>>> fix jobs not found causing app to break
-const apply = (req, res) => {
+async function apply(req, res){
+  try{
     var qry = req.body;
+    const jobs = await getData(job, {id: qry.job_id});
+    if (Object.keys(jobs).length == 0){
+      throw new Error("job doesn't exist!!"); 
+   }
+      let job_status = jobs.toJSON();
+      if (jobs && job_status.isOpen) { 
+        const create_job = await insertData(job, {
+          firstName: qry.firstName,
+         lastName: qry.lastName,
+         email: qry.email,
+         phone: qry.phone,
+         address: qry.address,
+         location: qry.location,
+         total_years_of_experience: qry.yearsOfExperience,
+         skills: qry.skills,
+         proffessional_qualifications: qry.proffessional_qualifications,
+         jobAppliedFor : qry.jobAppliedFor,
+         job_id: qry.job_id
+         });
 
-    return job.findByPk(qry.job_id)
-           .then(jobs =>{
-            if(jobs === null){
-              console.log('josbb'+jobs)
-              throw Error("User doesn't exist!!"); 
-            }
-            let job_status = jobs.toJSON();
-
-            if (jobs && job_status.isOpen) {  
-       return application.create({
-      firstName: qry.firstName,
-     lastName: qry.lastName,
-     email: qry.email,
-     phone: qry.phone,
-     address: qry.address,
-     location: qry.location,
-     total_years_of_experience: qry.yearsOfExperience,
-     skills: qry.skills,
-     proffessional_qualifications: qry.proffessional_qualifications,
-     jobAppliedFor : qry.jobAppliedFor,
-     job_id: qry.job_id
-   
-     }).then(created => {
      // send mail to user after a successful application
      eventEmitter.emit('sendApplyMail', qry.jobAppliedFor, qry.email);
      res.status(201).json({'message' : 'Application submitted sucessfully!', 
      'status': 1});
-     });
-      } else {
-              throw Error("Job doesn't exist");
+     }
+       else {
+              throw Error("Job listing has expired");
             }
-          }).
-           catch(err =>{
+          }
+           catch(err){
        res.status(404).json({'message' : 'Error applying for the job!', 
-       'error': err, 'status': 0});
-   });
+       'error': err.message, 'status': 0});
+   }
 }
 
 // view applications

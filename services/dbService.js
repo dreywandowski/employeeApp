@@ -14,6 +14,9 @@ const insertData = (table, data) => {
                 case "User":
                     record = 'user';
                     break;
+                    case "job":
+                        record = 'job';
+                        break;
             default:
         }
         throw new Error('Error creating ' + record + ': ' + err); 

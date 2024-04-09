@@ -1,18 +1,10 @@
 var application = require('../models/application');
 var job = require('../models/job');
-const { sendEmail } = require('../services/emailService');
+const { emitEvent } = require('../services/emailService');
 var Json2csvParser = require('json2csv').Parser;
 const EventEmitter = require('events');
 var eventEmitter = new EventEmitter();
 const { insertData, getData, updateData } = require('../services/dbService'); 
-
-// TO-DO: Block applications for jobs that are expired
-
-// send mail to user upon succesful job application
-eventEmitter.on('sendApplyMail', (msg, email) => {
-  sendEmail(email, "Your job application has been recieved", msg, process.env.JOB_APPLIED_TEMPLATE);
-});
-
 
 // send mail to user upon change of job application status
 eventEmitter.on('sendFirstInterviewMail', (email, interview_date, jobAppliedFor, address) => {
@@ -21,7 +13,7 @@ eventEmitter.on('sendFirstInterviewMail', (email, interview_date, jobAppliedFor,
     job: jobAppliedFor,
     location: address,
   };
-sendEmail(email, "Interview Invitation", process.env.INTERVIEW_TEMPLATE, contentData);
+sendEmail(email, "Interview Invitation", contentData, process.env.INTERVIEW_TEMPLATE);
 });
 
 eventEmitter.on('sendSecondInterviewMail', (email, interview_date, jobAppliedFor, address) => {
@@ -30,7 +22,7 @@ eventEmitter.on('sendSecondInterviewMail', (email, interview_date, jobAppliedFor
     job: jobAppliedFor,
     location: address,
   };
-  sendEmail(email, "Final Interview Invitation", process.env.INTERVIEW_TEMPLATE_SECOND, contentData);
+  sendEmail(email, "Final Interview Invitation", contentData, process.env.INTERVIEW_TEMPLATE_SECOND);
   });
 
 eventEmitter.on('sendOfferLetter', (email, interview_date, jobAppliedFor, address) => {
@@ -39,7 +31,7 @@ eventEmitter.on('sendOfferLetter', (email, interview_date, jobAppliedFor, addres
     job: jobAppliedFor,
     location: address,
   };
-    sendEmail(email, "Offer Letter", process.env.OFFER_LETTER, contentData);
+    sendEmail(email, "Offer Letter",  contentData, process.env.OFFER_LETTER);
     });
 
 
@@ -68,7 +60,7 @@ async function apply(req, res){
          });
 
      // send mail to user after a successful application
-     eventEmitter.emit('sendApplyMail', qry.jobAppliedFor, qry.email);
+     emitEvent('sendApplyMail', qry.jobAppliedFor, qry.email,  process.env.JOB_APPLIED_TEMPLATE, "Your job application has been recieved");
      res.status(201).json({'message' : 'Application submitted sucessfully!', 
      'status': 1});
      }
@@ -144,13 +136,16 @@ const changeJobStatus = (req, res) => {
     return application.findAll({where: {id:qry.id}}).
     then(application =>{
        if(qry.status == 2){
-        eventEmitter.emit('sendFirstInterviewMail', application[0].dataValues.email, application[0].dataValues.interview_date, application[0].dataValues.jobAppliedFor, process.env.COMPANY_ADDRESS);
+        emitEvent('sendFirstInterviewMail', qry.jobAppliedFor, qry.email,  process.env.JOB_APPLIED_TEMPLATE, "Your job application has been recieved");
+       // eventEmitter.emit('sendFirstInterviewMail', application[0].dataValues.email, application[0].dataValues.interview_date, application[0].dataValues.jobAppliedFor, process.env.COMPANY_ADDRESS);
        }
        else if(qry.status == 3){
+        emitEvent('sendFirstInterviewMail', qry.jobAppliedFor, qry.email,  process.env.JOB_APPLIED_TEMPLATE, "Your job application has been recieved");
         eventEmitter.emit('sendSecondInterviewMail', application[0].dataValues.email, application[0].dataValues.interview_date, application[0].dataValues.jobAppliedFor, process.env.COMPANY_ADDRESS);
        }
        // TO-DO: generate offer letter email + pdf and send
        else if(qry.status == 4){
+        emitEvent('sendFirstInterviewMail', qry.jobAppliedFor, qry.email,  process.env.JOB_APPLIED_TEMPLATE, "Your job application has been recieved");
         eventEmitter.emit('sendOfferLetter', application[0].dataValues.email, application[0].dataValues.interview_date, application[0].dataValues.jobAppliedFor, process.env.COMPANY_ADDRESS);
        }
        else{

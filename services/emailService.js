@@ -1,6 +1,30 @@
 const axios = require('axios');
 const nodemailer = require('nodemailer');
 const ejs = require('ejs');
+const EventEmitter = require('events');
+var eventEmitter = new EventEmitter();
+
+
+async function emitEvent(event_, content, email, template, subject){
+  try{
+    eventEmitter.on(event_, async (content, email, template, subject) => {
+      try {
+        await sendEmail(email, subject, content, template);
+      } catch (err) {
+        throw new Error("Error sending email: " + err);
+      }
+    });
+    eventEmitter.emit(event_, content, email, template, subject);
+  }
+  catch(err){
+    throw new Error("Unable to fire event: " + err);
+  }
+}
+
+
+
+
+
 
     async function sendEmail(email, subject, others, template){
          user = process.env.MAIL_USERNAME;
@@ -40,6 +64,7 @@ const ejs = require('ejs');
 
 
 module.exports = {
-    sendEmail 
+    sendEmail,
+    emitEvent
 }
 

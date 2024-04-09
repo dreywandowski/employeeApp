@@ -2,37 +2,7 @@ var application = require('../models/application');
 var job = require('../models/job');
 const { emitEvent } = require('../services/emailService');
 var Json2csvParser = require('json2csv').Parser;
-const EventEmitter = require('events');
-var eventEmitter = new EventEmitter();
 const { insertData, getData, updateData } = require('../services/dbService'); 
-
-// send mail to user upon change of job application status
-eventEmitter.on('sendFirstInterviewMail', (email, interview_date, jobAppliedFor, address) => {
-  const contentData = {
-    interview_date: interview_date,
-    job: jobAppliedFor,
-    location: address,
-  };
-sendEmail(email, "Interview Invitation", contentData, process.env.INTERVIEW_TEMPLATE);
-});
-
-eventEmitter.on('sendSecondInterviewMail', (email, interview_date, jobAppliedFor, address) => {
-  const contentData = {
-    interview_date: interview_date,
-    job: jobAppliedFor,
-    location: address,
-  };
-  sendEmail(email, "Final Interview Invitation", contentData, process.env.INTERVIEW_TEMPLATE_SECOND);
-  });
-
-eventEmitter.on('sendOfferLetter', (email, interview_date, jobAppliedFor, address) => {
-  const contentData = {
-    interview_date: interview_date,
-    job: jobAppliedFor,
-    location: address,
-  };
-    sendEmail(email, "Offer Letter",  contentData, process.env.OFFER_LETTER);
-    });
 
 
 // apply for a job 
@@ -60,7 +30,7 @@ async function apply(req, res){
          });
 
      // send mail to user after a successful application
-     emitEvent('sendApplyMail', qry.jobAppliedFor, qry.email,  process.env.JOB_APPLIED_TEMPLATE, "Your job application has been recieved");
+     await emitEvent('sendApplyMail', qry.jobAppliedFor, qry.email,  process.env.JOB_APPLIED_TEMPLATE, "Your job application has been recieved");
      res.status(201).json({'message' : 'Application submitted sucessfully!', 
      'status': 1});
      }
@@ -135,18 +105,20 @@ const changeJobStatus = (req, res) => {
     // get application details
     return application.findAll({where: {id:qry.id}}).
     then(application =>{
+      const contentData = {
+        interview_date: application[0].dataValues.interview_date,
+        job: application[0].dataValues.jobAppliedFor,
+        location: process.env.COMPANY_ADDRESS 
+      };
        if(qry.status == 2){
-        emitEvent('sendFirstInterviewMail', qry.jobAppliedFor, qry.email,  process.env.JOB_APPLIED_TEMPLATE, "Your job application has been recieved");
-       // eventEmitter.emit('sendFirstInterviewMail', application[0].dataValues.email, application[0].dataValues.interview_date, application[0].dataValues.jobAppliedFor, process.env.COMPANY_ADDRESS);
+       emitEvent('sendFirstInterviewMail', contentData, application[0].dataValues.email,  process.env.INTERVIEW_TEMPLATE, "Interview Invitation");
        }
        else if(qry.status == 3){
-        emitEvent('sendFirstInterviewMail', qry.jobAppliedFor, qry.email,  process.env.JOB_APPLIED_TEMPLATE, "Your job application has been recieved");
-        eventEmitter.emit('sendSecondInterviewMail', application[0].dataValues.email, application[0].dataValues.interview_date, application[0].dataValues.jobAppliedFor, process.env.COMPANY_ADDRESS);
+        emitEvent('sendSecondInterviewMail', contentData, application[0].dataValues.email,  process.env.INTERVIEW_TEMPLATE_SECOND, "Final Interview Invitation");
        }
        // TO-DO: generate offer letter email + pdf and send
        else if(qry.status == 4){
-        emitEvent('sendFirstInterviewMail', qry.jobAppliedFor, qry.email,  process.env.JOB_APPLIED_TEMPLATE, "Your job application has been recieved");
-        eventEmitter.emit('sendOfferLetter', application[0].dataValues.email, application[0].dataValues.interview_date, application[0].dataValues.jobAppliedFor, process.env.COMPANY_ADDRESS);
+        emitEvent('sendOfferLetter', contentData, application[0].dataValues.email,  process.env.OFFER_LETTER, "Offer Letter");
        }
        else{
        }
@@ -156,7 +128,7 @@ const changeJobStatus = (req, res) => {
     }).
   catch(err =>{
       res.status(404).json({'message' : 'Error updating application status!', 
-      'error': err, 'status': 0});
+      'error': err.message, 'status': 0});
   });
 }
 

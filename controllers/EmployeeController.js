@@ -1,14 +1,13 @@
 var users = require('../models/Users');
 var password_resets = require('../models/password_resets');
 const { hashPassword, decryptPassword } = require('../services/hashPasswordService'); 
-const { sendEmail } = require('../services/emailService');
 const { insertData, getData, updateData } = require('../services/dbService'); 
+const { emitEvent } = require('../services/emailService');
 const Users = require('../models/Users');
 const jwt = require("jsonwebtoken");
 const NodeCache = require('node-cache');
 const cache = new NodeCache({ stdTTL: 86450 });
-const EventEmitter = require('events');
-var eventEmitter = new EventEmitter();
+
 
    // home route
 const index = (req, res, next) => {
@@ -20,10 +19,6 @@ const d = new Date();
 d.toLocaleString('en-US', { timeZone: 'Africa/Lagos' })
 const newD = new Date(d.getTime() + 172800);
 
- // send mail to the new user for verification
- eventEmitter.on('sendVerifyAccount', (pin, email) => {
-        sendEmail(email, "Verify your account", pin, process.env.USER_VERIFY_TEMPLATE);
- });
 
 // assign new user token utility
 async function assignUserToken(username, role, email) {
@@ -69,8 +64,8 @@ async function new_user_verify(email){
      }
      else{
        const pin =  Math.floor(Math.random() * 999999) + 100000;
-       const createPin = await insertData(password_resets, {email: email, token: pin });
-       eventEmitter.emit('sendVerifyAccount', pin,email);
+       await insertData(password_resets, {email: email, token: pin });
+       await emitEvent('sendVerifyAccount', pin, email,  process.env.USER_VERIFY_TEMPLATE, "Verify your account");
        return 1;
         }
      }
@@ -98,7 +93,7 @@ const resend_token = (req, res) => {
             throw Error("unable to re-create a verification pin");
         }
         else{
-            eventEmitter.emit('sendVerifyAccount', pin,req.body.email);
+            emitEvent('sendVerifyAccount', pin, pin,req.body.email,  process.env.USER_VERIFY_TEMPLATE, "Verify your account");
             res.status(200).json({'message' : 'Verification token has been re-sent to your email!', 
     'status':1}); 
         }
@@ -255,7 +250,7 @@ async function login(req, res){
   
     const checkPwd = await decryptPassword(pwd,check[0].dataValues.password);
     if(checkPwd){
-        const assignToken = await assignUserToken(qry.username, role, email);
+        const assignToken = await assignUserToken(qry.username, role, check[0].dataValues.email);
         res.status(200).json({'message' :'Login successful.., Authenticated!', 'status' :1, accessToken:assignToken, user: user_details,expiresAt: newD});
     }
     else{

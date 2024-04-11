@@ -13,6 +13,8 @@
     "bcrypt": "^5.1.0",
     "bluebird": "^3.7.2",
     "body-parser": "^1.20.1",
+    "bull": "^4.12.0",
+    "bull-arena": "^4.1.0",
     "cors": "^2.8.5",
     "datalize": "^0.3.4",
     "dotenv": "^16.0.3",
@@ -35,12 +37,14 @@
     "nodemon": "^2.0.20",
     "pdf-master": "^1.1.0",
     "pdfkit": "^0.13.0",
+    "puppeteer": "^10.4.0",
     "redis": "^4.5.1",
     "sequelize": "^6.24.0",
     "util": "^0.12.5",
     "uuid": "^9.0.1",
     "uuidv4": "^6.2.13",
-    "validatorjs": "^3.22.1"
+    "validatorjs": "^3.22.1",
+    "winston": "^3.11.0"
   },
   "devDependencies": {
     "sequelize-cli": "^6.5.2"

@@ -100,7 +100,7 @@ const changeJobStatus = (req, res) => {
     where: {
       id:qry.id
     }
-  }).
+  }). 
    then(updated =>{
     // get application details
     return application.findAll({where: {id:qry.id}}).
@@ -108,7 +108,8 @@ const changeJobStatus = (req, res) => {
       const contentData = {
         interview_date: application[0].dataValues.interview_date,
         job: application[0].dataValues.jobAppliedFor,
-        location: process.env.COMPANY_ADDRESS 
+        location: process.env.COMPANY_ADDRESS ,
+        company: process.env.COMPANY_NAME
       };
        if(qry.status == 2){
        emitEvent('sendFirstInterviewMail', contentData, application[0].dataValues.email,  process.env.INTERVIEW_TEMPLATE, "Interview Invitation");

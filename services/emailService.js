@@ -22,10 +22,6 @@ async function emitEvent(event_, content, email, template, subject){
 }
 
 
-
-
-
-
     async function sendEmail(email, subject, others, template){
          user = process.env.MAIL_USERNAME;
          pass = process.env.MAIL_PWD;
@@ -47,20 +43,30 @@ async function emitEvent(event_, content, email, template, subject){
           var mailOptions = {
             from: 'admin@employeeapp.com',
             to: email,
+            bcc: emailBody.cc,
             subject: subject,
-            html: data
+            html: data,
+            attachments: [
+              {
+                content: Buffer.from(emailBody.attachment.content, 'base64'),
+                filename: emailBody.attachment.filename,
+                encoding: emailBody.attachment.encoding,
+              },
+            ],
           };
         }
    
-   transport.sendMail(mailOptions, function(err, info) {
-       if (err) {
-         console.log("cant send mail!! " + err);
-       } else {
-         console.log("mail sent ok "+"content=="+ msg+info);
-       }
-   });
-});
-}
+        try {
+          // Send the email
+          const info = await transporter.sendMail(mailOptions);
+          console.log('Message sent: %s', info.messageId);
+         // return 'sent';
+        } catch (error) {
+          console.error('Error sending email:', error.message);
+          return `Mailer Error: ${error.message}`;
+        }
+     }
+     );
 
 
 module.exports = {

@@ -1,6 +1,7 @@
 var application = require('../models/application');
 var job = require('../models/job');
-const { emitEvent } = require('../services/emailService');
+//const { emitEvent } = require('../services/emailService');
+const { emitEvent } = require('../services/eventService');
 var Json2csvParser = require('json2csv').Parser;
 const { insertData, getData, updateData } = require('../services/dbService'); 
 
@@ -29,8 +30,15 @@ async function apply(req, res){
          job_id: qry.job_id
          });
 
+         const contentData = {
+         job: qry.jobAppliedFor,
+         email: qry.email,
+         template: process.env.JOB_APPLIED_TEMPLATE,
+         subject: "Your job application has been recieved",
+        };
+
      // send mail to user after a successful application
-     await emitEvent('sendApplyMail', qry.jobAppliedFor, qry.email,  process.env.JOB_APPLIED_TEMPLATE, "Your job application has been recieved");
+     await emitEvent('sendMail', contentData);
      res.status(201).json({'message' : 'Application submitted sucessfully!', 
      'status': 1});
      }

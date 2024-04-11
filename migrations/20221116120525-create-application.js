@@ -47,7 +47,6 @@ module.exports = {
       job_id: {
         allowNull: true,
         type: Sequelize.INTEGER,
-        unique: true
       }
     });
   },

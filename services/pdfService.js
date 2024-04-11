@@ -4,7 +4,7 @@ const puppeteer = require('puppeteer');
 const logger = require('../logger/log');
 const { sendMail } = require('../services/emailService');
 
-async function convertAndSend(jsonData, full_name, fname) {
+async function convertAndSend(jsonData, printPdf = false) {
   try {
     let attachment = '';
     if(printPdf){
@@ -37,11 +37,11 @@ async function convertAndSend(jsonData, full_name, fname) {
     }
 
     // Render E-mail HTML from EJS template
-    const mailContent = await ejs.renderFile(process.env.OFFER_LETTER, { fname });
+    const mailContent = await ejs.renderFile(jsonData.template);
     try { 
       const emailBody = {
-        recipient: email,
-        subject: subject,
+        recipient: jsonData.email,
+        subject: jsonData.subject,
         cc: ['aduramimo@gmail.com'],
         content: mailContent,
         attachment: attachment ? attachment : '',
@@ -50,10 +50,12 @@ async function convertAndSend(jsonData, full_name, fname) {
       // Send email
       const send_mail = await sendMail(emailBody);
       logger.info('Email sent successfully:', send_mail);
-
+      
+      if(printPdf){
       // Delete the file after sending the email
        await fs.unlink(pdfFullPath);
        logger.info('File deleted successfully:', pdfFullPath);
+      }
     } catch (error) {
       logger.error('Error:', error);
       console.error('Error:', error);

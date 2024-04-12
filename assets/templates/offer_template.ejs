@@ -295,7 +295,7 @@
 
                                                                         <td style="font-size:6px; line-height:10px; padding:0px 0px 0px 0px;" valign="top" align="center">
 
-                                                                            <img class="max-width" border="0" style="display:block; color:#000000; text-decoration:none; font-family:Helvetica, arial, sans-serif; font-size:16px; max-width:100% !important; width:100%; height:auto !important;" width="600" alt="" data-proportionally-constrained="true" data-responsive="true" src="http://cdn.mcauto-images-production.sendgrid.net/b9430582e862412d/2d07672f-c129-4ac2-902f-6ec4b1458d03/1084x163.jpg">
+                                                                            <img class="max-width" border="0" style="display:block; color:#000000; text-decoration:none; font-family:Helvetica, arial, sans-serif; font-size:16px; max-width:100% !important; width:100%; height:auto !important;" width="600" alt="" data-proportionally-constrained="true" data-responsive="true" src="https://dreywandowski.ng/images/complete-hr-logo-zip-file/png/logo-black.jpg">
 
                                                                         </td>
 
@@ -313,13 +313,13 @@
 
                                                                         <td style="padding:18px 40px 40px 40px; line-height:22px; text-align:inherit;" height="100%" valign="top" bgcolor="" role="module-content">
                                                                             
-                                                                                <div style="font-family: inherit; text-align: left"><span style="font-size: 16px; font-family: 'trebuchet ms', helvetica, sans-serif; color: #000000">Hi <%= fname %>,</span></div>
+                                                                                <div style="font-family: inherit; text-align: left"><span style="font-size: 16px; font-family: 'trebuchet ms', helvetica, sans-serif; color: #000000">Hello <%= jsonData.fullName %>,</span></div>
 
                                                                                 <div style="font-family: inherit; text-align: left"><br></div>
 
-                                                                                <div style="font-family: inherit; text-align: left"><span style="font-size: 16px; font-family: 'trebuchet ms', helvetica, sans-serif; color: #000000">We are delighted to extend our formal offer for the position of <%=content.job %> at <%=content.company %>. Your qualifications and experience have impressed us, and we believe that your skills will contribute significantly to our team.
-                                                                                    In order to formalize your acceptance of this offer, please review the attached employment contract and return a signed copy to us within 2 days. If you have any questions or require clarification on any terms, feel free to reach out to us.
-                                                                                    Once again, congratulations on your new position! We look forward to welcoming you to our team.
+                                                                                <div style="font-family: inherit; text-align: left"><span style="font-size: 16px; font-family: 'trebuchet ms', helvetica, sans-serif; color: #000000">Congratulations! <br><br> 
+                                                                                    We are delighted to extend our formal offer for the position of <%=jsonData.job %> at <%=jsonData.company %>. <br>Your qualifications and experience have impressed us, and we believe that your skills will contribute significantly to our team.<br>
+                                                                                    Please review the attached employment contract and return a signed copy to us within 2 days. <br><br> We look forward to welcoming you to our team.
                                                                                     <br><br>
                                                                                     Best regards,
                                                                                  </span></div>
@@ -390,8 +390,8 @@
 
                                                                         <td style="padding:20px 20px 40px 20px; line-height:22px; text-align:inherit;" height="100%" valign="top" bgcolor="" role="module-content">
                                                                             <div>
-                                                                                <div style="font-family: inherit; text-align: center"><span style="font-size: 16px; font-family: helvetica, sans-serif; color: #4b515e">HR Solutions &nbsp;| &nbsp;&nbsp;Leaves &nbsp;&nbsp;| &nbsp;&nbsp;Employee Management &nbsp;&nbsp;| &nbsp;&nbsp;Leaves<br>
-                                                                                   <%=content.location %>
+                                                                                <div style="font-family: inherit; text-align: center"><span style="font-size: 16px; font-family: helvetica, sans-serif; color: #4b515e">HR Solutions &nbsp;| &nbsp;&nbsp;Leaves &nbsp;&nbsp;| &nbsp;&nbsp;Employee Management &nbsp;&nbsp;| &nbsp;&nbsp;Leaves<br><br>
+                                                                                   <%=jsonData.location %>
                                                                                    </span></div>
                                                                                 <div></div>
                                                                             </div>

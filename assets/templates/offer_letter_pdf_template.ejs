@@ -309,7 +309,7 @@
 
                                                                         <td style="font-size:6px; line-height:10px; padding:0px 0px 0px 0px;" valign="top" align="center">
 
-                                                                            <img class="max-width" border="0" style="display:block; color:#000000; text-decoration:none; font-family:Helvetica, arial, sans-serif; font-size:16px; max-width:100% !important; width:100%; height:auto !important;" width="600" alt="" data-proportionally-constrained="true" data-responsive="true" src="http://cdn.mcauto-images-production.sendgrid.net/b9430582e862412d/2d07672f-c129-4ac2-902f-6ec4b1458d03/1084x163.jpg">
+                                                                            <img class="max-width" border="0" style="display:block; color:#000000; text-decoration:none; font-family:Helvetica, arial, sans-serif; font-size:16px; max-width:100% !important; width:100%; height:auto !important;" width="600" alt="" data-proportionally-constrained="true" data-responsive="true" src="https://dreywandowski.ng/images/complete-hr-logo-zip-file/png/logo-black.jpg">
 
                                                                         </td>
 
@@ -322,12 +322,8 @@
                                                             <div class="content">
     
                                                                 <div class="container">
-                                                                  <h2 class="mb-5"><u><center>Monthly Loan Transactions - 
-                                                                    <% jsonData.forEach((item, index) => { %>
-                                                                        <% if (index === 0) { %>
-                                                                            <%= item.first_name %> <%= item.last_name %>
-                                                                            <% } %>
-                                                                      <% }); %>
+                                                                  <h2 class="mb-5"><u><center>Employment Contract - 
+                                                                    <% jsonData.fullName %>
                                                                   </center></u></h2>
                                                                   
                                                             
@@ -336,29 +332,25 @@
                                                                     <table class="table custom-table">
                                                                       <thead>
                                                                         <tr>  
-                                                                        <th scope="col" class="entry-date-column">Loan ID</th>
-                                                                          <th scope="col" class="entry-date-column">Transaction Amount</th>
-                                                                          <th scope="col" class="entry-date-column">Comment</th>
-                                                                          <th scope="col" class="entry-date-column">Balance</th>
-                                                                          <th scope="col" class="entry-date-column">Transaction Channel</th>
-                                                                          <th scope="col" class="entry-date-column">Entry Date</th>
-                                                                          <th scope="col" class="entry-date-column">Transaction Type</th>
+                                                                        <th scope="col" class="entry-date-column">Job Title</th>
+                                                                          <th scope="col" class="entry-date-column">Salary Grade</th>
+                                                                          <th scope="col" class="entry-date-column">Start Date</th>
+                                                                          <th scope="col" class="entry-date-column">Gross Earnings</th>
+                                                                          <th scope="col" class="entry-date-column">Deductions</th>
+                                                                          <th scope="col" class="entry-date-column">Net Salary</th>
+                                                                          <th scope="col" class="entry-date-column"></th>
                                                                         </tr>
                                                                       </thead>
                                                                       <tbody>
-                                                                        <% jsonData.forEach(item => { %>
                                                                         <tr scope="row">
-                                                                          
-                                                                         
-                                                                          <td><%= item.loan_id %></td>
-                                                                          <td>&#8358;<%= parseFloat(item.transaction_amt).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) %></td>
-                                                                          <td><%= item.comment %></td>
-                                                                          <td>&#8358;<%= parseFloat(item.balance).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) %></td>
-                                                                          <td><%= item.channel_name %></td>
-                                                                          <td><%= new Date(item.entry_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></td>
-                                                                          <td><%= item.transaction_type %></td>
+                                                                          <td><%= jsonData.job %></td>
+                                                                          <td></td>
+                                                                          <td></td>
+                                                                          <td>&#8358;<%= parseFloat(jsonData.gross).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) %></td>
+                                                                          <td>&#8358;<%= parseFloat(jsonData.deductions).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) %></td>
+                                                                          <td>&#8358;<%= parseFloat(jsonData.net).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) %></td>
+                                                                          <td></td>
                                                                         </tr>
-                                                                        <% }); %>
                                                                       </tbody>
                                                                     </table>
                                                                   </div>
@@ -405,15 +397,11 @@
 
                                                                         <td style="padding:20px 20px 40px 20px; line-height:22px; text-align:inherit;" height="100%" valign="top" bgcolor="" role="module-content">
                                                                             <div>
-                                                                                <div style="font-family: inherit; text-align: center"><span style="font-size: 16px; font-family: helvetica, sans-serif; color: #4b515e">Loans &nbsp;| &nbsp;&nbsp;Savings &nbsp;&nbsp;| &nbsp;&nbsp;Deposits &nbsp;&nbsp;| &nbsp;&nbsp;Payments<br>
+                                                                
+                                                                                <div style="font-family: inherit; text-align: center"><span style="font-size: 16px; font-family: helvetica, sans-serif; color: #4b515e">HR Solutions &nbsp;| &nbsp;&nbsp;Leaves &nbsp;&nbsp;| &nbsp;&nbsp;Employee Management &nbsp;&nbsp;| &nbsp;&nbsp;Leaves
+                                                                                    <br><br>
 
-                                                                                        23, Awolowo Road, Ikoyi, Lagos.<br>
-
-                                                                                        hello@renmoney.com<br>
-
-                                                                                        www.renmoney.com<br>
-
-                                                                                        0700 5000 500</span></div>
+                                                                                    <%=jsonData.location %></div>
                                                                                 <div></div>
                                                                             </div>
                                                                         </td>

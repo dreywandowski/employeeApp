@@ -1,6 +1,5 @@
 var application = require('../models/application');
 var job = require('../models/job');
-//const { emitEvent } = require('../services/emailService');
 const { emitEvent } = require('../services/eventService');
 var Json2csvParser = require('json2csv').Parser;
 const { insertData, getData, updateData } = require('../services/dbService'); 
@@ -117,21 +116,37 @@ const changeJobStatus = (req, res) => {
         interview_date: application[0].dataValues.interview_date,
         job: application[0].dataValues.jobAppliedFor,
         location: process.env.COMPANY_ADDRESS ,
-        company: process.env.COMPANY_NAME
+        company: process.env.COMPANY_NAME,
+        email: application[0].dataValues.email,
+        fullName: application[0].dataValues.firstName + ' ' + application[0].dataValues.lastName,
+        template: '',
+        subject: '',
+        gross : 364383.00,
+        deductions : 36374.09,
+        net: 253783.09
       };
-       if(qry.status == 2){
-       emitEvent('sendFirstInterviewMail', contentData, application[0].dataValues.email,  process.env.INTERVIEW_TEMPLATE, "Interview Invitation");
-       }
-       else if(qry.status == 3){
-        emitEvent('sendSecondInterviewMail', contentData, application[0].dataValues.email,  process.env.INTERVIEW_TEMPLATE_SECOND, "Final Interview Invitation");
-       }
-       // TO-DO: generate offer letter email + pdf and send
-       else if(qry.status == 4){
-        emitEvent('sendOfferLetter', contentData, application[0].dataValues.email,  process.env.OFFER_LETTER, "Offer Letter");
-       }
-       else{
-       }
-         
+        switch(qry.status){
+          case "2": 
+          contentData.template = process.env.INTERVIEW_TEMPLATE;
+          contentData.subject = "Interview Invitation";
+          emitEvent('sendMail', contentData);
+        break;
+        case "3":
+          contentData.template = process.env.INTERVIEW_TEMPLATE_SECOND;
+          contentData.subject = "Final Interview Invitation";
+          emitEvent('sendMail', contentData);
+          break;
+        case "4":
+          contentData.template = process.env.OFFER_LETTER;
+          contentData.pdfTemplate = process.env.OFFER_PDF_TEMPLATE;
+          contentData.subject = "Offer Letter";
+          contentData.printPdf = true;
+          contentData.pdfType = '_offer_letter';
+          
+          emitEvent('sendMail', contentData);
+          break;
+          default:
+        }
           res.status(200).json({'message' : 'Application status updated sucessfully!', 'status': 1});
       })
     }).

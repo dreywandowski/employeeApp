@@ -4,19 +4,20 @@ const puppeteer = require('puppeteer');
 const logger = require('../logger/log');
 const { sendMail } = require('../services/emailService');
 
-async function convertAndSend(jsonData, printPdf = false) {
+async function convertAndSend(jsonData) {
   try {
     let attachment = '';
-    if(printPdf){
-        const pdfFileName = `${full_name.replace(/\s+/g, '_')}_offer_letter.pdf`;
-        const pdfFullPath = `./pdfs/${pdfFileName}`;
-        const pdfContent = await ejs.renderFile(process.env.PDF_TEMPLATE, { jsonData });
+    let pdfFullPath = '';
+    if(jsonData.printPdf){
+        const pdfFileName = `${jsonData.fullName.replace(/\s+/g, '_')}_${jsonData.pdfType.replace(/\s+/g, '_')}.pdf`;
+        pdfFullPath = `./pdfs/${pdfFileName}`;
+        const pdfContent = await ejs.renderFile(jsonData.pdfTemplate, { jsonData });
 
           // Create PDF from HTML content using Puppeteer
         const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
         const page = await browser.newPage();
         await page.setContent(pdfContent);
-        await page.pdf({ path: pdfFullPath, format: 'ledger', scale: 1, protrait: true });
+        await page.pdf({ path: pdfFullPath, format: 'A4', scale: 0.8, portrait: true });
         await browser.close();
 
         // Read the created PDF file
@@ -29,7 +30,7 @@ async function convertAndSend(jsonData, printPdf = false) {
 
       // Prepare email content and attachment
       attachment = {
-        filename: `${full_name} - ${file_name}.pdf`,
+        filename: `${pdfFileName}`,
         content: pdfEncoded,
         encoding: 'base64',
         contentType: 'application/pdf',
@@ -37,7 +38,7 @@ async function convertAndSend(jsonData, printPdf = false) {
     }
 
     // Render E-mail HTML from EJS template
-    const mailContent = await ejs.renderFile(jsonData.template);
+    const mailContent = await ejs.renderFile(jsonData.template, {jsonData});
     try { 
       const emailBody = {
         recipient: jsonData.email,
@@ -51,7 +52,7 @@ async function convertAndSend(jsonData, printPdf = false) {
       const send_mail = await sendMail(emailBody);
       logger.info('Email sent successfully:', send_mail);
       
-      if(printPdf){
+      if(jsonData.printPdf){
       // Delete the file after sending the email
        await fs.unlink(pdfFullPath);
        logger.info('File deleted successfully:', pdfFullPath);

@@ -34,7 +34,7 @@ const getResource = (req, res) => {
         method: 'GET',
         url: 'https://api.paystack.co/bank?currency=NGN',
         headers: {
-            Authorization: `Bearer ${process.env.PAYSTACK_SECRET}`,
+            Authorization: `Bearer ${process.env.FLW_SECRET}`,
             'Content-Type': 'application/json'
         }
     };

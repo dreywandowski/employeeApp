@@ -170,24 +170,7 @@ const verifyMail = (req, res) => {
 async function register (req, res) {
     try{
        var qry = req.body;
-       let payload = {
-        "email": qry.email,
-        'is_permanent' : true,
-        "tx_ref": "flw_"+new Date(),
-        "firstname": qry.firstName,
-        "lastname": qry.lastName,
-        "phonenumber": qry.phoneNumber,
-        "bvn": "12345678901",
-        "narration": "my account details"
-      };
-     const bankDetails = await postResource(payload,'/virtual-account-numbers');
-     if(bankDetails.status == 'success' && bankDetails.data.response_code == '02'){
-        await insertData(bank_acct, { accountName: qry.firstName + ' ' + qry.lastName,
-        accountNumber: bankDetails.data.account_number,
-        bankName: bankDetails.data.bank_name,
-        username: qry.username});
-     }
-      /*
+
          // hash the password
     const hashed = await hashPassword(qry.password);
 
@@ -211,10 +194,29 @@ async function register (req, res) {
      qry.admin === "1" ? role = 'admin' : role = 'user';
    const user_details = {username: qry.username, role: role, email:qry.email };
    const assignToken = await assignUserToken(qry.username, role, qry.email);
+
+   // create bank acct for user after all is done
+   let payload = {
+    "email": qry.email,
+    'is_permanent' : true,
+    "tx_ref": "flw_"+new Date(),
+    "firstname": qry.firstName,
+    "lastname": qry.lastName,
+    "phonenumber": qry.phoneNumber,
+    "bvn": "12345678901",
+    "narration": "my account details"
+  };
+ const bankDetails = await postResource(payload,'/virtual-account-numbers');
+ if(bankDetails.status == 'success' && bankDetails.data.response_code == '02'){
+    await insertData(bank_acct, { accountName: qry.firstName + ' ' + qry.lastName,
+    accountNumber: bankDetails.data.account_number,
+    bankName: bankDetails.data.bank_name,
+    username: qry.username});
+ }
   
    res.status(201).json({'message' : 'User '+qry.firstName+ ' '+ qry.lastName+' '+ 'created sucessfully!',
    accessToken:assignToken, user: user_details,expiresAt: newD, 'status':1});
-   */
+   
             }
         catch(error){
             let statusCode = 403; // Default status code

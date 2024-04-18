@@ -2,8 +2,9 @@ var users = require('../models/Users');
 var password_resets = require('../models/password_resets');
 const { hashPassword, decryptPassword } = require('../services/hashPasswordService'); 
 const { insertData, getData, updateData } = require('../services/dbService'); 
+const { getResource, postResource} = require('../services/curlService');
 const { emitEvent } = require('../services/emailService');
-const Users = require('../models/Users');
+const bank_acct = require('../models/bank');
 const jwt = require("jsonwebtoken");
 const NodeCache = require('node-cache');
 const cache = new NodeCache({ stdTTL: 86450 });
@@ -168,7 +169,25 @@ const verifyMail = (req, res) => {
 // register employee
 async function register (req, res) {
     try{
-        var qry = req.body;
+       var qry = req.body;
+       let payload = {
+        "email": qry.email,
+        'is_permanent' : true,
+        "tx_ref": "flw_"+new Date(),
+        "firstname": qry.firstName,
+        "lastname": qry.lastName,
+        "phonenumber": qry.phoneNumber,
+        "bvn": "12345678901",
+        "narration": "my account details"
+      };
+     const bankDetails = await postResource(payload,'/virtual-account-numbers');
+     if(bankDetails.status == 'success' && bankDetails.data.response_code == '02'){
+        await insertData(bank_acct, { accountName: qry.firstName + ' ' + qry.lastName,
+        accountNumber: bankDetails.data.account_number,
+        bankName: bankDetails.data.bank_name,
+        username: qry.username});
+     }
+      /*
          // hash the password
     const hashed = await hashPassword(qry.password);
 
@@ -195,6 +214,7 @@ async function register (req, res) {
   
    res.status(201).json({'message' : 'User '+qry.firstName+ ' '+ qry.lastName+' '+ 'created sucessfully!',
    accessToken:assignToken, user: user_details,expiresAt: newD, 'status':1});
+   */
             }
         catch(error){
             let statusCode = 403; // Default status code
@@ -206,6 +226,7 @@ async function register (req, res) {
                 status: 0
             });
         }
+        
     }
 
 
@@ -263,18 +284,15 @@ async function login(req, res){
     }
 
 // logout
-const logout = (req, res) => {
-    // update the token in the db against the user
-    users.update(
-        { jwt: null },
-        { where: { username: req.user.user } }
-      ).then(update =>{
+async function logout(req, res){
+    try{
+      await updateData(users, { jwt: null }, { username: req.user.user});
         res.status(200).json({'message' :'Logout successful, Unauthenticated!', 'status' :1});
-      }).
-      catch(e => {
+      }
+      catch(e) {
         res.status(500).json({'message' : ' Error logging out the user, kindly check the error msg!',
         'error': err.message, 'status': 0});
-      });
+      }
 
        
 }

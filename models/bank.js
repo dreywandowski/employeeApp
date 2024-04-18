@@ -9,7 +9,8 @@ const bank = sequelize.define('bank_accounts', {
   accountNumber: DataTypes.STRING,
   bankName: DataTypes.STRING,
   bankCode: DataTypes.STRING,
-  username: DataTypes.STRING
+  username: DataTypes.STRING,
+  paystack_id: DataTypes.STRING
  });
  
 

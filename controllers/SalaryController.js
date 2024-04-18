@@ -124,6 +124,10 @@ const download = (req, res) =>{
 
 }
 
+async function create_cust_acct(req, res){
+
+}
+
 // add account details for staff
 const addAccount = (req, res) => {
     var qry = req.body;

@@ -10,9 +10,6 @@ async function apply(req, res){
   try{
     var qry = req.body;
     const jobs = await getData(job, {id: qry.job_id});
-    if (Object.keys(jobs).length == 0){
-      throw new Error("job doesn't exist!!"); 
-   }
       let job_status = jobs[0].dataValues;
       if (jobs && job_status.isOpen) { 
         const create_job = await insertData(application, {
@@ -112,6 +109,8 @@ const changeJobStatus = (req, res) => {
     // get application details
     return application.findAll({where: {id:qry.id}}).
     then(application =>{
+      // TODO: Fill in the Offer Letter proffessionally and start working other modules
+      // calculate gross, deductions, net and start date for offer letter
       const contentData = {
         interview_date: application[0].dataValues.interview_date,
         job: application[0].dataValues.jobAppliedFor,

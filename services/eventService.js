@@ -1,6 +1,5 @@
 const EventEmitter = require('events');
-var eventEmitter = new EventEmitter();
-const { sendMail } = require('../services/emailService');
+const eventEmitter = new EventEmitter();
 const { convertAndSend } = require('./pdfService');
 
 async function emitEvent(event_, info){

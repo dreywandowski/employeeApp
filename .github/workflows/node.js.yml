@@ -26,6 +26,6 @@ jobs:
             cd /var/www/html/payroll
             git pull
             #npx sequelize-cli db:migrate
-            #npm install uuid
+            #npm install
             sudo systemctl stop employee-app
             sudo systemctl start employee-app

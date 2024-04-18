@@ -1,8 +1,9 @@
-const insertData = (table, data) => {
-    return table.create(data).
-    then(created => {
-        return created;
-    }).catch(err => {
+const insertData = async (table, data) => {
+    try{
+    let created = await table.create(data);
+    return created;
+    }
+    catch(err) {
         let record = 'record';
         switch (table){
             case "User":
@@ -20,31 +21,37 @@ const insertData = (table, data) => {
             default:
         }
         throw new Error('Error creating ' + record + ': ' + err); 
-    });
-}
-    
-const getData = (table, clause) => {
-    let qry = '';
-    if (clause && Object.keys(clause).length !== 0) {
-        qry = table.findAll({ where: clause });
-    } else {
-        qry = table.findAll();
     }
-    return qry.then(data => {
-        return data;
-    }).catch(err => {
-        throw new Error('Error getting the record: ' + err); 
-    });
+}
+   
+
+const getData = async (table, clause, exclude_list) => {
+    try {
+        let qry = '';
+        if (clause && Object.keys(clause).length !== 0) {
+            qry = await table.findAll({ where: clause, attributes: { exclude: exclude_list } });
+        } else {
+            qry = await table.findAll();
+        }
+        if (qry.length === 0) {
+            throw new Error("Data doesn't exist!!");
+        }
+        return qry;
+    } catch (err) {
+        throw new Error('Error getting the record: ' + err.message); 
+    }
 }
 
-const updateData = (table, attributes, clause) => {
-    return table.update(attributes, { where: clause }).
-    then(data => {
-        return data;
-    }).catch(err => {
+
+const updateData = async(table, attributes, clause) => {
+    try{
+    let data = await table.update(attributes, { where: clause });
+    return data;
+  }catch(err) {
         throw new Error('Error updating the record: ' + err); 
-    });
+    }
 }
+
       module.exports = {
         insertData,
         getData,

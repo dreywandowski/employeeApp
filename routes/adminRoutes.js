@@ -36,8 +36,8 @@ var urlencodedParser = bodyParser.urlencoded ({extended :false});
   // create bank account
   router.post('/employees/createAccount', [auth, verification, adminVerify, urlencodedParser], salary.addAccount);
 
-  // create transfer reciepent
-  //router.post('/employees/admin/createBeneficiary', [auth, verification, adminVerify, urlencodedParser], salary.createTransferRecipient);
+  // transfer money
+  router.post('/employees/admin/paySalary', [auth, verification, adminVerify, urlencodedParser], salary.paySalary);
 
   // transfer money -- bulk
  // router.post('/employees/admin/transferBulk', [auth, verification, adminVerify, urlencodedParser], salary.transferMoneyFlw);

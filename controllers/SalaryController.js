@@ -1,7 +1,8 @@
-var users = require('../models/Users');
-var bank = require('../models/bank');
-var pdf = require('html-pdf');
-var options = {format: 'Letter'};
+const users = require('../models/Users');
+const bank = require('../models/bank');
+const transactions = require('../models/transaction');
+const pdf = require('html-pdf');
+const options = {format: 'Letter'};
 const ejs = require('ejs');
 const EventEmitter = require('events');
 const fs = require('fs');
@@ -181,111 +182,30 @@ async function transfers(transferDetails){
 }
 
 
-async function transfersCallback(id){
-    let verifyResponse = await verifyTransfer(id);
-     if (($verifyResponse['status'] == 'successful' || $verifyResponse['status'] == 'success') && $verifyResponse['data']['status'] != "FAILED" ){
-            $this->raw_log('transfer_webhook_success for '.$verifyResponse['data']['reference'], 'verify_response: ' . json_encode($verifyResponse));
-            return (new ConsultantTransactionsController)->save_transaction($verifyResponse); 
+async transfersCallback(req, res) =>{
+    try{
+        let verifyResponse = await verifyTransfer(req.params.id);
+            
+     if ((verifyResponse.status == 'successful' || verifyResponse.status == 'success') && verifyResponse.data.status != "FAILED" ){
+        raw_logs('transfer_webhook_success for '+verifyResponse.data.reference, 'verify_response: ' +verifyResponse);
+        //await insertData(transactions, {email: email, token: pin });
     }
     else{
-        $this->raw_log('transfer_webhook_failed for '.$id, 'verify_response: ' . json_encode($verifyResponse));    
+        raw_logs('transfer_webhook_failed for '+id, 'verify_response: ' +verifyResponse);    
         return false;
-}
-    try{
     }
     catch(err){
-
+      return err;
     }
 }
-
-
-const createTransferRecipient = (name, account_number, bank_code) => {
-const params = JSON.stringify({
-"type": "nuban",
-"name":name,
-"account_number": account_number,
-"bank_code": bank_code,
-"currency": "NGN"
-});
-
-let token = process.env.PAYSTACK_SECRET;
-
-const options ={
-    hostname: "api.paystack.co",
-    port: 443,
-    path: "/transferrecipient",
-    method: "POST",
-    headers: {
-        "Authorization": Bearer `${process.env.PAYSTACK_SECRET}`,
-        "Content-Type": "application/json"
-    }
-}
-const req = https.request(options, res => {
-    let data = '';
-    res.on('data', (chunk) => {
-        data += chunk
-    }
-    );
-    
-    res.on('end', () =>{
-    console.log(JSON.parse(data));
-    let result = [Math.random(), data.recipient_code];
-    return result;
-    }).on('error', error => {
-        console.error(error);
-        return result = [error];
-    })
-})
-
-req.write(params);
-req.end();
 }
 
-// initiate transfer to employee
-const transferMoney = (amount, ref, recipient) =>{
-    const params = JSON.stringify({
-        "source": "balance",
-        "amount": amount,
-        "reference": ref,
-        "recipient": recipient,
-        "reason": "Salary Payment"
-        });
-        
-        let token = process.env.PAYSTACK_SECRET;
-        
-        const options ={
-            hostname: "api.paystack.co",
-            port: 443,
-            path: "/transfer",
-            method: "POST",
-            headers: {
-                "Authorization": Bearer `${process.env.PAYSTACK_SECRET}`,
-                "Content-Type": "application/json"
-            }
-        }
-        const req = https.request(options, res => {
-            let data = '';
-            res.on('data', (chunk) => {
-                data += chunk
-            }
-            );
-            
-            res.on('end', () =>{
-            console.log(JSON.parse(data));
-            let result = [data.status, data.id, data.createdAt];
-            return result;
-            }).on('error', error => {
-                console.error(error);
-                return result = [error];
-            })
-        })
-        
-        req.write(params);
-        req.end();
-}
+
 
 // make salary payment for staff
 const paySalary = (req, res)=>{
+
+    // TO-DO: WOrk on this
     let username = req.params.username;
      bank.findOne({where: {username:username}}).
      then(account =>{
@@ -297,9 +217,8 @@ const paySalary = (req, res)=>{
            let account_number = account.accountNumber;
            let bank_code = account.bankCode;
 
-           const createReciver = createTransferRecipient(name, account_number, bank_code);
            if(createReciver.length !=1){
-             const send = transferMoney(amount, createReciver[0], createReciver[1]);
+             const send = transfers(amount, createReciver[0], createReciver[1]);
              if(send.length !=1){
                 res.status(200).json({'message' : 'Transfer initiated sucessfully! Please check your bank account', 'status': 1});
              }else{

@@ -7,7 +7,8 @@ const EventEmitter = require('events');
 const fs = require('fs');
 const https = require('https');
 const env = require('dotenv').config();
-//var { getRequest, postRequest } = require('./UtilController');
+const { getResource, postResource} = require('../services/curlService');
+const { insertData, getData, updateData, raw_logs } = require('../services/dbService');
 
 var eventEmitter = new EventEmitter();
 // create a pdf file of the salary breakdown
@@ -124,9 +125,6 @@ const download = (req, res) =>{
 
 }
 
-async function create_cust_acct(req, res){
-
-}
 
 // add account details for staff
 const addAccount = (req, res) => {
@@ -147,7 +145,60 @@ const addAccount = (req, res) => {
     });
 }
 
-// create transfer recipient
+    
+// transfer salary to employee
+async function transfers(transferDetails){
+    try{
+    let ref = 'flw_' + new Date().getUTCMilliseconds();
+    let payload = {
+        "account_bank" : transferDetails.bank_code,
+        "account_number" : transferDetails.acct_num,
+        "amount" : transferDetails.amount,
+        "narration" :  transferDetails.narration,
+        "currency" : "NGN",
+        "reference" : ref,
+        "callback_url" : `${process.env.BASE_URL}transferCallback`,
+        "debit_currency" => "NGN",
+    };
+
+    const transfer = await postResource(payload,'/transfers');
+
+    // log the transfer payload
+    raw_logs('transfer_payload for '+ref, payload);
+
+    if(transfer.status == "success"){
+        raw_logs('transfer_init_success_response for '+ref, transfer);
+        return transfer.data.id;
+    }
+    else{
+        raw_logs('transfer_failed_response for '+ref, transfer);
+        return 0;
+    }
+   }
+  catch(err){
+    return err; 
+         }
+}
+
+
+async function transfersCallback(id){
+    let verifyResponse = await verifyTransfer(id);
+     if (($verifyResponse['status'] == 'successful' || $verifyResponse['status'] == 'success') && $verifyResponse['data']['status'] != "FAILED" ){
+            $this->raw_log('transfer_webhook_success for '.$verifyResponse['data']['reference'], 'verify_response: ' . json_encode($verifyResponse));
+            return (new ConsultantTransactionsController)->save_transaction($verifyResponse); 
+    }
+    else{
+        $this->raw_log('transfer_webhook_failed for '.$id, 'verify_response: ' . json_encode($verifyResponse));    
+        return false;
+}
+    try{
+    }
+    catch(err){
+
+    }
+}
+
+
 const createTransferRecipient = (name, account_number, bank_code) => {
 const params = JSON.stringify({
 "type": "nuban",

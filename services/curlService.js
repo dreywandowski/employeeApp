@@ -2,7 +2,7 @@ const request = require('request');
 
 const postResource = async (payload, resource) => {
     const options = {
-        url: `https://api.flutterwave.com/v3${resource}`,
+        url: `${process.env.FLW_BASE_URL}${resource}`,
         method: 'POST',
         headers: {
             Authorization: `Bearer ${process.env.FLW_SECRET}`,

@@ -63,8 +63,19 @@ var testJson = (req, res, next) => {
   // edit profile
   router.put('/employees/updateEmployee/:name',  [auth, urlencodedParser, validateEditUser, verification], employee.editProfile);
 
+   // upload profile picture
+   router.post('/employees/uploadPicture', [auth, verification, urlencodedParser], files.uploadPic);
+
+    // verify token
+  router.get('/verifyToken', [testJson, auth], employee.verify);
+
+    // logout
+  router.post('/employees/logout',  [auth, verification, urlencodedParser], employee.logout);
 
 
+ ///////////////////////////////////////////////
+  ///////// EMPLOYEE SALARY ROUTES ///////
+  /////////////////////////////////////////////
   // my salary breakdown
   router.get('/employees/mySalary/:name', [auth, verification], salary.mySalaryBreakDown);
 
@@ -72,15 +83,8 @@ var testJson = (req, res, next) => {
   router.get('/employees/downloadSalary', [auth, verification], salary.download);
  
 
-    // upload profile picture
-   router.post('/employees/uploadPicture', [auth, verification, urlencodedParser], files.uploadPic);
 
-    // verify token
-    router.get('/verifyToken', [testJson, auth], employee.verify);
-
-    // logout
-  router.post('/employees/logout',  [auth, verification, urlencodedParser], employee.logout);
-
+   
 
   
    ///////////////////////////////////////////////

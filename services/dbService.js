@@ -1,3 +1,5 @@
+const raw_log = require('../models/raw_logs');
+
 const insertData = async (table, data) => {
     try{
     let created = await table.create(data);
@@ -52,9 +54,20 @@ const updateData = async(table, attributes, clause) => {
     }
 }
 
+
+const raw_logs = async(data) => {
+    try{
+        let raw = await raw_log.create(data);
+        return true;
+      }catch(err) {
+            throw new Error('Error creating the log: ' + err); 
+        }
+}
+
       module.exports = {
         insertData,
         getData,
-        updateData
+        updateData,
+        raw_logs
       };
       

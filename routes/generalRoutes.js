@@ -3,6 +3,7 @@ var app = express();
 var router = express.Router();
 var jobs = require('../controllers/JobsController');
 var applications = require('../controllers/ApplicationsController');
+var salary = require('../controllers/SalaryController');
 
 
 // handle POST requests
@@ -10,9 +11,11 @@ var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded ({extended :false});
 
 
+  // callback route for transfer
+  router.get('/transferCallback', salary.transfersCallback);
 
- // get all jobs
- router.get('/jobs', jobs.getJobs);
+  // get all jobs
+  router.get('/jobs', jobs.getJobs);
 
   // get job
   router.get('/jobs/:id', jobs.getJob);

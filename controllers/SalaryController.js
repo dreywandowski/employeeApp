@@ -159,7 +159,7 @@ async function transfers(transferDetails){
         "currency" : "NGN",
         "reference" : ref,
         "callback_url" : `${process.env.BASE_URL}transferCallback`,
-        "debit_currency" => "NGN",
+        "debit_currency" : "NGN",
     };
 
     const transfer = await postResource(payload,'/transfers');
@@ -182,7 +182,7 @@ async function transfers(transferDetails){
 }
 
 
-async transfersCallback(req, res) =>{
+async function transfersCallback (req, res){
     try{
         let verifyResponse = await verifyTransfer(req.params.id);
             
@@ -194,18 +194,18 @@ async transfersCallback(req, res) =>{
         raw_logs('transfer_webhook_failed for '+id, 'verify_response: ' +verifyResponse);    
         return false;
     }
+}
     catch(err){
       return err;
     }
 }
-}
+
 
 
 
 // make salary payment for staff
-async paySalary (req, res) =>{
+async function paySalary (req, res){
     try{
-    let username = ;
     const check = await getData(bank, {username: req.body.username });
     const bank_code = await checkBank(check[0].dataValues.bankName);
     let payload = {
@@ -222,16 +222,16 @@ async paySalary (req, res) =>{
              }
            }
 
-    catch(err =>{
+    catch(err){
         res.status(404).json({'message' : 'Error Initiating bank transfer!', 
         'error': err, 'status': 0});
-    });
+    };
 }
 
 
 
 // get the Nigerian Bank of the employee for transfer
-async checkBank = (bank_name) => {
+async function checkBank(bank_name){
     try{
         let banks = getResource('/banks/NG');
 
@@ -241,9 +241,9 @@ async checkBank = (bank_name) => {
             return bank.code;
         });
     }
-    catch(err => {
+    catch(err){
      return "error getting bank code "+ err;
-    });
+    };
 }
 
 

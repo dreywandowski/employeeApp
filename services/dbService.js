@@ -55,8 +55,9 @@ const updateData = async(table, attributes, clause) => {
 }
 
 
-const raw_logs = async(data) => {
+const raw_logs = async(title, body) => {
     try{
+        let data = {title: title, body: JSON.stringify(body)}; 
         let raw = await raw_log.create(data);
         return true;
       }catch(err) {

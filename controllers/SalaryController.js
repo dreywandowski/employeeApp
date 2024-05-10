@@ -146,6 +146,33 @@ const addAccount = (req, res) => {
     });
 }
 
+// make salary payment for staff
+async function paySalary (req, res){
+    try{
+    const check = await getData(bank, {username: req.query.username });
+    const bank_code = await checkBank(check[0].dataValues.bankName);
+    let payload = {
+        "bank_code" : bank_code, // 044
+        "acct_num" : check[0].dataValues.accountNumber,  //0690000040
+        "amount" : req.body.amount,
+        "narration" :  req.body.narration,
+    }
+             const send = transfers(payload);
+             console.log(send);return;
+             if(send != false){
+                res.status(200).json({'message' : 'Transfer initiated sucessfully! Please check your bank account', 'status': 1});
+             }else{
+                return "Unable to transfer funds, error = "+send;
+             }
+           }
+
+    catch(err){
+        res.status(404).json({'message' : 'Error Initiating bank transfer!', 
+        'error': err, 'status': 0});
+    };
+}
+
+
     
 // transfer salary to employee
 async function transfers(transferDetails){
@@ -162,7 +189,8 @@ async function transfers(transferDetails){
         "debit_currency" : "NGN",
     };
 
-    const transfer = await postResource(payload,'/transfers');
+    const transfer = postResource(payload,'/transfers');
+    console.log(transfer);return;
 
     // log the transfer payload
     raw_logs('transfer_payload for '+ref, payload);
@@ -201,54 +229,22 @@ async function transfersCallback (req, res){
 }
 
 
-
-
-// make salary payment for staff
-async function paySalary (req, res){
-    try{
-    const check = await getData(bank, {username: req.query.username });
-    const bank_code = await checkBank(check[0].dataValues.bankName);
-    console.log(bank_code);return;
-    let payload = {
-        "bank_code" : bank_code, // 044
-        "acct_num" : check[0].dataValues.accountNumber,  //0690000040
-        "amount" : req.body.amount,
-        "narration" :  req.body.narration,
-    }
-             const send = transfers(payload);
-             if(send != false){
-                res.status(200).json({'message' : 'Transfer initiated sucessfully! Please check your bank account', 'status': 1});
-             }else{
-                return "Unable to transfer funds, error = "+send;
-             }
-           }
-
-    catch(err){
-        res.status(404).json({'message' : 'Error Initiating bank transfer!', 
-        'error': err, 'status': 0});
-    };
-}
-
-
-
 // get the Nigerian Bank of the employee for transfer
 async function checkBank(bank_name){
     try{
         var banks = await getResource('/banks/NG');
         banks = JSON.parse(banks);
-        banks.data.forEach(bank => {
-          if(bank.name == bank_name){
-            console.log('dhf'+bank.name + 'and ' + bank_name);return;
-            return bank.code;
-          }
-            else {
-                throw new Error(`Bank with name '${bank_name}' not found`);
+        bank_details = banks.data;
+        for (const bank of bank_details) {
+            if (bank.name === bank_name) {
+                return bank.code; 
             }
-        }
-            );
+        };
+        console.log('hereee');return;
+          throw new Error(`Bank with name '${bank_name}' not found`);
     }
     catch(err){
-     return "error getting bank code "+ err;
+        throw new Error("error getting bank code "+ err);
     };
 }
 

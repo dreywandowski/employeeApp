@@ -203,34 +203,26 @@ async transfersCallback(req, res) =>{
 
 
 // make salary payment for staff
-const paySalary = (req, res)=>{
-
-    // TO-DO: WOrk on this
-    let username = req.params.username;
-     bank.findOne({where: {username:username}}).
-     then(account =>{
-           if(account == null){
-            throw new Error("No bank account exists for specified user");
-           }
-
-           let name = account.accountName;
-           let account_number = account.accountNumber;
-           let bank_code = account.bankCode;
-
-           if(createReciver.length !=1){
-             const send = transfers(amount, createReciver[0], createReciver[1]);
-             if(send.length !=1){
+async paySalary (req, res) =>{
+    try{
+    let username = ;
+    const check = await getData(bank, {username: req.body.username });
+    let payload = {
+        "bank_code" : check[0].dataValues.bankCode,
+        "acct_num" : heck[0].dataValues.accountNumber,
+        "amount" : req.body.amount,
+        "narration" :  req.body.narration,
+    }
+             const send = transfers(payload);
+             if(send != false){
                 res.status(200).json({'message' : 'Transfer initiated sucessfully! Please check your bank account', 'status': 1});
              }else{
-                throw new Error("Unable to transfer funds, error = "+send.error);
+                return "Unable to transfer funds, error = "+send;
              }
-           }else{
-            throw new Error("Unable to create transfer reciepient, error == "+createReciver.error);
            }
 
-        }).
     catch(err =>{
-        res.status(404).json({'message' : 'Error Retrieving bank account for '+ username+' ', 
+        res.status(404).json({'message' : 'Error Initiating bank transfer!', 
         'error': err, 'status': 0});
     });
 }

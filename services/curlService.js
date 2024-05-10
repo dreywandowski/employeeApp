@@ -1,29 +1,23 @@
-const postResource = (payload, resource) => {
-  const options = {
-    url: `${process.env.FLW_BASE_URL}${resource}`,
-    method: 'POST',
-    headers: {
-        Authorization: `Bearer ${process.env.FLW_SECRET}`,
-        'Content-Type': 'application/json'
-    },
-    json: JSON.stringify(payload)
-};
-  
-  // Make the POST request
-  fetch(options.url, options)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+const axios = require('axios');
+const postResource = async (payload, resource) => {
+    const options = {
+        url: `${process.env.FLW_BASE_URL}${resource}`,
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${process.env.FLW_SECRET}`,
+            'Content-Type': 'application/json'
+        },
+        httpsAgent: false 
+    };
+    try {
+        const response = await axios.post(resource, payload, options);
+        console.log(response);return;
+        return response;
+      } catch (error) {
+        console.error('Error posting resource :', error.message);
+        throw error;
       }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Post request response:', data);
-      return;
-    })
-    .catch(error => {
-      console.error('There was a problem with the fetch operation:', error);
-    });
+
 }
 
 

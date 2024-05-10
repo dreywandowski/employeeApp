@@ -188,9 +188,9 @@ async function transfers(transferDetails){
         "callback_url" : `${process.env.BASE_URL}transferCallback`,
         "debit_currency" : "NGN",
     };
-
-    const transfer = postResource(payload,'/transfers');
-    console.log(transfer);return;
+  console.log(payload);return;
+    const transfer = await postResource(payload,'/transfers');
+    return;
 
     // log the transfer payload
     raw_logs('transfer_payload for '+ref, payload);

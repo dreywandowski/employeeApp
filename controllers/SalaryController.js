@@ -206,10 +206,11 @@ async function transfersCallback (req, res){
 // make salary payment for staff
 async function paySalary (req, res){
     try{
-    const check = await getData(bank, {username: req.body.username });
+    const check = await getData(bank, {username: req.query.username });
     const bank_code = await checkBank(check[0].dataValues.bankName);
+    console.log(bank_code);return;
     let payload = {
-        "bank_code" : check[0].dataValues.bankCode, // 044
+        "bank_code" : bank_code, // 044
         "acct_num" : check[0].dataValues.accountNumber,  //0690000040
         "amount" : req.body.amount,
         "narration" :  req.body.narration,
@@ -233,13 +234,18 @@ async function paySalary (req, res){
 // get the Nigerian Bank of the employee for transfer
 async function checkBank(bank_name){
     try{
-        let banks = getResource('/banks/NG');
-
-        let available_banks = banks.data;
-        availableBanks.forEach(bank => {
-            if (bank.name !== bank_name) return;
+        var banks = await getResource('/banks/NG');
+        banks = JSON.parse(banks);
+        banks.data.forEach(bank => {
+          if(bank.name == bank_name){
+            console.log('dhf'+bank.name + 'and ' + bank_name);return;
             return bank.code;
-        });
+          }
+            else {
+                throw new Error(`Bank with name '${bank_name}' not found`);
+            }
+        }
+            );
     }
     catch(err){
      return "error getting bank code "+ err;
@@ -252,5 +258,5 @@ module.exports = {
     download,
     addAccount,
     paySalary,
-    listBanks
+    transfersCallback
 }

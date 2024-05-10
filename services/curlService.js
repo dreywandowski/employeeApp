@@ -27,11 +27,10 @@ const postResource = async (payload, resource) => {
 }
 
 
-
-
 const getResource = async (resource, params) =>  {
+    const queryParams = params ? `?${params}` : '';
     const options = {
-        url: `${process.env.FLW_BASE_URL}${resource}?${params}`,
+        url: `${process.env.FLW_BASE_URL}${resource}${queryParams}`,
         method: 'GET',
         headers: {
             Authorization: `Bearer ${process.env.FLW_SECRET}`,
@@ -46,13 +45,15 @@ const getResource = async (resource, params) =>  {
                 return;
             }
             if (response.statusCode >= 200 && response.statusCode < 300) {
-                resolve(JSON.parse(body));
+               //let responseData = resolve(JSON.parse(body));
+                resolve(body);
             } else {
                 reject(new Error(`Failed to load resource, status code: ${response.statusCode}`));
             }
         });
     });
 }
+
 
 
 module.exports = {

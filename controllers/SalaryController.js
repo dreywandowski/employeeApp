@@ -207,9 +207,10 @@ async paySalary (req, res) =>{
     try{
     let username = ;
     const check = await getData(bank, {username: req.body.username });
+    const bank_code = await checkBank(check[0].dataValues.bankName);
     let payload = {
-        "bank_code" : check[0].dataValues.bankCode,
-        "acct_num" : heck[0].dataValues.accountNumber,
+        "bank_code" : check[0].dataValues.bankCode, // 044
+        "acct_num" : check[0].dataValues.accountNumber,  //0690000040
         "amount" : req.body.amount,
         "narration" :  req.body.narration,
     }
@@ -229,59 +230,20 @@ async paySalary (req, res) =>{
 
 
 
-// list avalible Nigerian Banks
-const listBanks = (req,res) => {
-    const options = {
-        method: 'GET',
-        hostname: 'api.paystack.co',
-        path: '/bank?currency=NGN',
-        maxRedirects: 20,
-        headers: {
-          Authorization: `Bearer ${process.env.PAYSTACK_SECRET}`,
-          'Content-Type': 'application/json',
-        }
-      };
+// get the Nigerian Bank of the employee for transfer
+async checkBank = (bank_name) => {
+    try{
+        let banks = getResource('/banks/NG');
 
-     // var call = getRequest(options);
-     // return;
-    
-      const request = https.request(options, function (response) {
-        const chunks = [];
-    
-        response.on('data', function (chunk) {
-          chunks.push(chunk);
+        let available_banks = banks.data;
+        availableBanks.forEach(bank => {
+            if (bank.name !== bank_name) return;
+            return bank.code;
         });
-    
-        response.on('end', function () {
-          try {
-            const body = Buffer.concat(chunks);
-            const banks = JSON.parse(body.toString());
-    
-            // Send the JSON response to the user with a status code of 200
-            res.status(200).json({
-              message: 'Banks List retrieved successfully!',
-              banks: banks.data,
-              status: 1,
-            });
-          } catch (error) {
-            // Handle parsing error and send an error response to the user with a status code of 403
-            res.status(403).json({
-              message: 'Error retrieving banks... ' + error.message,
-              status: 0,
-            });
-          }
-        });
-    
-        response.on('error', function (error) {
-          // Handle response error and send an error response to the user with a status code of 500
-          res.status(500).json({
-            message: 'Internal Server Error: ' + error.message,
-            status: 0,
-          });
-        });
-      });
-    
-      request.end();
+    }
+    catch(err => {
+     return "error getting bank code "+ err;
+    });
 }
 
 

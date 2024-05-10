@@ -20,7 +20,7 @@ const postResource = async (payload, resource) => {
             if (response.statusCode >= 200 && response.statusCode < 300) {
                 resolve(JSON.parse(body));
             } else {
-                reject(new Error(`Failed to load page, status code: ${response.statusCode}`));
+                reject(new Error(`Failed to load resource, status code: ${response.statusCode}`));
             }
         });
     });
@@ -29,45 +29,28 @@ const postResource = async (payload, resource) => {
 
 
 
-const getResource = (req, res) => {
+const getResource = async (resource, params) =>  {
     const options = {
+        url: `${process.env.FLW_BASE_URL}${resource}?${params}`,
         method: 'GET',
-        url: 'https://api.paystack.co/bank?currency=NGN',
         headers: {
             Authorization: `Bearer ${process.env.FLW_SECRET}`,
             'Content-Type': 'application/json'
         }
     };
 
-    request(options, (error, response, body) => {
-        if (error) {
-            res.status(500).json({
-                message: 'Internal Server Error: ' + error.message,
-                status: 0
-            });
-            return;
-        }
-
-        if (response.statusCode >= 200 && response.statusCode < 300) {
-            try {
-                const banks = JSON.parse(body);
-                res.status(200).json({
-                    message: 'Banks List retrieved successfully!',
-                    banks: banks.data,
-                    status: 1
-                });
-            } catch (parseError) {
-                res.status(403).json({
-                    message: 'Error retrieving banks... ' + parseError.message,
-                    status: 0
-                });
+    return new Promise((resolve, reject) => {
+        request(options, (error, response, body) => {
+            if (error) {
+                reject(error);
+                return;
             }
-        } else {
-            res.status(403).json({
-                message: 'Error retrieving banks... Status Code: ' + response.statusCode,
-                status: 0
-            });
-        }
+            if (response.statusCode >= 200 && response.statusCode < 300) {
+                resolve(JSON.parse(body));
+            } else {
+                reject(new Error(`Failed to load resource, status code: ${response.statusCode}`));
+            }
+        });
     });
 }
 

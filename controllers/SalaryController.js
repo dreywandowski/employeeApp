@@ -177,7 +177,7 @@ async function paySalary (req, res){
 // transfer salary to employee
 async function transfers(transferDetails){
     try{
-    let ref = 'flw_' + new Date().getUTCMilliseconds();
+    let ref = 'flw_' + new Date().getUTCMilliseconds()+ Math.random();
     let payload = {
         "account_bank" : transferDetails.bank_code,
         "account_number" : transferDetails.acct_num,
@@ -231,21 +231,13 @@ async function transfersCallback (req, res){
 
 // get the Nigerian Bank of the employee for transfer
 async function checkBank(bank_name){
-    try{
-        var banks = await getResource('/banks/NG');
-        banks = JSON.parse(banks);
-        bank_details = banks.data;
+        var bank_details = await getResource('/banks/NG');
         for (const bank of bank_details) {
             if (bank.name === bank_name) {
                 return bank.code; 
             }
         };
-        console.log('hereee');return;
           throw new Error(`Bank with name '${bank_name}' not found`);
-    }
-    catch(err){
-        throw new Error("error getting bank code "+ err);
-    };
 }
 
 

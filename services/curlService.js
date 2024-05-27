@@ -14,8 +14,10 @@ const postResource = async (payload, resource) => {
       }
 }
 
-const getResource = async (resource, params) => {
+const getResource = async (resource, params, data = '') => {
     const queryParams = params ? `?${params}` : '';
+    const returnString = data ? 1 : 0;
+    console.log('returnString' + returnString);
     try {
         const config = {
           headers: {
@@ -24,7 +26,7 @@ const getResource = async (resource, params) => {
           }
       };
     const response = await axios.get(`${process.env.FLW_BASE_URL}${resource}${queryParams}`, config);
-    const data = response.data.data;
+    const data = returnString ? response.data: response.data.data;
     
     return data;
       } catch (error) {

@@ -157,7 +157,7 @@ async function paySalary (req, res){
         "amount" : req.body.amount,
         "narration" :  req.body.narration,
     }
-   await transfers(payload, res);
+   await transfers(payload, req, res);
            }
 
     catch(err){
@@ -169,7 +169,7 @@ async function paySalary (req, res){
 
     
 // transfer salary to employee
-async function transfers(transferDetails, res){
+async function transfers(transferDetails, req, res){
     try{
     let ref = 'flw_' + new Date().getUTCMilliseconds();
     let payload = {
@@ -189,7 +189,13 @@ async function transfers(transferDetails, res){
 
     if(transfer.status == "success"){
         raw_logs('transfer_init_success_response for '+ref, transfer);
-            res.status(200).json({'message' : 'Transfer initiated sucessfully! Please check your bank account', 'status': 1});
+        let verify = await transfersCallback(transfer.data.id, req, res);
+        if(verify){
+            res.status(200).json({'message' : 'Transfer initiated sucessfully! Please check your bank account', 'status': 1}); 
+        }
+        else{
+            res.status(503).json({'message' : 'transfer initiated but unable to verify = '+verify, 'status': 0});
+        }
     }
     else{
         raw_logs('transfer_failed_response for '+ref, transfer);
@@ -202,17 +208,27 @@ async function transfers(transferDetails, res){
         }
 
 
-async function transfersCallback (req, res){
+async function transfersCallback (id, req, res){
     try{
-        let verifyResponse = await verifyTransfer(req.params.id);
+        let verifyResponse = await verifyTransfer(id);
             
      if ((verifyResponse.status == 'successful' || verifyResponse.status == 'success') && verifyResponse.data.status != "FAILED" ){
-        raw_logs('transfer_webhook_success for '+verifyResponse.data.reference, 'verify_response: ' +verifyResponse);
-        //await insertData(transactions, {email: email, token: pin });
+        raw_logs('transfer_webhook_success for '+verifyResponse.data.reference, verifyResponse);
+        await insertData(transactions, 
+            {accountName: verifyResponse.data.full_name,
+             accountNumber: verifyResponse.data.account_number,
+             bankName: verifyResponse.data.bank_name,
+             author: req.user.user,
+             username_recieved: req.query.username,
+             description: verifyResponse.data.narration,
+             trn_ref: verifyResponse.data.reference,
+             amount: verifyResponse.data.amount 
+            });
+        return 1;
     }
     else{
-        raw_logs('transfer_webhook_failed for '+id, 'verify_response: ' +verifyResponse);    
-        return false;
+        raw_logs('transfer_webhook_failed for '+id, verifyResponse);    
+        return verifyResponse;
     }
 }
     catch(err){
@@ -230,6 +246,12 @@ async function checkBank(bank_name){
             }
         };
           throw new Error(`Bank with name '${bank_name}' not found`);
+}
+
+// verify transfer
+async function verifyTransfer(id){
+    var transfer_details = await getResource('/transfers/'+id, '', 1);
+    return transfer_details;
 }
 
 

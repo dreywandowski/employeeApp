@@ -5,12 +5,12 @@ const DataTypes = conn.DataTypes;
 // create a raw_logs model
 const transactions = sequelize.define('transactions', {
     accountName: DataTypes.STRING,
-    accountNumber: DataTypes.TEXT('long'),
-    bankName: DataTypes.DATE,
-    author: DataTypes.DATE,
+    accountNumber: DataTypes.STRING,
+    bankName: DataTypes.STRING,
+    author: DataTypes.STRING,
     username_recieved: DataTypes.STRING,
-    description: DataTypes.TEXT('long'),
-    trn_ref: DataTypes.TEXT('long'),
+    description: DataTypes.STRING,
+    trn_ref: DataTypes.STRING,
     amount: DataTypes.DECIMAL(10, 2),
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE

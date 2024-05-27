@@ -158,7 +158,6 @@ async function paySalary (req, res){
         "narration" :  req.body.narration,
     }
              const send = transfers(payload);
-             console.log(send);return;
              if(send != false){
                 res.status(200).json({'message' : 'Transfer initiated sucessfully! Please check your bank account', 'status': 1});
              }else{
@@ -177,7 +176,7 @@ async function paySalary (req, res){
 // transfer salary to employee
 async function transfers(transferDetails){
     try{
-    let ref = 'flw_' + new Date().getUTCMilliseconds()+ Math.random();
+    let ref = 'flw_' + new Date().getUTCMilliseconds();
     let payload = {
         "account_bank" : transferDetails.bank_code,
         "account_number" : transferDetails.acct_num,
@@ -188,9 +187,7 @@ async function transfers(transferDetails){
         "callback_url" : `${process.env.BASE_URL}transferCallback`,
         "debit_currency" : "NGN",
     };
-  console.log(payload);return;
     const transfer = await postResource(payload,'/transfers');
-    return;
 
     // log the transfer payload
     raw_logs('transfer_payload for '+ref, payload);

@@ -128,7 +128,7 @@ const download = (req, res) =>{
 
 
 // add account details for staff
-const addAccount = (req, res) => {
+/*const addAccount = (req, res) => {
     var qry = req.body;
     let username = qry.username;
 
@@ -144,7 +144,8 @@ const addAccount = (req, res) => {
         res.status(403).json({'message' : 'Error creating an account for the user ' + err, 
         'status':0});
     });
-}
+}*/
+
 
 // make salary payment for staff
 async function paySalary (req, res){
@@ -152,8 +153,8 @@ async function paySalary (req, res){
     const check = await getData(bank, {username: req.query.username });
     const bank_code = await checkBank(check[0].dataValues.bankName);
     let payload = {
-        "bank_code" :  '044', //bank_code, 
-        "acct_num" : '0690000040', //check[0].dataValues.accountNumber, 
+        "bank_code" :  'bank_code', //044, 
+        "acct_num" :  check[0].dataValues.accountNumber, //0690000040, 
         "amount" : req.body.amount,
         "narration" :  req.body.narration,
     }
@@ -258,7 +259,6 @@ async function verifyTransfer(id){
 module.exports = {
     mySalaryBreakDown,
     download,
-    addAccount,
     paySalary,
     transfersCallback
 }

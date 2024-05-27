@@ -152,21 +152,16 @@ async function paySalary (req, res){
     const check = await getData(bank, {username: req.query.username });
     const bank_code = await checkBank(check[0].dataValues.bankName);
     let payload = {
-        "bank_code" : bank_code, // 044
-        "acct_num" : check[0].dataValues.accountNumber,  //0690000040
+        "bank_code" :  '044', //bank_code, 
+        "acct_num" : '0690000040', //check[0].dataValues.accountNumber, 
         "amount" : req.body.amount,
         "narration" :  req.body.narration,
     }
-             const send = transfers(payload);
-             if(send != false){
-                res.status(200).json({'message' : 'Transfer initiated sucessfully! Please check your bank account', 'status': 1});
-             }else{
-                return "Unable to transfer funds, error = "+send;
-             }
+   await transfers(payload, res);
            }
 
     catch(err){
-        res.status(404).json({'message' : 'Error Initiating bank transfer!', 
+        res.status(503).json({'message' : 'Error Initiating bank transfer!', 
         'error': err, 'status': 0});
     };
 }
@@ -174,7 +169,7 @@ async function paySalary (req, res){
 
     
 // transfer salary to employee
-async function transfers(transferDetails){
+async function transfers(transferDetails, res){
     try{
     let ref = 'flw_' + new Date().getUTCMilliseconds();
     let payload = {
@@ -190,21 +185,21 @@ async function transfers(transferDetails){
     const transfer = await postResource(payload,'/transfers');
 
     // log the transfer payload
-    raw_logs('transfer_payload for '+ref, payload);
+   raw_logs('transfer_payload for '+ref, payload);
 
     if(transfer.status == "success"){
         raw_logs('transfer_init_success_response for '+ref, transfer);
-        return transfer.data.id;
+            res.status(200).json({'message' : 'Transfer initiated sucessfully! Please check your bank account', 'status': 1});
     }
     else{
         raw_logs('transfer_failed_response for '+ref, transfer);
-        return 0;
+        res.status(503).json({'message' : 'Unable to transfer funds, error = '+transfer.data.complete_message, 'status': 0});
     }
-   }
+}
   catch(err){
     return err; 
          }
-}
+        }
 
 
 async function transfersCallback (req, res){

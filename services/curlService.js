@@ -8,11 +8,8 @@ const postResource = async (payload, resource) => {
             }
         };
         const response = await axios.post(`${process.env.FLW_BASE_URL}${resource}`, payload, config);
-        console.log("Response received:", response.data);
-        return response.data.data;
+        return response.data;
       } catch (error) {
-        console.error("Error posting resource:", error.response.data);
-       // throw new Error(`Failed to post resource: ${error.response.data}`);
        return error.response.data;
       }
 }
@@ -31,7 +28,6 @@ const getResource = async (resource, params) => {
     
     return data;
       } catch (error) {
-        console.error("Error getting resource:", error);
         return error.response.data;
       }
 

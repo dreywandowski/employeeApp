@@ -1,6 +1,5 @@
-const axios = require('axios');
 const nodemailer = require('nodemailer');
-const ejs = require('ejs');
+const logger = require('../logger/log');
 
      async function sendMail(emailBody) {
       // Create a Nodemailer transporter
@@ -37,11 +36,12 @@ const ejs = require('ejs');
       try {
         // Send the email
         const info = await transport.sendMail(mailOptions);
-        console.log('Message sent: %s', info.messageId);
-       // return 'sent';
+        //console.log('Message sent: %s', info.messageId);
+        logger.info(`${new Date().toISOString()} : Message sent: `%s, info.messageId);
       } catch (error) {
-        console.error('Error sending email:', error.message);
-        return `Mailer Error: ${error.message}`;
+      //  console.error('Error sending email:', error.message);
+        logger.error(`${new Date().toISOString()} : Mailer Error: `, error.message);
+        //return `Mailer Error: ${error.message}`;
       }
     }
 

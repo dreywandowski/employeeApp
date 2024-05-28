@@ -1,4 +1,6 @@
 const axios = require('axios');
+const logger = require('../logger/log');
+
 const postResource = async (payload, resource) => {
     try {
         const config = {
@@ -10,14 +12,14 @@ const postResource = async (payload, resource) => {
         const response = await axios.post(`${process.env.FLW_BASE_URL}${resource}`, payload, config);
         return response.data;
       } catch (error) {
-       return error.response.data;
+      // return error.response.data;
+       logger.error(`${new Date().toISOString()} : Error getting resource with error:`, error.response.data);
       }
 }
 
 const getResource = async (resource, params, data = '') => {
     const queryParams = params ? `?${params}` : '';
     const returnString = data ? 1 : 0;
-    console.log('returnString' + returnString);
     try {
         const config = {
           headers: {
@@ -30,7 +32,8 @@ const getResource = async (resource, params, data = '') => {
     
     return data;
       } catch (error) {
-        return error.response.data;
+        //return error.response.data;
+        logger.error(`${new Date().toISOString()} : Error posting resource with error:`, error.response.data);
       }
 
 }

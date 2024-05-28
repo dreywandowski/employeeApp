@@ -260,5 +260,5 @@ module.exports = {
     mySalaryBreakDown,
     download,
     paySalary,
-    transfersCallback
+    //transfersCallback
 }

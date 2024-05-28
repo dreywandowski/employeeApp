@@ -1,4 +1,5 @@
 const raw_log = require('../models/raw_logs');
+const logger = require('../logger/log');
 
 const insertData = async (table, data) => {
     try{
@@ -22,7 +23,8 @@ const insertData = async (table, data) => {
                         break;
             default:
         }
-        throw new Error('Error creating ' + record + ': ' + err); 
+        logger.error(`${new Date().toISOString()} : Error creating  ${record} with error:`, err);
+        throw new Error(`Error creating  ${record} with error:`, err);
     }
 }
    
@@ -40,6 +42,7 @@ const getData = async (table, clause, exclude_list) => {
         }
         return qry;
     } catch (err) {
+        logger.error(`${new Date().toISOString()} : Error getting the record with error:`, err);
         throw new Error('Error getting the record: ' + err.message); 
     }
 }
@@ -50,7 +53,8 @@ const updateData = async(table, attributes, clause) => {
     let data = await table.update(attributes, { where: clause });
     return data;
   }catch(err) {
-        throw new Error('Error updating the record: ' + err); 
+    logger.error(`${new Date().toISOString()} : Error updating the record with error:`, err);
+     throw new Error('Error updating the record: ' + err); 
     }
 }
 
@@ -61,7 +65,8 @@ const raw_logs = async(title, body) => {
         await raw_log.create(data);
         return true;
       }catch(err) {
-            throw new Error('Error creating the log: ' + err); 
+            logger.error(`${new Date().toISOString()} : Error creating the log with error:`, err); 
+            throw new Error('Error creating the log: ' + err);
         }
 }
 

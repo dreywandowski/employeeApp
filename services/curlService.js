@@ -13,7 +13,7 @@ const postResource = async (payload, resource) => {
         return response.data;
       } catch (error) {
        logger.error(`${new Date().toISOString()} : Error getting resource with error:`, error.response.data);
-       return error.response.data;
+       throw new Error("Error getting resource with error: " + error.response.data);
       }
 }
 
@@ -33,7 +33,7 @@ const getResource = async (resource, params, data = '') => {
     return data;
       } catch (error) {
         logger.error(`${new Date().toISOString()} : Error posting resource with error:`, error.response.data);
-        return error.response.data;
+        throw new Error("Error posting resource with error: " + error.response.data);
       }
 
 }

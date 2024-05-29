@@ -153,7 +153,7 @@ async function paySalary (req, res){
     const check = await getData(bank, {username: req.query.username });
     const bank_code = await checkBank(check[0].dataValues.bankName);
     let payload = {
-        "bank_code" :  'bank_code', //044, 
+        "bank_code" :  bank_code, //044, 
         "acct_num" :  check[0].dataValues.accountNumber, //0690000040, 
         "amount" : req.body.amount,
         "narration" :  req.body.narration,

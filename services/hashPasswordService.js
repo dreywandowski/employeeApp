@@ -1,16 +1,17 @@
 const bcrypt = require("bcrypt");
 
-function hashPassword(plaintextPassword) {
-    bcrypt.hash(plaintextPassword, 15)
-        .then(hash => {
+const hashPassword = async (plaintextPassword) => {
+    try{
+    let hash = await bcrypt.hash(plaintextPassword, 15);
             console.log("our hashed pwd: "+hash);
             return hash;
-        }).catch(err => {
+        }
+        catch(err){
             throw new Error("Error hashing the password " + err); 
-        });
+        }
     }
-    
 
+    // turning an ordinary function to asynchronous
     function decryptPassword(pwd, dbPwd) {
         return new Promise((resolve, reject) => {
             bcrypt.compare(pwd, dbPwd)

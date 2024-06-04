@@ -281,7 +281,7 @@ async function login(req, res){
     }
     }
         catch(err){
-            throw new Error('Error logging in : ' + err.message);
+            res.status(500).json({'message': err.message, 'status': 0})
         };
     }
 
@@ -294,9 +294,7 @@ async function logout(req, res){
       catch(e) {
         res.status(500).json({'message' : ' Error logging out the user, kindly check the error msg!',
         'error': err.message, 'status': 0});
-      }
-
-       
+      }    
 }
 
 

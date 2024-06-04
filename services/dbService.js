@@ -7,24 +7,8 @@ const insertData = async (table, data) => {
     return created;
     }
     catch(err) {
-        let record = 'record';
-        switch (table){
-            case "User":
-            record = 'user';
-            break;
-            case "password_resets":
-                record = 'verification pin';
-                break;
-                case "User":
-                    record = 'user';
-                    break;
-                    case "job":
-                        record = 'job';
-                        break;
-            default:
-        }
-        logger.error(`${new Date().toISOString()} : Error creating  ${record} with error:`, err);
-        throw new Error(`Error creating  ${record} with error:`, err);
+        logger.error(`Error creating the record with error:`, err.message);
+        throw new Error(`Error creating the record with error:`, err.message);
     }
 }
    
@@ -42,8 +26,8 @@ const getData = async (table, clause, exclude_list) => {
         }
         return qry;
     } catch (err) {
-        logger.error(`${new Date().toISOString()} : Error getting the record with error:`, err);
-        throw new Error('Error getting the record: ' + err.message); 
+        logger.error(`Error getting the record with error:`, err.message);
+        throw new Error(`Error getting the record:  ${err.message}`); 
     }
 }
 
@@ -53,7 +37,7 @@ const updateData = async(table, attributes, clause) => {
     let data = await table.update(attributes, { where: clause });
     return data;
   }catch(err) {
-    logger.error(`${new Date().toISOString()} : Error updating the record with error:`, err);
+    logger.error(`Error updating the record with error:`, err);
      throw new Error('Error updating the record: ' + err); 
     }
 }
@@ -65,7 +49,7 @@ const raw_logs = async(title, body) => {
         await raw_log.create(data);
         return true;
       }catch(err) {
-            logger.error(`${new Date().toISOString()} : Error creating the log with error:`, err); 
+            logger.error(`Error creating the log with error:`, err); 
             throw new Error('Error creating the log: ' + err);
         }
 }

@@ -160,10 +160,9 @@ async function paySalary (req, res){
     }
    await transfers(payload, req, res);
            }
-
     catch(err){
         res.status(503).json({'message' : 'Error Initiating bank transfer!', 
-        'error': err, 'status': 0});
+        'error': err.message, 'status': 0});
     };
 }
 

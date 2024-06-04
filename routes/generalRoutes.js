@@ -11,10 +11,6 @@ const axios = require('axios');
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded ({extended :false});
 
-
-  // callback route for transfer
-  router.get('/transferCallback', salary.transfersCallback);
-
   // get all jobs
   router.get('/jobs', jobs.getJobs);
 

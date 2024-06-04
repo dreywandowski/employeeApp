@@ -25,9 +25,6 @@ module.exports = {
       username: {
         type: Sequelize.STRING
       },
-      paystack_id: {
-        type: Sequelize.STRING
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

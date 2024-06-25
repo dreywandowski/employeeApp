@@ -1,0 +1,1 @@
+{"version":3,"file":"20231227154520-modify_jobs_add_department.js","sourceRoot":"","sources":["../../migrations/20231227154520-modify_jobs_add_department.ts"],"names":[],"mappings":"AAAA,YAAY,CAAC;AAGb,MAAM,CAAC,OAAO,GAAG;IACf,KAAK,CAAC,EAAE,CAAE,cAAc,EAAE,SAAS;IASnC,CAAC;IAED,KAAK,CAAC,IAAI,CAAE,cAAc,EAAE,SAAS;IAOrC,CAAC;CACF,CAAC"}

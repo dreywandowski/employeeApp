@@ -1,4 +1,4 @@
-const users = require('../models/Users');
+/*const users = require('../models/Users');
 const bank = require('../models/bank');
 const transactions = require('../models/transaction');
 const pdf = require('html-pdf');
@@ -157,7 +157,7 @@ const download = (req, res) => {
     });
 }*/
 
-
+/*
 // make salary payment for staff
 async function paySalary(req, res) {
     try {
@@ -274,4 +274,4 @@ module.exports = {
     download,
     paySalary,
     //transfersCallback
-}
+}*/

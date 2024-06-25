@@ -1,4 +1,2 @@
-declare const conn: any;
-declare const sequelize: any;
-declare const DataTypes: any;
-declare const Job: any;
+declare const Job: import("sequelize").ModelCtor<import("sequelize").Model<any, any>>;
+export default Job;

@@ -1,17 +1,17 @@
-const conn = require('../connection');
-const sequelize = conn.sequelize;
-const DataTypes = conn.DataTypes;
-const transactions = sequelize.define('transactions', {
-    accountName: DataTypes.STRING,
-    accountNumber: DataTypes.STRING,
-    bankName: DataTypes.STRING,
-    author: DataTypes.STRING,
-    username_recieved: DataTypes.STRING,
-    description: DataTypes.STRING,
-    trn_ref: DataTypes.STRING,
-    amount: DataTypes.DECIMAL(10, 2),
-    createdAt: DataTypes.DATE,
-    updatedAt: DataTypes.DATE
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const connection_1 = require("../connection");
+const transactions = connection_1.sequelize.define('transactions', {
+    accountName: connection_1.DataTypes.STRING,
+    accountNumber: connection_1.DataTypes.STRING,
+    bankName: connection_1.DataTypes.STRING,
+    author: connection_1.DataTypes.STRING,
+    username_recieved: connection_1.DataTypes.STRING,
+    description: connection_1.DataTypes.STRING,
+    trn_ref: connection_1.DataTypes.STRING,
+    amount: connection_1.DataTypes.DECIMAL(10, 2),
+    createdAt: connection_1.DataTypes.DATE,
+    updatedAt: connection_1.DataTypes.DATE
 });
-module.exports = transactions;
+exports.default = transactions;
 //# sourceMappingURL=transaction.js.map

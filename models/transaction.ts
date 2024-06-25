@@ -1,6 +1,4 @@
-const conn = require('../connection');
-const sequelize = conn.sequelize;
-const DataTypes = conn.DataTypes;
+import { DataTypes, sequelize } from '../connection';
 
 // create a raw_logs model
 const transactions = sequelize.define('transactions', {
@@ -17,4 +15,4 @@ const transactions = sequelize.define('transactions', {
 });
 
 
-module.exports = transactions;
+export default transactions;

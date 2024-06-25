@@ -1,16 +1,16 @@
-const conn = require('../connection');
-const sequelize = conn.sequelize;
-const DataTypes = conn.DataTypes;
-const Job = sequelize.define('jobs', {
-    title: DataTypes.STRING,
-    isOpen: DataTypes.BOOLEAN,
-    yearsOfExperience: DataTypes.INTEGER,
-    description: DataTypes.STRING,
-    duties: DataTypes.STRING,
-    qualifications: DataTypes.STRING,
-    skills: DataTypes.STRING,
-    end_date: DataTypes.DATE,
-    department: DataTypes.STRING
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const connection_1 = require("../connection");
+const Job = connection_1.sequelize.define('jobs', {
+    title: connection_1.DataTypes.STRING,
+    isOpen: connection_1.DataTypes.BOOLEAN,
+    yearsOfExperience: connection_1.DataTypes.INTEGER,
+    description: connection_1.DataTypes.STRING,
+    duties: connection_1.DataTypes.STRING,
+    qualifications: connection_1.DataTypes.STRING,
+    skills: connection_1.DataTypes.STRING,
+    end_date: connection_1.DataTypes.DATE,
+    department: connection_1.DataTypes.STRING
 });
 Job.associate = function (models) {
     Job.belongsTo(models.application, {
@@ -18,5 +18,5 @@ Job.associate = function (models) {
         sourceKey: "id"
     });
 };
-module.exports = Job;
+exports.default = Job;
 //# sourceMappingURL=job.js.map

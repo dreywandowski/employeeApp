@@ -1,12 +1,12 @@
-const conn = require('../connection');
-const sequelize = conn.sequelize;
-const DataTypes = conn.DataTypes;
-const bank = sequelize.define('bank_accounts', {
-    accountName: DataTypes.STRING,
-    accountNumber: DataTypes.STRING,
-    bankName: DataTypes.STRING,
-    bankCode: DataTypes.STRING,
-    username: DataTypes.STRING
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const connection_1 = require("../connection");
+const bank = connection_1.sequelize.define('bank_accounts', {
+    accountName: connection_1.DataTypes.STRING,
+    accountNumber: connection_1.DataTypes.STRING,
+    bankName: connection_1.DataTypes.STRING,
+    bankCode: connection_1.DataTypes.STRING,
+    username: connection_1.DataTypes.STRING
 });
-module.exports = bank;
+exports.default = bank;
 //# sourceMappingURL=bank.js.map

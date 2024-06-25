@@ -1,4 +1,2 @@
-declare const conn: any;
-declare const sequelize: any;
-declare const DataTypes: any;
-declare const raw_logs: any;
+declare const raw_logs: import("sequelize").ModelCtor<import("sequelize").Model<any, any>>;
+export default raw_logs;

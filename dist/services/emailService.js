@@ -1,10 +1,12 @@
-const nodemailer = require('nodemailer');
-const logger = require('../logger/log');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const nodemailer_1 = require("nodemailer");
+const log_1 = require("../logger/log");
 async function sendMail(emailBody) {
     user = process.env.MAIL_USERNAME;
     pass = process.env.MAIL_PWD;
     let content = '';
-    let transport = nodemailer.createTransport({
+    let transport = nodemailer_1.default.createTransport({
         host: "smtp.gmail.com",
         port: 465,
         secure: true,
@@ -29,10 +31,10 @@ async function sendMail(emailBody) {
     };
     try {
         const info = await transport.sendMail(mailOptions);
-        logger.info(`${new Date().toISOString()} : Message sent: ` % s, info.messageId);
+        log_1.default.info(`${new Date().toISOString()} : Message sent: ` % s, info.messageId);
     }
     catch (error) {
-        logger.error(`${new Date().toISOString()} : Mailer Error: `, error.message);
+        log_1.default.error(`${new Date().toISOString()} : Mailer Error: `, error.message);
     }
 }
 module.exports = {

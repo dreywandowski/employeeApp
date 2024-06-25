@@ -1,9 +1,9 @@
-const conn = require('../connection');
-const sequelize = conn.sequelize;
-const DataTypes = conn.DataTypes;
-const passwordResets = sequelize.define('password_resets', {
-    email: DataTypes.STRING,
-    token: DataTypes.STRING
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const connection_1 = require("../connection");
+const passwordResets = connection_1.sequelize.define('password_resets', {
+    email: connection_1.DataTypes.STRING,
+    token: connection_1.DataTypes.STRING
 });
-module.exports = passwordResets;
+exports.default = passwordResets;
 //# sourceMappingURL=password_resets.js.map

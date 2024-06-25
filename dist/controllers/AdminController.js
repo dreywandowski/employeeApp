@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.rankEmployee = exports.deleteEmployee = exports.getEmployees = exports.employee_id = void 0;
+const Users_1 = require("../models/Users");
 const employee_id = (req, res) => {
     const username = req.params.name;
-    users.sync().then(data => {
-        return users.findAll({
+    Users_1.default.sync().then(data => {
+        return Users_1.default.findAll({
             where: { username: username },
             attributes: {
                 exclude: ['password', 'createdAt', 'updatedAt', 'jwt']
@@ -33,8 +34,8 @@ const employee_id = (req, res) => {
 };
 exports.employee_id = employee_id;
 const getEmployees = (req, res) => {
-    users.sync().then(data => {
-        return users.findAll({
+    Users_1.default.sync().then(data => {
+        return Users_1.default.findAll({
             attributes: { exclude: ['password', 'createdAt', 'updatedAt', 'jwt'] }
         });
     }).
@@ -54,8 +55,8 @@ const getEmployees = (req, res) => {
 exports.getEmployees = getEmployees;
 const deleteEmployee = (req, res) => {
     const username = req.params.name;
-    users.sync().then(data => {
-        return users.destroy({
+    Users_1.default.sync().then(data => {
+        return Users_1.default.destroy({
             where: {
                 username: username
             }
@@ -85,7 +86,7 @@ exports.deleteEmployee = deleteEmployee;
 const rankEmployee = (req, res) => {
     var username = req.params.name;
     var qry = req.body.rank;
-    users.update({ rank: qry }, {
+    Users_1.default.update({ rank: qry }, {
         where: { username: username }
     }).then(resp => {
         res.status(200).json({

@@ -1,4 +1,4 @@
-var users = require('../models/Users');
+/*var users = require('../models/Users');
 var password_resets = require('../models/password_resets');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -159,4 +159,4 @@ module.exports = {
     verify_reset,
     resetPwd
 
-}
+}*/

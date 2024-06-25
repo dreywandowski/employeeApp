@@ -1,6 +1,4 @@
-const conn = require('../connection');
-const sequelize = conn.sequelize;
-const DataTypes = conn.DataTypes;
+import { DataTypes, sequelize } from '../connection';
 
 
 // create an application model
@@ -18,13 +16,13 @@ const application = sequelize.define('applications', {
   job_id: DataTypes.INTEGER,
   status: DataTypes.INTEGER,
   interview_date: DataTypes.DATE
- });
- 
- application.associate = function(models){
+});
+
+application.associate = function (models) {
   application.hasMany(models.job, {
-      foreignKey: "id",
-      sourceKey: "job_id"
+    foreignKey: "id",
+    sourceKey: "job_id"
   })
 }
 
- module.exports = application;
+module.exports = application;

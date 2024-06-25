@@ -1,4 +1,4 @@
-var users = require('../models/Users');
+/*var users = require('../models/Users');
 var password_resets = require('../models/password_resets');
 const { hashPassword, decryptPassword } = require('../services/hashPasswordService');
 const { insertData, getData, updateData } = require('../services/dbService');
@@ -161,17 +161,17 @@ const verifyMail = (req, res) => {
             throw Error("Error updating the user with a verified token!!");
          }*/
 
-        res.status(200).json({
-            'message': 'User verified succesfully, you may proceed to login'
-            , 'status': 1
-        });
+/*res.status(200).json({
+    'message': 'User verified succesfully, you may proceed to login'
+    , 'status': 1
+});
     }).
-        catch(err => {
-            res.status(403).json({
-                'message': 'Error updating the user with a verified token or updating the dB! ' + err,
-                'status': 0
-            });
-        });
+        catch (err => {
+    res.status(403).json({
+        'message': 'Error updating the user with a verified token or updating the dB! ' + err,
+        'status': 0
+    });
+});
 
 }
 
@@ -342,4 +342,4 @@ module.exports = {
     verifyMail,
     resend_token
 
-}
+}*/

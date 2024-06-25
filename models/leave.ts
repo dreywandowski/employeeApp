@@ -1,29 +1,27 @@
-const conn = require('../connection');
-const sequelize = conn.sequelize;
-const DataTypes = conn.DataTypes;
+import { DataTypes, sequelize } from '../connection';
 
 
 // create a leave model
 const Leave = sequelize.define('leaves', {
- purpose: DataTypes.STRING,
- type: DataTypes.STRING,
- status: DataTypes.STRING,
- date_from: DataTypes.DATE,
- date_to: DataTypes.DATE,
- username: DataTypes.STRING,
- approved: DataTypes.BOOLEAN,
- approved_by: DataTypes.STRING,
- rejected_by: DataTypes.STRING
+  purpose: DataTypes.STRING,
+  type: DataTypes.STRING,
+  status: DataTypes.STRING,
+  date_from: DataTypes.DATE,
+  date_to: DataTypes.DATE,
+  username: DataTypes.STRING,
+  approved: DataTypes.BOOLEAN,
+  approved_by: DataTypes.STRING,
+  rejected_by: DataTypes.STRING
 });
 
-Leave.associate = function(models){
-  Users.belongsTo(models.Users, {
-      foreignKey: "username",
-      sourceKey: "username"
-  })
+Leave.associate = function (models: any) {
+  Leave.belongsTo(models.Users, {
+    foreignKey: "username",
+    targetKey: "username"
+  });
 
 }
-module.exports = Leave;
+export default Leave;
 
 
 
@@ -42,22 +40,22 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    /*
-    static associate(models) {
-      // define association here
-    }
-  }
-  Leave.init({
-    purpose: DataTypes.STRING,
-    type: DataTypes.STRING,
-    status: DataTypes.STRING,
-    date_from: DataTypes.DATE,
-    date_to: DataTypes.DATE,
-    username: DataTypes.STRING,
-    approved: DataTypes.BOOLEAN
-  }, {
-    sequelize,
-    modelName: 'Leave',
-  });
-  return Leave;
+/*
+static associate(models) {
+  // define association here
+}
+}
+Leave.init({
+purpose: DataTypes.STRING,
+type: DataTypes.STRING,
+status: DataTypes.STRING,
+date_from: DataTypes.DATE,
+date_to: DataTypes.DATE,
+username: DataTypes.STRING,
+approved: DataTypes.BOOLEAN
+}, {
+sequelize,
+modelName: 'Leave',
+});
+return Leave;
 };*/

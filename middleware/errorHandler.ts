@@ -1,4 +1,6 @@
-module.exports = (req, res, next) => {
+
+/*
+module.exports = (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
   // search on the db if authenticated user is verified
   User.findOne({
     where: {
@@ -13,4 +15,4 @@ module.exports = (req, res, next) => {
   }).catch(e => {
     return res.status(400).json({ error: "unable to authenticate user! " + e, status: 0 })
   });
-};
+};*/

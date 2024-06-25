@@ -1,7 +1,9 @@
-const bcrypt = require("bcrypt");
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const bcrypt_1 = require("bcrypt");
 const hashPassword = async (plaintextPassword) => {
     try {
-        let hash = await bcrypt.hash(plaintextPassword, 15);
+        let hash = await bcrypt_1.default.hash(plaintextPassword, 15);
         console.log("our hashed pwd: " + hash);
         return hash;
     }
@@ -11,7 +13,7 @@ const hashPassword = async (plaintextPassword) => {
 };
 function decryptPassword(pwd, dbPwd) {
     return new Promise((resolve, reject) => {
-        bcrypt.compare(pwd, dbPwd)
+        bcrypt_1.default.compare(pwd, dbPwd)
             .then(plain => {
             resolve(plain);
         }).catch(err => {

@@ -1,4 +1,2 @@
-declare const conn: any;
-declare const sequelize: any;
-declare const DataTypes: any;
-declare const passwordResets: any;
+declare const passwordResets: import("sequelize").ModelCtor<import("sequelize").Model<any, any>>;
+export default passwordResets;

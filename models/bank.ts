@@ -1,6 +1,4 @@
-const conn = require('../connection');
-const sequelize = conn.sequelize;
-const DataTypes = conn.DataTypes;
+import { DataTypes, sequelize } from '../connection';
 
 
 // create an account model
@@ -10,7 +8,7 @@ const bank = sequelize.define('bank_accounts', {
   bankName: DataTypes.STRING,
   bankCode: DataTypes.STRING,
   username: DataTypes.STRING
- });
- 
+});
 
- module.exports = bank;
+
+export default bank;

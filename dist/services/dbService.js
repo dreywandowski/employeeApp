@@ -1,12 +1,14 @@
-const raw_log = require('../models/raw_logs');
-const logger = require('../logger/log');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const log_1 = require("../logger/log");
+const raw_logs_1 = require("../models/raw_logs");
 const insertData = async (table, data) => {
     try {
         let created = await table.create(data);
         return created;
     }
     catch (err) {
-        logger.error(`Error creating the record with error:`, err.message);
+        log_1.default.error(`Error creating the record with error:`, err.message);
         throw new Error(`Error creating the record with error:`, err.message);
     }
 };
@@ -25,7 +27,7 @@ const getData = async (table, clause, exclude_list) => {
         return qry;
     }
     catch (err) {
-        logger.error(`Error getting the record with error:`, err.message);
+        log_1.default.error(`Error getting the record with error:`, err.message);
         throw new Error(`Error getting the record:  ${err.message}`);
     }
 };
@@ -35,18 +37,18 @@ const updateData = async (table, attributes, clause) => {
         return data;
     }
     catch (err) {
-        logger.error(`Error updating the record with error:`, err);
+        log_1.default.error(`Error updating the record with error:`, err);
         throw new Error('Error updating the record: ' + err);
     }
 };
 const raw_logs = async (title, body) => {
     try {
         let data = { title: title, body: JSON.stringify(body) };
-        await raw_log.create(data);
+        await raw_logs_1.default.create(data);
         return true;
     }
     catch (err) {
-        logger.error(`Error creating the log with error:`, err);
+        log_1.default.error(`Error creating the log with error:`, err);
         throw new Error('Error creating the log: ' + err);
     }
 };

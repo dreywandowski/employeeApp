@@ -1,5 +1,5 @@
-//var users = require('../models/Users');
 import { Request, Response } from 'express';
+import users from '../models/Users';
 
 // get an employee
 export const employee_id = (req: Request, res: Response) => {

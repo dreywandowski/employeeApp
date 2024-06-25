@@ -1,2 +1,3 @@
-declare const winston: any;
-declare const logger: any;
+import winston from 'winston';
+declare const logger: winston.Logger;
+export default logger;

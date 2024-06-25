@@ -1,11 +1,11 @@
-const conn = require('../connection');
-const sequelize = conn.sequelize;
-const DataTypes = conn.DataTypes;
-const raw_logs = sequelize.define('raw_logs', {
-    title: DataTypes.STRING,
-    body: DataTypes.TEXT('long'),
-    createdAt: DataTypes.DATE,
-    updatedAt: DataTypes.DATE
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const connection_1 = require("../connection");
+const raw_logs = connection_1.sequelize.define('raw_logs', {
+    title: connection_1.DataTypes.STRING,
+    body: connection_1.DataTypes.TEXT('long'),
+    createdAt: connection_1.DataTypes.DATE,
+    updatedAt: connection_1.DataTypes.DATE
 });
-module.exports = raw_logs;
+exports.default = raw_logs;
 //# sourceMappingURL=raw_logs.js.map

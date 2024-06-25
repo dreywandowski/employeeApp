@@ -1,4 +1,4 @@
-var leave = require('../models/leave');
+/*var leave = require('../models/leave');
 const env = require('dotenv').config();
 const EventEmitter = require('events');
 const ejs = require('ejs');
@@ -168,103 +168,104 @@ const requestLeave = (req, res) => {
          status : 'cancelled'
        } 
 ]*/
-    })
-        .then(leave => {
-            var leave = require('../models/leave');
-            let id = req.params.id;
-            leave.findAll({ where: { id: id } }).
-                then(found => {
-                    eventEmitter.emit('sendMail', found);
-                    res.status(200).json({
-                        'message': 'Leave requested sucessfully!',
-                        'status': 1
-                    });
-                }).catch(err => {
-                    res.status(403).json({
-                        'message': 'Error requesting the leave application! ' + err,
-                        'status': 0
-                    });
-                });
+/* })
+     .then(leave => {
+         var leave = require('../models/leave');
+         let id = req.params.id;
+         leave.findAll({ where: { id: id } }).
+             then(found => {
+                 eventEmitter.emit('sendMail', found);
+                 res.status(200).json({
+                     'message': 'Leave requested sucessfully!',
+                     'status': 1
+                 });
+             }).catch(err => {
+                 res.status(403).json({
+                     'message': 'Error requesting the leave application! ' + err,
+                     'status': 0
+                 });
+             });
 
-        });
+     });
 }
 
 // cancel a leave request
 const cancelLeave = (req, res) => {
-    leave.update({ status: 'cancelled', }, { where: { id: req.params.id } }).then(leave => {
-        res.status(200).json({
-            'message': 'Leave request cancelled sucessfully!',
-            'status': 1
-        });
-    }).catch(err => {
-        res.status(403).json({
-            'message': 'Error cancelling the leave application! ' + err,
-            'status': 0
-        });
-    });
+ leave.update({ status: 'cancelled', }, { where: { id: req.params.id } }).then(leave => {
+     res.status(200).json({
+         'message': 'Leave request cancelled sucessfully!',
+         'status': 1
+     });
+ }).catch(err => {
+     res.status(403).json({
+         'message': 'Error cancelling the leave application! ' + err,
+         'status': 0
+     });
+ });
 }
 
 
 // get all leaves needing approval/rejection
 const getLeavesApproval = (req, res) => {
-    return leave.findAll({
-        where: {
-            status: 'requested'
-        }
-    }).then(leave => {
-        res.status(200).json({
-            'message': 'Leave list retrieved sucessfully!',
-            'leaves': leave, 'status': 1
-        });
-    }).
-        catch(err => {
-            res.status(404).json({
-                'message': 'Error Retrieving leave list!',
-                'error': err, 'status': 0
-            });
-        });
+ return leave.findAll({
+     where: {
+         status: 'requested'
+     }
+ }).then(leave => {
+     res.status(200).json({
+         'message': 'Leave list retrieved sucessfully!',
+         'leaves': leave, 'status': 1
+     });
+ }).
+     catch(err => {
+         res.status(404).json({
+             'message': 'Error Retrieving leave list!',
+             'error': err, 'status': 0
+         });
+     });
 }
 
 // approve leave request -- admin (supervisors) only
 const approveLeave = (req, res) => {
-    leave.update({ approved: 1, approved_by: req.user.user }, { where: { id: req.params.id } }).then(leave => {
-        eventEmitter.emit('sendFeedbackMail', 1);
-        res.status(200).json({
-            'message': 'Leave request approved sucessfully!',
-            'status': 1
-        });
-    }).catch(err => {
-        res.status(403).json({
-            'message': 'Error approving the leave application! ' + err,
-            'status': 0
-        });
-    });
+ leave.update({ approved: 1, approved_by: req.user.user }, { where: { id: req.params.id } }).then(leave => {
+     eventEmitter.emit('sendFeedbackMail', 1);
+     res.status(200).json({
+         'message': 'Leave request approved sucessfully!',
+         'status': 1
+     });
+ }).catch(err => {
+     res.status(403).json({
+         'message': 'Error approving the leave application! ' + err,
+         'status': 0
+     });
+ });
 }
 
 // reject leave request -- admin (supervisors) only
 const rejectLeave = (req, res) => {
-    leave.update({ status: 'cancelled', approved: 0, rejected_by: req.user.user }, { where: { id: req.params.id } }).then(leave => {
-        eventEmitter.emit('sendFeedbackMail', 0);
-        res.status(200).json({
-            'message': 'Leave request rejected sucessfully!',
-            'status': 1
-        });
-    }).catch(err => {
-        res.status(403).json({
-            'message': 'Error rejecting the leave application! ' + err,
-            'status': 0
-        });
-    });
+ leave.update({ status: 'cancelled', approved: 0, rejected_by: req.user.user }, { where: { id: req.params.id } }).then(leave => {
+     eventEmitter.emit('sendFeedbackMail', 0);
+     res.status(200).json({
+         'message': 'Leave request rejected sucessfully!',
+         'status': 1
+     });
+ }).catch(err => {
+     res.status(403).json({
+         'message': 'Error rejecting the leave application! ' + err,
+         'status': 0
+     });
+ });
 }
 
 
 module.exports = {
-    getLeaves,
-    createLeave,
-    requestLeave,
-    cancelLeave,
-    getLeave,
-    getLeavesApproval,
-    approveLeave,
-    rejectLeave
+ getLeaves,
+ createLeave,
+ requestLeave,
+ cancelLeave,
+ getLeave,
+ getLeavesApproval,
+ approveLeave,
+ rejectLeave
 }
+*/

@@ -1,22 +1,22 @@
-const conn = require('../connection');
-const sequelize = conn.sequelize;
-const DataTypes = conn.DataTypes;
-const Leave = sequelize.define('leaves', {
-    purpose: DataTypes.STRING,
-    type: DataTypes.STRING,
-    status: DataTypes.STRING,
-    date_from: DataTypes.DATE,
-    date_to: DataTypes.DATE,
-    username: DataTypes.STRING,
-    approved: DataTypes.BOOLEAN,
-    approved_by: DataTypes.STRING,
-    rejected_by: DataTypes.STRING
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const connection_1 = require("../connection");
+const Leave = connection_1.sequelize.define('leaves', {
+    purpose: connection_1.DataTypes.STRING,
+    type: connection_1.DataTypes.STRING,
+    status: connection_1.DataTypes.STRING,
+    date_from: connection_1.DataTypes.DATE,
+    date_to: connection_1.DataTypes.DATE,
+    username: connection_1.DataTypes.STRING,
+    approved: connection_1.DataTypes.BOOLEAN,
+    approved_by: connection_1.DataTypes.STRING,
+    rejected_by: connection_1.DataTypes.STRING
 });
 Leave.associate = function (models) {
-    Users.belongsTo(models.Users, {
+    Leave.belongsTo(models.Users, {
         foreignKey: "username",
-        sourceKey: "username"
+        targetKey: "username"
     });
 };
-module.exports = Leave;
+exports.default = Leave;
 //# sourceMappingURL=leave.js.map

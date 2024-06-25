@@ -1,6 +1,4 @@
-const conn = require('../connection');
-const sequelize = conn.sequelize;
-const DataTypes = conn.DataTypes;
+import { DataTypes, sequelize } from '../connection';
 
 
 // create a job model
@@ -14,15 +12,14 @@ const Job = sequelize.define('jobs', {
   skills: DataTypes.STRING,
   end_date: DataTypes.DATE,
   department: DataTypes.STRING
- });
- 
+});
 
- Job.associate = function(models){
+
+Job.associate = function (models) {
   Job.belongsTo(models.application, {
-      foreignKey: "job_id",
-      sourceKey: "id"
+    foreignKey: "job_id",
+    sourceKey: "id"
   })
 
 }
- module.exports = Job;
- 
+export default Job;

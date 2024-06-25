@@ -3,10 +3,11 @@ var job = require('../models/job');
 const { emitEvent } = require('../services/eventService');
 var Json2csvParser = require('json2csv').Parser;
 const { insertData, getData, updateData } = require('../services/dbService');
+import { Request, Response } from 'express';
 
 
 // apply for a job 
-async function apply(req, res) {
+export async function apply(req: Request, res: Response) {
   try {
     var qry = req.body;
     const jobs = await getData(job, { id: qry.job_id });
@@ -53,7 +54,7 @@ async function apply(req, res) {
 }
 
 // view applications
-const getApplications = (req, res) => {
+export const getApplications = (req: Request, res: Response) => {
   return application.findAll().then(applications => {
     //  option to convert to csv file
     if (req.body.csv == 1) {
@@ -85,7 +86,7 @@ const getApplications = (req, res) => {
 }
 
 // view application
-const getApplication = (req, res) => {
+export const getApplication = (req: Request, res: Response) => {
   let id = req.params.id;
   return application.findAll({ where: { id: id } }).
     then(application => {
@@ -102,8 +103,9 @@ const getApplication = (req, res) => {
     });
 }
 
-// change job status 
-const changeJobStatus = (req, res) => {
+// change job status
+/*
+export const changeJobStatus = (req: Request, res: Response) => {
   var qry = req.body;
   var qry_upd = {};
   if (qry.interview_date !== null && qry.interview_date !== '') {
@@ -167,14 +169,6 @@ const changeJobStatus = (req, res) => {
         'error': err.message, 'status': 0
       });
     });
-}
+}*/
 
 // export applications to csv
-
-module.exports = {
-  apply,
-  getApplication,
-  getApplications,
-  changeJobStatus
-
-}

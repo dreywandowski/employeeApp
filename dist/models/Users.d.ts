@@ -1,4 +1,2 @@
-declare const conn: any;
-declare const sequelize: any;
-declare const DataTypes: any;
-declare const Users: any;
+declare const Users: import("sequelize").ModelCtor<import("sequelize").Model<any, any>>;
+export default Users;

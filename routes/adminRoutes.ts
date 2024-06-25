@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import { deleteEmployee, employee_id, getEmployees, rankEmployee } from '../controllers/AdminController';
-var auth = require('../middleware/verifyToken');
-var adminVerify = require('../middleware/verifyAdmin');
-var leave = require('../controllers/LeaveController');
-var applications = require('../controllers/ApplicationsController');
-var jobs = require('../controllers/JobsController');
-var salary = require('../controllers/SalaryController');
-var verification = require('../middleware/checkUserVerified');
+import { getApplication, getApplications } from '../controllers/ApplicationsController';
+import { closeJob, postJob } from '../controllers/JobsController';
+//import leave from '../controllers/LeaveController';
+//import salary from '../controllers/SalaryController';
+import verification from '../middleware/checkUserVerified';
+import adminVerify from '../middleware/verifyAdmin';
+import auth from '../middleware/verifyToken';
+
 
 const router: Router = Router();
 
@@ -37,7 +38,7 @@ router.post('/employees/rankEmployee/:name', [auth, verification, adminVerify, u
 // router.post('/employees/createAccount', [auth, verification, adminVerify, urlencodedParser], salary.addAccount);
 
 // transfer money
-router.post('/employees/paySalary', [auth, verification, adminVerify, urlencodedParser], salary.paySalary);
+//router.post('/employees/paySalary', [auth, verification, adminVerify, urlencodedParser], salary.paySalary);
 
 // transfer money -- bulk
 // router.post('/employees/admin/transferBulk', [auth, verification, adminVerify, urlencodedParser], salary.transferMoneyFlw);
@@ -52,13 +53,13 @@ router.post('/employees/paySalary', [auth, verification, adminVerify, urlencoded
 
 /////////////// LEAVE ROUTES //////////////////////
 // get a list of leaves needing admin attention
-router.get('/leaves/attention', [auth, verification, adminVerify], leave.getLeavesApproval);
+//router.get('/leaves/attention', [auth, verification, adminVerify], leave.getLeavesApproval);
 
 // approve a leave request
-router.post('/leaves/approve/:id', [auth, verification, adminVerify], leave.approveLeave);
+//router.post('/leaves/approve/:id', [auth, verification, adminVerify], leave.approveLeave);
 
 // reject a leave request
-router.post('/leaves/reject/:id', [auth, verification, adminVerify], leave.rejectLeave);
+//router.post('/leaves/reject/:id', [auth, verification, adminVerify], leave.rejectLeave);
 
 ////////////////////////////////////////////////////////////////
 
@@ -66,19 +67,19 @@ router.post('/leaves/reject/:id', [auth, verification, adminVerify], leave.rejec
 /////////////// JOB ROUTES //////////////////////
 
 // view job application
-router.get('/jobs/applications/:id', [auth, verification, adminVerify], applications.getApplication);
+router.get('/jobs/applications/:id', [auth, verification, adminVerify], getApplication);
 
 // view job applications
-router.get('/jobs/applications', [auth, verification, adminVerify, urlencodedParser], applications.getApplications);
+router.get('/jobs/applications', [auth, verification, adminVerify, urlencodedParser], getApplications);
 
 // create job application
-router.post('/jobs/applications', [auth, urlencodedParser, verification, adminVerify], jobs.postJob);
+router.post('/jobs/applications', [auth, urlencodedParser, verification, adminVerify], postJob);
 
 // change application status
-router.post('/jobs/applications/changeAppStatus', [auth, urlencodedParser, verification, adminVerify], applications.changeJobStatus);
+//router.post('/jobs/applications/changeAppStatus', [auth, urlencodedParser, verification, adminVerify], applications.changeJobStatus);
 
 // close job
-router.post('/jobs/applications/closeJob', [auth, urlencodedParser, verification, adminVerify], jobs.closeJob);
+router.post('/jobs/applications/closeJob', [auth, urlencodedParser, verification, adminVerify], closeJob);
 
 ////////////////////////////////////////////////////////////////
 

@@ -1,6 +1,8 @@
 // verify user if its admin
+import { NextFunction, Response } from 'express';
+import { IGetUserAuthInfoRequest } from "../types";
 
-module.exports = (req, res, next) => {
+const adminVerify = (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
   const role = req.user.role;
 
   if (role === "admin") {
@@ -15,3 +17,5 @@ module.exports = (req, res, next) => {
 
 
 };
+
+export default adminVerify;

@@ -5,8 +5,8 @@ import dotenv from 'dotenv';
 
 // Import routes
 import adminRoutes from './routes/adminRoutes';
-import employeeRoutes from './routes/employeeRoutes';
-import generalRoutes from './routes/generalRoutes';
+//import employeeRoutes from './routes/employeeRoutes';
+//import generalRoutes from './routes/generalRoutes';
 
 dotenv.config();
 
@@ -22,9 +22,9 @@ app.use('/assets', express.static('assets'));
 app.use(cors());
 
 // Initialize routes
-app.use('/api', employeeRoutes);
+//app.use('/api', employeeRoutes);
 app.use('/api', adminRoutes);
-app.use('/api', generalRoutes);
+//app.use('/api', generalRoutes);
 
 // Uncomment and configure Redis client if needed
 /*

@@ -1,73 +1,67 @@
-const conn = require('../connection');
-const sequelize = conn.sequelize;
-const DataTypes = conn.DataTypes;
-const Users = sequelize.define('users', {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const connection_1 = require("../connection");
+const Users = connection_1.sequelize.define('users', {
     employee_id: {
-        type: DataTypes.UUID,
+        type: connection_1.DataTypes.UUID,
         primaryKey: true,
         allowNull: false,
-        defaultValue: DataTypes.UUIDV4,
+        defaultValue: connection_1.DataTypes.UUIDV4,
     },
     firstName: {
-        type: DataTypes.STRING,
+        type: connection_1.DataTypes.STRING,
         allowNull: false
     },
     lastName: {
-        type: DataTypes.STRING,
+        type: connection_1.DataTypes.STRING,
         allowNull: false
     },
     username: {
-        type: DataTypes.STRING,
+        type: connection_1.DataTypes.STRING,
         allowNull: false,
         primaryKey: true
     },
     password: {
-        type: DataTypes.STRING,
+        type: connection_1.DataTypes.STRING,
         allowNull: true
     },
     age: {
-        type: DataTypes.INTEGER,
+        type: connection_1.DataTypes.INTEGER,
         allowNull: true
     },
     isAdmin: {
-        type: DataTypes.BOOLEAN,
+        type: connection_1.DataTypes.BOOLEAN,
         allowNull: false
     },
     email: {
-        type: DataTypes.STRING,
+        type: connection_1.DataTypes.STRING,
         allowNull: true,
         unique: true
     },
     department: {
-        type: DataTypes.STRING,
+        type: connection_1.DataTypes.STRING,
         allowNull: true
     },
     supervisor: {
-        type: DataTypes.STRING,
+        type: connection_1.DataTypes.STRING,
         allowNull: true
     },
     subordinates: {
-        type: DataTypes.TEXT('long'),
+        type: connection_1.DataTypes.TEXT('long'),
         allowNull: true
     },
     jwt: {
-        type: DataTypes.STRING,
+        type: connection_1.DataTypes.STRING,
         allowNull: true
     },
     verifiedAt: {
-        type: DataTypes.DATE,
+        type: connection_1.DataTypes.DATE,
         allowNull: true
     },
     rank: {
-        type: DataTypes.STRING,
+        type: connection_1.DataTypes.STRING,
         allowNull: true
     }
 });
-Users.associate = function (models) {
-    Users.hasMany(models.leaves, {
-        foreignKey: "username",
-        sourceKey: "username"
-    });
-};
-module.exports = Users;
+exports.default = Users;
 //# sourceMappingURL=Users.js.map

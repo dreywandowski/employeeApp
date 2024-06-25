@@ -1,7 +1,9 @@
+import { NextFunction, Response } from 'express';
 import jwt from "jsonwebtoken";
 import User from "../models/Users";
+import { IGetUserAuthInfoRequest } from "../types";
 
-module.exports = (req, res, next) => {
+const auth = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
   let token;
   if (
     req.headers.authorization &&
@@ -42,3 +44,6 @@ module.exports = (req, res, next) => {
     return res.status(400).json({ error: 'token invalid ' + e, status: 0 })
   }
 };
+
+
+export default auth;

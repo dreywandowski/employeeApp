@@ -1,9 +1,4 @@
-declare var application: any;
-declare var job: any;
-declare const emitEvent: any;
-declare var Json2csvParser: any;
-declare const insertData: any, getData: any, updateData: any;
-declare function apply(req: any, res: any): Promise<void>;
-declare const getApplications: (req: any, res: any) => any;
-declare const getApplication: (req: any, res: any) => any;
-declare const changeJobStatus: (req: any, res: any) => any;
+import { Request, Response } from 'express';
+export declare function apply(req: Request, res: Response): Promise<void>;
+export declare const getApplications: (req: Request, res: Response) => any;
+export declare const getApplication: (req: Request, res: Response) => any;

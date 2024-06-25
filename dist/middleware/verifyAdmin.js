@@ -1,4 +1,6 @@
-module.exports = (req, res, next) => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const adminVerify = (req, res, next) => {
     const role = req.user.role;
     if (role === "admin") {
         next();
@@ -10,4 +12,5 @@ module.exports = (req, res, next) => {
         });
     }
 };
+exports.default = adminVerify;
 //# sourceMappingURL=verifyAdmin.js.map

@@ -1,5 +1,5 @@
-declare var jobs: any;
-declare const getJobs: (req: any, res: any) => any;
-declare const getJob: (req: any, res: any) => any;
-declare const postJob: (req: any, res: any) => any;
-declare const closeJob: (req: any, res: any) => any;
+import { Request, Response } from 'express';
+export declare const getJobs: (req: Request, res: Response) => any;
+export declare const getJob: (req: Request, res: Response) => any;
+export declare const postJob: (req: Request, res: Response) => any;
+export declare const closeJob: (req: Request, res: Response) => any;

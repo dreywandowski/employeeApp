@@ -1,7 +1,8 @@
 var jobs = require('../models/job');
+import { Request, Response } from 'express';
 
 // get all jobs
-const getJobs = (req, res) => {
+export const getJobs = (req: Request, res: Response) => {
     return jobs.findAll({
         //attributes: { exclude: ['password', 'createdAt'] }
     }).then(jobs => {
@@ -20,7 +21,7 @@ const getJobs = (req, res) => {
 }
 
 // get a job item
-const getJob = (req, res) => {
+export const getJob = (req: Request, res: Response) => {
     let id = req.params.id;
     return jobs.findAll({ where: { id: id } }).
         then(job => {
@@ -38,7 +39,7 @@ const getJob = (req, res) => {
 }
 
 // post a job 
-const postJob = (req, res) => {
+export const postJob = (req: Request, res: Response) => {
     var qry = req.body;
     var title = qry.title;
 
@@ -67,7 +68,7 @@ const postJob = (req, res) => {
 
 }
 
-const closeJob = (req, res) => {
+export const closeJob = (req: Request, res: Response) => {
     var qry = req.body;
 
     return jobs.update({ isOpen: 0 }, {
@@ -87,10 +88,3 @@ const closeJob = (req, res) => {
 }
 
 
-module.exports = {
-    getJobs,
-    getJob,
-    postJob,
-    closeJob
-
-}

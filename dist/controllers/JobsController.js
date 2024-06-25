@@ -1,3 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.closeJob = exports.postJob = exports.getJob = exports.getJobs = void 0;
 var jobs = require('../models/job');
 const getJobs = (req, res) => {
     return jobs.findAll({}).then(jobs => {
@@ -13,6 +16,7 @@ const getJobs = (req, res) => {
         });
     });
 };
+exports.getJobs = getJobs;
 const getJob = (req, res) => {
     let id = req.params.id;
     return jobs.findAll({ where: { id: id } }).
@@ -29,6 +33,7 @@ const getJob = (req, res) => {
         });
     });
 };
+exports.getJob = getJob;
 const postJob = (req, res) => {
     var qry = req.body;
     var title = qry.title;
@@ -55,6 +60,7 @@ const postJob = (req, res) => {
         });
     });
 };
+exports.postJob = postJob;
 const closeJob = (req, res) => {
     var qry = req.body;
     return jobs.update({ isOpen: 0 }, {
@@ -72,10 +78,5 @@ const closeJob = (req, res) => {
         });
     });
 };
-module.exports = {
-    getJobs,
-    getJob,
-    postJob,
-    closeJob
-};
+exports.closeJob = closeJob;
 //# sourceMappingURL=JobsController.js.map

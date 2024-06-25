@@ -1,21 +1,23 @@
-const { check, validationResult } = require('express-validator');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_validator_1 = require("express-validator");
 const userValidationRules = () => {
     const words = ['created', 'requested'];
     return [
-        check('purpose', 'purpose length should be at least 10 characters').isLength({ min: 10, max: 200 }),
-        check('type', 'type should contains 10 digits')
+        (0, express_validator_1.check)('purpose', 'purpose length should be at least 10 characters').isLength({ min: 10, max: 200 }),
+        (0, express_validator_1.check)('type', 'type should contains 10 digits')
             .isLength({ min: 5, max: 20 }),
-        check('status', "status must contain 'created' or 'requested'")
+        (0, express_validator_1.check)('status', "status must contain 'created' or 'requested'")
             .exists()
             .isIn(words),
-        check('date_from', 'must be a valid date')
+        (0, express_validator_1.check)('date_from', 'must be a valid date')
             .isDate(),
-        check('date_to', 'must be a valid date')
+        (0, express_validator_1.check)('date_to', 'must be a valid date')
             .isDate()
     ];
 };
 const validate = (req, res, next) => {
-    const errors = validationResult(req);
+    const errors = (0, express_validator_1.validationResult)(req);
     if (errors.isEmpty()) {
         return next();
     }

@@ -1,11 +1,13 @@
-const User = require("../models/Users");
-module.exports = (req, res, next) => {
-    User.findOne({
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Users_1 = require("../models/Users");
+const verification = (req, res, next) => {
+    Users_1.default.findOne({
         where: {
             username: req.user.user
         },
         attributes: ['verifiedAt'],
-    }).then(resp => {
+    }).then((resp) => {
         if (resp.verifiedAt === null) {
             throw Error("user is not yet verified!!");
         }
@@ -14,4 +16,5 @@ module.exports = (req, res, next) => {
         return res.status(400).json({ error: "unable to authenticate user! " + e, status: 0 });
     });
 };
+exports.default = verification;
 //# sourceMappingURL=checkUserVerified.js.map

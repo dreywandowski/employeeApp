@@ -1,4 +1,4 @@
-const User = require("../models/Users");
+import User from "../models/Users";
 
 module.exports = (req, res, next) => {
   // search on the db if authenticated user is verified

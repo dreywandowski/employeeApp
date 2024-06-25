@@ -1,7 +1,7 @@
-var express = require('express');
-var app = express();
-var router = express.Router();
-var admin = require('../controllers/AdminController');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const AdminController_1 = require("../controllers/AdminController");
 var auth = require('../middleware/verifyToken');
 var adminVerify = require('../middleware/verifyAdmin');
 var leave = require('../controllers/LeaveController');
@@ -9,13 +9,13 @@ var applications = require('../controllers/ApplicationsController');
 var jobs = require('../controllers/JobsController');
 var salary = require('../controllers/SalaryController');
 var verification = require('../middleware/checkUserVerified');
+const router = (0, express_1.Router)();
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
-router.delete('/employees/removeEmployee/:name', [auth, verification, adminVerify], admin.deleteEmployee);
-router.post('/employees/assignSupervisor/:name', [auth, verification, adminVerify], admin.assignEmployee);
-router.get('/employees/:name', [auth, verification, adminVerify], admin.employee_id);
-router.get('/employees/', [auth, verification, adminVerify], admin.getEmployees);
-router.post('/employees/rankEmployee/:name', [auth, verification, adminVerify, urlencodedParser], admin.rankEmployee);
+router.delete('/employees/removeEmployee/:name', [auth, verification, adminVerify], AdminController_1.deleteEmployee);
+router.get('/employees/:name', [auth, verification, adminVerify], AdminController_1.employee_id);
+router.get('/employees/', [auth, verification, adminVerify], AdminController_1.getEmployees);
+router.post('/employees/rankEmployee/:name', [auth, verification, adminVerify, urlencodedParser], AdminController_1.rankEmployee);
 router.post('/employees/paySalary', [auth, verification, adminVerify, urlencodedParser], salary.paySalary);
 router.get('/leaves/attention', [auth, verification, adminVerify], leave.getLeavesApproval);
 router.post('/leaves/approve/:id', [auth, verification, adminVerify], leave.approveLeave);
@@ -25,5 +25,5 @@ router.get('/jobs/applications', [auth, verification, adminVerify, urlencodedPar
 router.post('/jobs/applications', [auth, urlencodedParser, verification, adminVerify], jobs.postJob);
 router.post('/jobs/applications/changeAppStatus', [auth, urlencodedParser, verification, adminVerify], applications.changeJobStatus);
 router.post('/jobs/applications/closeJob', [auth, urlencodedParser, verification, adminVerify], jobs.closeJob);
-module.exports = router;
+exports.default = router;
 //# sourceMappingURL=adminRoutes.js.map

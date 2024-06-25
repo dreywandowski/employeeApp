@@ -1,71 +1,62 @@
-var express = require('express');
-var app = express();
-var cors = require('cors');
-var redis = require('redis');
+import cors from 'cors';
+import express, { Application } from 'express';
+// import { createClient, RedisClientType } from 'redis';
+import dotenv from 'dotenv';
 
-// connect to Redis 
-/*const client = redis.createClient();
-(async () => {
-    // Connect to redis server
-    await client.connect();
-})();
-console.log("Attempting to connect to redis");
-client.on('connect', () => {
-    console.log('Connected to the redis server from the root file!');
-});
+// Import routes
+import adminRoutes from './routes/adminRoutes';
+import employeeRoutes from './routes/employeeRoutes';
+import generalRoutes from './routes/generalRoutes';
 
-// Log any error that may occur to the console
-client.on("error", (err) => {
-    console.log(`Error:${err}`);
-});
+dotenv.config();
 
-// Close the connection when there is an interrupt sent from keyboard
-process.on('SIGINT', () => {
-    client.quit();
-    console.log('redis client quit');
-});*/
+const app: Application = express();
 
-
-// tell node to use ejs as the templating engine
+// Set the view engine to EJS
 app.set('view engine', 'ejs');
 
-// use middleware to serve up static files -- hint-- name the folder static for autobind
+// Serve static files from the 'assets' directory
 app.use('/assets', express.static('assets'));
 
-
-// fire our routes
-const employeeRoutes = require('./routes/employeeRoutes');
-const adminRoutes = require('./routes/adminRoutes');
-const generalRoutes = require('./routes/generalRoutes');
-
-// cors
+// Apply CORS middleware
 app.use(cors());
 
-// all routes
-app.use('/api',employeeRoutes);
-app.use('/api',adminRoutes);
-app.use('/api',generalRoutes);
+// Initialize routes
+app.use('/api', employeeRoutes);
+app.use('/api', adminRoutes);
+app.use('/api', generalRoutes);
 
+// Uncomment and configure Redis client if needed
 /*
-var whitelist = ['http://example1.com', 'http://example2.com']
-var corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
+const client: RedisClientType = createClient();
+
+(async () => {
+    try {
+        await client.connect();
+        console.log('Connected to the Redis server from the root file!');
+    } catch (err) {
+        console.error('Redis connection error:', err);
     }
-  }
-}
+})();
+
+client.on('connect', () => {
+    console.log('Connected to the Redis server from the root file!');
+});
+
+client.on('error', (err) => {
+    console.error(`Redis error: ${err}`);
+});
+
+process.on('SIGINT', () => {
+    client.quit();
+    console.log('Redis client quit');
+});
 */
 
+// Set the port
+const port = process.env.PORT || 5000;
 
-// set our port
-var port = process.env.PORT || 5000;
-
-
-app.listen( port, () => {
-    console.log( `my employee app backend server is running http://localhost:${ port }` );
-    console.log( `press CTRL+C to stop server` );
-} );
-
+app.listen(port, () => {
+  console.log(`My employee app backend server is running at http://localhost:${port}`);
+  console.log('Press CTRL+C to stop server');
+});

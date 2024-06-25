@@ -1,7 +1,8 @@
-var users = require('../models/Users');
+//var users = require('../models/Users');
+import { Request, Response } from 'express';
 
 // get an employee
-const employee_id = (req, res) => {
+export const employee_id = (req: Request, res: Response) => {
     const username = req.params.name;
 
     users.sync().then(data => {
@@ -34,7 +35,7 @@ const employee_id = (req, res) => {
 
 
 // get all employees
-const getEmployees = (req, res) => {
+export const getEmployees = (req: Request, res: Response) => {
     users.sync().then(data => {
         return users.findAll({
             attributes: { exclude: ['password', 'createdAt', 'updatedAt', 'jwt'] }
@@ -56,7 +57,7 @@ const getEmployees = (req, res) => {
 }
 
 // delete an employee
-const deleteEmployee = (req, res) => {
+export const deleteEmployee = (req: Request, res: Response) => {
     const username = req.params.name;
 
     users.sync().then(data => {
@@ -89,7 +90,7 @@ const deleteEmployee = (req, res) => {
 
 
 // place an employee to a rank
-const rankEmployee = (req, res) => {
+export const rankEmployee = (req: Request, res: Response) => {
     var username = req.params.name;
     var qry = req.body.rank;
 
@@ -104,8 +105,8 @@ const rankEmployee = (req, res) => {
         })
         .catch(err => {
             res.status(401).json({
-                'message': ' Error updating user!',
-                'status': 0, message: err
+                'message': ' Error updating user! ' + err,
+                'status': 0
             });
         });
 
@@ -114,7 +115,7 @@ const rankEmployee = (req, res) => {
 // TOD0: Fix saving multiple surbodinates not saving to an array and error message showing
 // even after a successful assignment
 
-const assignEmployee = (req, res) => {
+/*export const assignEmployee = (req: Request, res: Response) => {
     users.findAll({
         where: { username: req.params.name },
         attributes: { exclude: ['password', 'createdAt', 'updatedAt', 'jwt'] },
@@ -159,15 +160,4 @@ const assignEmployee = (req, res) => {
             });
     });
     //});
-}
-
-
-
-module.exports = {
-    employee_id,
-    getEmployees,
-    deleteEmployee,
-    assignEmployee,
-    rankEmployee
-
-}
+}*/

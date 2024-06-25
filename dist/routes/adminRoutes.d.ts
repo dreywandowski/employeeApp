@@ -1,13 +1,3 @@
-declare var express: any;
-declare var app: any;
-declare var router: any;
-declare var admin: any;
-declare var auth: any;
-declare var adminVerify: any;
-declare var leave: any;
-declare var applications: any;
-declare var jobs: any;
-declare var salary: any;
-declare var verification: any;
-declare var bodyParser: any;
-declare var urlencodedParser: any;
+import { Router } from 'express';
+declare const router: Router;
+export default router;

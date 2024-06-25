@@ -42,7 +42,8 @@
     "pdfkit": "^0.13.0",
     "puppeteer": "^10.4.0",
     "redis": "^4.5.1",
-    "sequelize": "^6.24.0",
+    "sequelize": "^6.37.3",
+    "sequelize-typescript": "^2.1.6",
     "util": "^0.12.5",
     "uuid": "^9.0.1",
     "uuidv4": "^6.2.13",
@@ -50,8 +51,13 @@
     "winston": "^3.11.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/dotenv": "^8.2.0",
+    "@types/ejs": "^3.1.5",
     "@types/express": "^4.17.21",
     "@types/node": "^20.14.8",
+    "@types/redis": "^4.0.11",
+    "@types/sequelize": "^4.28.20",
     "sequelize-cli": "^6.5.2",
     "typescript": "^5.5.2"
   }

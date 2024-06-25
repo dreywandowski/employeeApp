@@ -1,23 +1,24 @@
-const env = require('dotenv').config();
-const { UUID, UUIDV4, Sequelize } = require('sequelize');
-const DataTypes = require('sequelize/lib/data-types');
+import { config } from 'dotenv';
+import { DataTypes, Sequelize, UUID, UUIDV4 } from 'sequelize';
+
+// Load environment variables from .env file
+config();
+
+// Create Sequelize instance with environment variables
 const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASS, {
     host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
+    port: parseInt(process.env.DB_PORT), // Parse port to integer
     dialect: 'mysql'
 });
 
-//  test our connection which returns a Promise object
-sequelize.authenticate().then((response) => {
-    console.log("connected succesfully using sequelize!!");
-}).catch((err) => {
-    console.log("Error connecting", err);
-})
+// Test the database connection
+sequelize.authenticate()
+    .then(() => {
+        console.log("Connected successfully using Sequelize!!");
+    })
+    .catch((err: Error) => {
+        console.error("Error connecting:", err);
+    });
 
+export { DataTypes, sequelize, UUID, UUIDV4 };
 
-module.exports = {
-    sequelize,
-    DataTypes,
-    UUID,
-    UUIDV4
-};

@@ -1,4 +1,6 @@
-var users = require('../models/Users');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.rankEmployee = exports.deleteEmployee = exports.getEmployees = exports.employee_id = void 0;
 const employee_id = (req, res) => {
     const username = req.params.name;
     users.sync().then(data => {
@@ -29,6 +31,7 @@ const employee_id = (req, res) => {
         });
     });
 };
+exports.employee_id = employee_id;
 const getEmployees = (req, res) => {
     users.sync().then(data => {
         return users.findAll({
@@ -48,6 +51,7 @@ const getEmployees = (req, res) => {
         });
     });
 };
+exports.getEmployees = getEmployees;
 const deleteEmployee = (req, res) => {
     const username = req.params.name;
     users.sync().then(data => {
@@ -77,6 +81,7 @@ const deleteEmployee = (req, res) => {
         });
     });
 };
+exports.deleteEmployee = deleteEmployee;
 const rankEmployee = (req, res) => {
     var username = req.params.name;
     var qry = req.body.rank;
@@ -90,54 +95,10 @@ const rankEmployee = (req, res) => {
     })
         .catch(err => {
         res.status(401).json({
-            'message': ' Error updating user!',
-            'status': 0, message: err
+            'message': ' Error updating user! ' + err,
+            'status': 0
         });
     });
 };
-const assignEmployee = (req, res) => {
-    users.findAll({
-        where: { username: req.params.name },
-        attributes: { exclude: ['password', 'createdAt', 'updatedAt', 'jwt'] },
-    }).then(user => {
-        users.findAll({
-            where: { isAdmin: 1, department: user[0].department },
-            attributes: { exclude: ['password', 'createdAt', 'updatedAt', 'jwt'] }
-        }).
-            then(admin => {
-            const upd_array = user[0].username.split();
-            if (admin[0].subordinates === null) {
-                let db = admin[0].subordinates;
-                const final_save = db.concat(upd_array);
-                users.update({ subordinates: final_save }, { where: { username: admin[0].username } });
-            }
-            else {
-                let db = admin[0].subordinates;
-                db = [];
-                const final_save = db.concat(upd_array);
-                users.update({ subordinates: final_save }, { where: { username: admin[0].username } });
-            }
-        }).
-            then(yes => {
-            res.status(200).json({
-                'message': 'Employee assignment completed sucessfully! ' +
-                    req.params.name + ' is now under ' + admin[0].username,
-                'status': 1
-            });
-        }).
-            catch(err => {
-            res.status(404).json({
-                'message': 'Error assigning supervisor to the user!',
-                'error': err, 'status': 0
-            });
-        });
-    });
-};
-module.exports = {
-    employee_id,
-    getEmployees,
-    deleteEmployee,
-    assignEmployee,
-    rankEmployee
-};
+exports.rankEmployee = rankEmployee;
 //# sourceMappingURL=AdminController.js.map

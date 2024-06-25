@@ -1,7 +1,5 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/Users");
-const NodeCache = require('node-cache');
-
+import jwt from "jsonwebtoken";
+import User from "../models/Users";
 
 module.exports = (req, res, next) => {
   let token;

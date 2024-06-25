@@ -1,4 +1,4 @@
-const { check, validationResult } = require('express-validator');
+import { check, validationResult } from 'express-validator';
 
 exports.validateUser = [
   check('firstName').trim().escape().not().isEmpty().withMessage('First name can not be empty!').bail().isLength({ min: 3 })
